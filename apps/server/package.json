@@ -1,0 +1,7 @@
+{
+  "name": "server",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "description": "Phase 0 stub — Colyseus rooms arrive in Phase 2"
+}
