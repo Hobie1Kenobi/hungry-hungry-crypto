@@ -21,31 +21,23 @@ export function PelletChip({ pellet }: { pellet: Pellet }) {
   const born = useRef(performance.now())
   const group = useRef<Group>(null)
   const scale = pellet.eatenBy !== undefined ? 0 : pellet.golden ? 1.4 : 1
-  const r = pellet.golden ? 0.42 : 0.34
+  const r = pellet.golden ? 0.44 : 0.36
   const color = pellet.golden ? '#f0c14b' : '#7ad4ff'
   const rim = pellet.golden ? '#fff3c4' : '#e9fbff'
   const spin = dumpT * 8 + delay * 20
-
   const land = Math.max(0, Math.min(1, (dumpT - delay) / 0.32))
-  const refillAge =
-    typeof performance !== 'undefined' ? Math.max(0, Math.min(1, (performance.now() - born.current) / 420)) : 1
-  const spread = easeOut(refill ? refillAge : land)
-  const y = 4.1 + (0.12 - 4.1) * spread
+  const y = refill ? 4.1 : 4.1 + (0.18 - 4.1) * easeOut(land)
 
   useFrame(() => {
-    if (!group.current || pellet.eatenBy !== undefined) return
-    if (!refill) return
+    if (!group.current || pellet.eatenBy !== undefined || !refill) return
     const t = Math.max(0, Math.min(1, (performance.now() - born.current) / 420))
-    const e = easeOut(t)
-    group.current.position.x = pellet.x * e
-    group.current.position.y = 4.1 + (0.12 - 4.1) * e
-    group.current.position.z = pellet.z * e
+    group.current.position.set(pellet.x, 4.1 + (0.18 - 4.1) * easeOut(t), pellet.z)
   })
 
   if (pellet.eatenBy !== undefined) return null
 
   return (
-    <group ref={group} position={[pellet.x * spread, y, pellet.z * spread]} rotation={[0, spin, 0]} scale={scale}>
+    <group ref={group} position={[pellet.x, y, pellet.z]} rotation={[0, spin, 0]} scale={scale}>
       <mesh castShadow receiveShadow>
         <cylinderGeometry args={[r, r, 0.1, 6]} />
         <meshStandardMaterial
@@ -53,12 +45,12 @@ export function PelletChip({ pellet }: { pellet: Pellet }) {
           metalness={0.55}
           roughness={0.22}
           emissive={pellet.golden ? '#c49214' : '#147a99'}
-          emissiveIntensity={pellet.golden ? 1.15 : 0.9}
+          emissiveIntensity={pellet.golden ? 1.2 : 1.05}
         />
       </mesh>
       <mesh position={[0, 0.06, 0]}>
         <cylinderGeometry args={[r * 0.72, r * 0.72, 0.02, 6]} />
-        <meshStandardMaterial color={rim} emissive={rim} emissiveIntensity={0.7} metalness={0.4} roughness={0.35} />
+        <meshStandardMaterial color={rim} emissive={rim} emissiveIntensity={0.75} metalness={0.4} roughness={0.35} />
       </mesh>
       <mesh position={[0, 0.07, 0]} rotation={[0, 0, Math.PI / 4]}>
         <boxGeometry args={[r * 0.95, 0.02, r * 0.18]} />
