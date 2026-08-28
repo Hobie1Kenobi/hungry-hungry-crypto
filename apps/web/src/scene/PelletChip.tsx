@@ -17,8 +17,8 @@ export function PelletChip({ pellet }: { pellet: Pellet }) {
   const delay = useMemo(() => hashDelay(pellet.id), [pellet.id])
   const land = Math.max(0, Math.min(1, (dumpT - delay) / 0.32))
   const y = pellet.eatenBy !== undefined ? -2 : 4.1 + (0.12 - 4.1) * easeOut(land)
-  const scale = pellet.eatenBy !== undefined ? 0 : pellet.golden ? 1.28 : 1
-  const r = pellet.golden ? 0.26 : 0.2
+  const scale = pellet.eatenBy !== undefined ? 0 : pellet.golden ? 1.55 : 1
+  const r = pellet.golden ? 0.32 : 0.2
   const color = pellet.golden ? '#f0c14b' : '#1b242e'
   const rim = pellet.golden ? '#fff3c4' : '#00e5ff'
   const spin = dumpT * 8 + delay * 20

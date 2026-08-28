@@ -101,8 +101,8 @@ export function Beast({ seat }: { seat: Seat }) {
           <Jaws open={extend} color={spec.color} accent={spec.accent} />
         </group>
       </group>
-      <Billboard position={[0, 1.58, 0]}>
-        <Text fontSize={0.22} color={spec.color} anchorX="center" anchorY="middle">
+      <Billboard position={[0, 1.72, 0]}>
+        <Text fontSize={0.26} color={spec.color} anchorX="center" anchorY="middle">
           {you ? `${spec.name}  YOU` : spec.name}
         </Text>
       </Billboard>

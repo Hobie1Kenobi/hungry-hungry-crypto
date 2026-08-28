@@ -132,7 +132,7 @@ export function chompReach(extend: number): number {
 }
 
 export function pelletInChompZone(pellet: Pellet, seat: Seat, extend: number): boolean {
-  if (pellet.eatenBy !== undefined || extend < 0.28) return false
+  if (pellet.eatenBy !== undefined || extend < 0.18) return false
   const reach = chompReach(extend)
   const w = CHOMP_HALF_WIDTH
   const origin = BEAST_OFFSET - 0.35

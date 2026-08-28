@@ -24,6 +24,7 @@ interface GameState {
   scores: Record<Seat, number>
   neckExtend: Record<Seat, number>
   chompDown: Record<Seat, boolean>
+  chompPulseUntil: number
   dumpT: number
   timeLeft: number
   result: MatchResult | null
@@ -57,6 +58,7 @@ export const useGameStore = create<GameState>((set, get) => ({
   scores: emptyScores(),
   neckExtend: emptyNecks(),
   chompDown: emptyChomp(),
+  chompPulseUntil: 0,
   dumpT: 0,
   timeLeft: ROUND_SECONDS,
   result: null,
@@ -65,9 +67,18 @@ export const useGameStore = create<GameState>((set, get) => ({
     const { ui } = get()
     if (ui !== 'playing' || input.seat !== HUMAN_SEAT) return
     set((s) => {
-      if (s.chompDown[input.seat] === input.down) return s
-      if (input.down) sfxChomp()
-      return { chompDown: { ...s.chompDown, [input.seat]: input.down } }
+      if (input.down) {
+        if (s.chompDown[input.seat]) return s
+        sfxChomp()
+        return {
+          chompDown: { ...s.chompDown, [input.seat]: true },
+          chompPulseUntil: 0,
+        }
+      }
+      return {
+        chompDown: { ...s.chompDown, [input.seat]: false },
+        chompPulseUntil: performance.now() + 240,
+      }
     })
   },
 
@@ -79,6 +90,7 @@ export const useGameStore = create<GameState>((set, get) => ({
       scores: emptyScores(),
       neckExtend: emptyNecks(),
       chompDown: emptyChomp(),
+      chompPulseUntil: 0,
       dumpT: 0,
       timeLeft: ROUND_SECONDS,
       result: null,
@@ -91,10 +103,12 @@ export const useGameStore = create<GameState>((set, get) => ({
 
     const dumpT = Math.min(1, state.dumpT + dt / 1.15)
     const timeLeft = Math.max(0, state.timeLeft - dt)
+    const pulsing = performance.now() < state.chompPulseUntil
     const neckExtend = { ...state.neckExtend }
     for (const seat of SEATS) {
-      const target = state.chompDown[seat] ? 1 : 0
-      const speed = state.chompDown[seat] ? 9 : 6.5
+      const biting = state.chompDown[seat] || (seat === HUMAN_SEAT && pulsing)
+      const target = biting ? 1 : 0
+      const speed = biting ? 16 : 7
       const cur = neckExtend[seat]
       const next = cur + Math.sign(target - cur) * Math.min(Math.abs(target - cur), dt * speed)
       neckExtend[seat] = Math.max(0, Math.min(1, next))
@@ -104,10 +118,10 @@ export const useGameStore = create<GameState>((set, get) => ({
     let scores = state.scores
     let ate = false
 
-    if (dumpT > 0.42) {
+    if (dumpT > 0.38) {
       for (const seat of SEATS) {
         const extend = neckExtend[seat]
-        if (extend < 0.28) continue
+        if (extend < 0.18) continue
         for (const pellet of pellets) {
           if (pellet.eatenBy !== undefined) continue
           if (!pelletInChompZone(pellet, seat, extend)) continue
@@ -138,6 +152,7 @@ export const useGameStore = create<GameState>((set, get) => ({
       pellets: [],
       result: null,
       chompDown: emptyChomp(),
+      chompPulseUntil: 0,
       neckExtend: emptyNecks(),
     })
   },

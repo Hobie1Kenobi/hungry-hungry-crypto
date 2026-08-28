@@ -13,7 +13,7 @@ import { Table } from './Table'
 function LookAtPond() {
   const camera = useThree((s) => s.camera)
   useLayoutEffect(() => {
-    camera.lookAt(0, 0.2, 0)
+    camera.lookAt(0, 0.35, 0)
   }, [camera])
   return null
 }
@@ -26,7 +26,7 @@ export function ArenaCanvas() {
       <Canvas
         shadows
         dpr={[1, 1.75]}
-        camera={{ position: [0, 13.8, 12.4], fov: 40, near: 0.1, far: 80 }}
+        camera={{ position: [0, 18.5, 14.8], fov: 42, near: 0.1, far: 90 }}
         gl={{ antialias: true }}
       >
         <LookAtPond />

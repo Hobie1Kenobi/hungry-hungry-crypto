@@ -13,26 +13,40 @@ function farEnough(x: number, z: number, placed: Pellet[], minDist: number): boo
   })
 }
 
+function place(placed: Pellet[], x0: number, x1: number, z0: number, z1: number, minDist: number): { x: number; z: number } {
+  const inner = POND_HALF * 0.82
+  let x = rand(x0, x1)
+  let z = rand(z0, z1)
+  for (let attempt = 0; attempt < 28; attempt += 1) {
+    x = rand(x0, x1)
+    z = rand(z0, z1)
+    x = Math.max(-inner, Math.min(inner, x))
+    z = Math.max(-inner, Math.min(inner, z))
+    if (farEnough(x, z, placed, minDist)) break
+  }
+  return { x, z }
+}
+
 export function spawnPellets(): Pellet[] {
   const inner = POND_HALF * 0.82
   const pellets: Pellet[] = []
+  const laneCount = 8
 
-  for (let i = 0; i < NORMAL_PELLET_COUNT; i += 1) {
-    let x = 0
-    let z = 0
-    for (let attempt = 0; attempt < 24; attempt += 1) {
-      x = rand(-inner, inner)
-      z = rand(-inner, inner)
-      if (farEnough(x, z, pellets, 0.55)) break
-    }
+  for (let i = 0; i < laneCount; i += 1) {
+    const { x, z } = place(pellets, -1.05, 1.05, -3.05, 0.55, 0.5)
+    pellets.push({ id: `crumb-${i}`, x, z, golden: false })
+  }
+
+  for (let i = laneCount; i < NORMAL_PELLET_COUNT; i += 1) {
+    const { x, z } = place(pellets, -inner, inner, -inner, inner, 0.55)
     pellets.push({ id: `crumb-${i}`, x, z, golden: false })
   }
 
   for (let g = 0; g < GOLDEN_PELLET_COUNT; g += 1) {
     pellets.push({
       id: `crumb-golden-${g}`,
-      x: rand(-0.55, 0.55),
-      z: rand(-0.55, 0.55),
+      x: rand(-0.35, 0.35),
+      z: rand(-0.85, -0.15),
       golden: true,
     })
   }
