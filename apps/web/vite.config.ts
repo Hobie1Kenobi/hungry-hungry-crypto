@@ -10,6 +10,9 @@ export default defineConfig({
       '@hhc/ai': path.resolve(__dirname, '../../packages/ai/src/index.ts'),
     },
   },
+  optimizeDeps: {
+    include: ['colyseus.js'],
+  },
   server: {
     host: true,
     port: 5173,

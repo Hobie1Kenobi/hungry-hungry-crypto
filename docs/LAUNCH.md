@@ -13,7 +13,7 @@ CRUMB on Testnet has no value.
 
 ## Orchestrator Launch Gate
 
-**Mainnet is forbidden until ATLAS issues a Launch Gate.** No client, server, or script in this repository may submit Mainnet transactions before that gate. Phase 1 cannot reach Mainnet.
+**Mainnet is forbidden until ATLAS issues a Launch Gate.** No client, server, or script in this repository may submit Mainnet transactions before that gate. Phase 2 cannot reach Mainnet.
 
 When (and only when) the gate is signed off, operators may consider a Mainnet WebSocket. Left commented on purpose:
 
@@ -31,6 +31,6 @@ When (and only when) the gate is signed off, operators may consider a Mainnet We
 - [ ] Economy: CRUMB has a disclosed Mainnet policy (Testnet remains worthless)
 - [ ] ATLAS Launch Gate recorded
 
-## Phase 1 exit
+## Phase 2 exit
 
-`pnpm install` works. `pnpm --filter web build` succeeds. `pnpm --filter @hhc/ai test` passes. Practice vs AI has live Easy / Normal / Hungry fill. No Colyseus, no wallets, no ledger writes. **Stop after Phase 1.**
+`pnpm install` works. `pnpm --filter web build` succeeds. `pnpm --filter @hhc/ai test` and `pnpm --filter server test` pass. HungryRoom (`hungry`) fills 4 seats (humans first, then AI). Quick Match and Private Room codes work. No wallets, no ledger writes. **Stop after Phase 2.**

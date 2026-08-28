@@ -3,6 +3,7 @@ import { Hud } from './ui/Hud'
 import { Lobby } from './ui/Lobby'
 import { Results } from './ui/Results'
 import { RoundClock } from './ui/RoundClock'
+import { Waiting } from './ui/Waiting'
 import { useChompInput } from './ui/useChompInput'
 import { useGameStore } from './store/gameStore'
 
@@ -14,6 +15,14 @@ export function App() {
     return (
       <div className="app">
         <Lobby />
+      </div>
+    )
+  }
+
+  if (ui === 'waiting') {
+    return (
+      <div className="app">
+        <Waiting />
       </div>
     )
   }

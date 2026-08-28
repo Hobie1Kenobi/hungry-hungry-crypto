@@ -1,16 +1,16 @@
 import { useEffect } from 'react'
-import { HUMAN_SEAT } from '@hhc/shared'
 import { useGameStore } from '../store/gameStore'
 
 export function useChompInput(): void {
   const setChomp = useGameStore((s) => s.setChomp)
   const ui = useGameStore((s) => s.ui)
+  const localSeat = useGameStore((s) => s.localSeat)
 
   useEffect(() => {
     if (ui !== 'playing') return
 
     const send = (down: boolean) => {
-      setChomp({ seat: HUMAN_SEAT, down, clientTime: performance.now() })
+      setChomp({ seat: localSeat, down, clientTime: performance.now() })
     }
 
     const onKeyDown = (e: KeyboardEvent) => {
@@ -35,12 +35,13 @@ export function useChompInput(): void {
       window.removeEventListener('blur', onBlur)
       send(false)
     }
-  }, [setChomp, ui])
+  }, [setChomp, ui, localSeat])
 }
 
 export function pointerChomp(down: boolean): void {
-  useGameStore.getState().setChomp({
-    seat: HUMAN_SEAT,
+  const { localSeat, setChomp } = useGameStore.getState()
+  setChomp({
+    seat: localSeat,
     down,
     clientTime: performance.now(),
   })

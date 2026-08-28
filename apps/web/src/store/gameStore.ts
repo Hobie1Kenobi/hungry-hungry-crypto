@@ -1,26 +1,43 @@
 import { create } from 'zustand'
-import type { ChompInput, MatchResult, Pellet, Seat } from '@hhc/shared'
+import type { ChompInput, MatchResult, Pellet, Seat, SeatOccupant } from '@hhc/shared'
 import {
-  DUMP_SECONDS,
   ROUND_SECONDS,
-  allPelletsEaten,
   applyChompInput,
-  collectEats,
   emptyChomp,
   emptyNecks,
   emptyPulse,
   emptyScores,
-  pelletValue,
-  pickWinner,
+  makeMatchResult,
+  planSeats,
+  spawnPellets,
+  stepArena,
   stepNeckExtend,
 } from '@hhc/shared'
 import { sfxChomp, sfxEat, sfxEnd } from '../game/sfx'
-import { spawnPellets } from '../game/spawn'
 
-export type UiPhase = 'lobby' | 'playing' | 'results'
+export type UiPhase = 'lobby' | 'waiting' | 'playing' | 'results'
+export type PlayMode = 'practice' | 'online'
+export type QueueMode = 'practice' | 'quick' | 'private'
+
+export interface NetFrame {
+  dumpT: number
+  timeLeft: number
+  pellets: Pellet[]
+  scores: Record<Seat, number>
+  neckExtend: Record<Seat, number>
+  chompDown: Record<Seat, boolean>
+}
 
 interface GameState {
   ui: UiPhase
+  playMode: PlayMode
+  queueMode: QueueMode
+  localSeat: Seat
+  occupants: SeatOccupant[]
+  roomCode: string
+  waitHint: string
+  waitError: string
+  startAt: number
   matchId: string
   pellets: Pellet[]
   scores: Record<Seat, number>
@@ -30,31 +47,38 @@ interface GameState {
   dumpT: number
   timeLeft: number
   result: MatchResult | null
+  netSend: ((input: ChompInput) => void) | null
+  netLeave: (() => void) | null
   setChomp: (input: ChompInput) => void
   startPractice: () => void
   tick: (dt: number, now?: number) => void
   backToLobby: () => void
+  beginWaiting: (opts: { queueMode: 'quick' | 'private'; hint: string; roomCode?: string }) => void
+  applyWelcome: (msg: { seat: Seat; roomCode?: string }) => void
+  applyLobbySeats: (occupants: SeatOccupant[], startAt: number, roomCode: string) => void
+  applyMatchStart: (matchId: string, seats: SeatOccupant[], localSeat: Seat) => void
+  applyNetFrame: (frame: NetFrame) => void
+  applyMatchEnd: (result: MatchResult) => void
+  setWaitError: (message: string) => void
+  bindNet: (handlers: { send: (input: ChompInput) => void; leave: () => void }) => void
 }
 
-function newMatchId(): string {
-  return `local-${crypto.randomUUID()}`
-}
-
-function finish(state: GameState): Pick<GameState, 'ui' | 'result' | 'chompDown'> {
-  const winner = pickWinner(state.scores)
-  const result: MatchResult = {
-    matchId: state.matchId,
-    scores: { ...state.scores },
-    addresses: {},
-    winner,
-    txHashes: [],
-  }
+function finishLocal(state: GameState): Pick<GameState, 'ui' | 'result' | 'chompDown'> {
+  const result = makeMatchResult(state.matchId, state.scores, {})
   sfxEnd()
   return { ui: 'results', result, chompDown: emptyChomp() }
 }
 
 export const useGameStore = create<GameState>((set, get) => ({
   ui: 'lobby',
+  playMode: 'practice',
+  queueMode: 'practice',
+  localSeat: 0,
+  occupants: [],
+  roomCode: '',
+  waitHint: '',
+  waitError: '',
+  startAt: 0,
   matchId: '',
   pellets: [],
   scores: emptyScores(),
@@ -64,12 +88,17 @@ export const useGameStore = create<GameState>((set, get) => ({
   dumpT: 0,
   timeLeft: ROUND_SECONDS,
   result: null,
+  netSend: null,
+  netLeave: null,
 
   setChomp: (input) => {
-    const { ui } = get()
-    if (ui !== 'playing') return
+    const state = get()
+    if (state.ui !== 'playing') return
+    const seat = state.playMode === 'online' ? state.localSeat : input.seat
+    const next: ChompInput = { seat, down: input.down, clientTime: input.clientTime }
+    if (state.playMode === 'online') state.netSend?.(next)
     set((s) => {
-      const applied = applyChompInput(s.chompDown, s.chompPulseUntil, input, input.clientTime)
+      const applied = applyChompInput(s.chompDown, s.chompPulseUntil, next, next.clientTime)
       if (!applied) return s
       if (applied.started) sfxChomp()
       return {
@@ -80,10 +109,122 @@ export const useGameStore = create<GameState>((set, get) => ({
   },
 
   startPractice: () => {
+    get().netLeave?.()
     set({
       ui: 'playing',
-      matchId: newMatchId(),
+      playMode: 'practice',
+      queueMode: 'practice',
+      localSeat: 0,
+      occupants: planSeats([0]),
+      roomCode: '',
+      waitError: '',
+      matchId: `local-${crypto.randomUUID()}`,
       pellets: spawnPellets(),
+      scores: emptyScores(),
+      neckExtend: emptyNecks(),
+      chompDown: emptyChomp(),
+      chompPulseUntil: emptyPulse(),
+      dumpT: 0,
+      timeLeft: ROUND_SECONDS,
+      result: null,
+      netSend: null,
+      netLeave: null,
+    })
+  },
+
+  tick: (dt, now = performance.now()) => {
+    const state = get()
+    if (state.ui !== 'playing') return
+    if (state.playMode === 'online') {
+      const neckExtend = stepNeckExtend(state.neckExtend, state.chompDown, state.chompPulseUntil, now, dt)
+      set({ neckExtend })
+      return
+    }
+
+    const stepped = stepArena(
+      {
+        pellets: state.pellets,
+        scores: state.scores,
+        neckExtend: state.neckExtend,
+        chompDown: state.chompDown,
+        chompPulseUntil: state.chompPulseUntil,
+        dumpT: state.dumpT,
+        timeLeft: state.timeLeft,
+      },
+      dt,
+      now,
+    )
+    for (const hit of stepped.hits) {
+      const pellet = stepped.snapshot.pellets.find((p) => p.id === hit.id)
+      if (pellet) sfxEat(pellet.golden)
+    }
+    const next: Partial<GameState> = { ...stepped.snapshot }
+    if (stepped.ended) {
+      Object.assign(next, finishLocal({ ...state, ...stepped.snapshot }))
+    }
+    set(next)
+  },
+
+  backToLobby: () => {
+    get().netLeave?.()
+    set({
+      ui: 'lobby',
+      playMode: 'practice',
+      queueMode: 'practice',
+      pellets: [],
+      result: null,
+      occupants: [],
+      roomCode: '',
+      waitHint: '',
+      waitError: '',
+      startAt: 0,
+      chompDown: emptyChomp(),
+      chompPulseUntil: emptyPulse(),
+      neckExtend: emptyNecks(),
+      netSend: null,
+      netLeave: null,
+    })
+  },
+
+  beginWaiting: ({ queueMode, hint, roomCode = '' }) => {
+    get().netLeave?.()
+    set({
+      ui: 'waiting',
+      playMode: 'online',
+      queueMode,
+      roomCode,
+      waitHint: hint,
+      waitError: '',
+      startAt: 0,
+      occupants: [],
+      result: null,
+      localSeat: 0,
+    })
+  },
+
+  applyWelcome: (msg) => {
+    set({
+      localSeat: msg.seat,
+      roomCode: msg.roomCode || get().roomCode,
+    })
+  },
+
+  applyLobbySeats: (occupants, startAt, roomCode) => {
+    set({
+      occupants,
+      startAt,
+      roomCode: roomCode || get().roomCode,
+    })
+  },
+
+  applyMatchStart: (matchId, seats, localSeat) => {
+    set({
+      ui: 'playing',
+      playMode: 'online',
+      matchId,
+      occupants: seats,
+      localSeat,
+      pellets: [],
       scores: emptyScores(),
       neckExtend: emptyNecks(),
       chompDown: emptyChomp(),
@@ -94,44 +235,46 @@ export const useGameStore = create<GameState>((set, get) => ({
     })
   },
 
-  tick: (dt, now = performance.now()) => {
+  applyNetFrame: (frame) => {
     const state = get()
-    if (state.ui !== 'playing') return
-
-    const dumpT = Math.min(1, state.dumpT + dt / DUMP_SECONDS)
-    const timeLeft = Math.max(0, state.timeLeft - dt)
-    const neckExtend = stepNeckExtend(state.neckExtend, state.chompDown, state.chompPulseUntil, now, dt)
-
-    let pellets = state.pellets
-    let scores = state.scores
-    const hits = collectEats(pellets, neckExtend, dumpT)
-    if (hits.length > 0) {
-      pellets = pellets.map((p) => ({ ...p }))
-      scores = { ...scores }
-      for (const hit of hits) {
-        const live = pellets.find((p) => p.id === hit.id)
-        if (!live || live.eatenBy !== undefined) continue
-        live.eatenBy = hit.seat
-        scores[hit.seat] += pelletValue(live)
-        sfxEat(live.golden)
+    if (state.ui !== 'playing' || state.playMode !== 'online') return
+    const prev = new Map(state.pellets.map((p) => [p.id, p.eatenBy]))
+    for (const pellet of frame.pellets) {
+      if (pellet.eatenBy !== undefined && prev.get(pellet.id) !== pellet.eatenBy) {
+        sfxEat(pellet.golden)
       }
     }
-
-    const next: Partial<GameState> = { dumpT, timeLeft, neckExtend, pellets, scores }
-    if (timeLeft <= 0 || allPelletsEaten(pellets)) {
-      Object.assign(next, finish({ ...state, scores, pellets, matchId: state.matchId }))
-    }
-    set(next)
+    const local = state.localSeat
+    set({
+      dumpT: frame.dumpT,
+      timeLeft: frame.timeLeft,
+      pellets: frame.pellets,
+      scores: frame.scores,
+      chompDown: { ...frame.chompDown, [local]: state.chompDown[local] },
+      neckExtend: { ...frame.neckExtend, [local]: state.neckExtend[local] },
+    })
   },
 
-  backToLobby: () => {
+  applyMatchEnd: (result) => {
+    sfxEnd()
     set({
-      ui: 'lobby',
-      pellets: [],
-      result: null,
+      ui: 'results',
+      result: { ...result, txHashes: result.txHashes ?? [] },
       chompDown: emptyChomp(),
-      chompPulseUntil: emptyPulse(),
-      neckExtend: emptyNecks(),
     })
+  },
+
+  setWaitError: (message) => {
+    get().netLeave?.()
+    set({
+      ui: 'waiting',
+      waitError: message,
+      netSend: null,
+      netLeave: null,
+    })
+  },
+
+  bindNet: ({ send, leave }) => {
+    set({ netSend: send, netLeave: leave })
   },
 }))

@@ -3,5 +3,34 @@
   "version": "0.0.1",
   "private": true,
   "type": "module",
-  "description": "Phase 0 stub — Colyseus rooms arrive in Phase 2"
+  "description": "Colyseus HungryRoom — Phase 2 authoritative match server. No XRPL writes.",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "start": "tsx src/index.ts",
+    "typecheck": "tsc --noEmit --pretty false",
+    "test": "vitest run && tsx src/smoke.ts",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "@colyseus/core": "0.16.24",
+    "@colyseus/schema": "3.0.76",
+    "@colyseus/ws-transport": "0.16.5",
+    "@hhc/ai": "workspace:*",
+    "@hhc/shared": "workspace:*",
+    "colyseus": "0.16.5",
+    "cors": "^2.8.5",
+    "express": "^4.21.2"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.17",
+    "@types/express": "^4.17.21",
+    "@types/node": "^22.13.0",
+    "colyseus.js": "0.16.22",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.3",
+    "vitest": "^2.1.9"
+  }
 }

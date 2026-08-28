@@ -9,6 +9,7 @@ export function RoundClock() {
   const setChomp = useGameStore((s) => s.setChomp)
   const ui = useGameStore((s) => s.ui)
   const matchId = useGameStore((s) => s.matchId)
+  const playMode = useGameStore((s) => s.playMode)
   const tickRef = useRef(tick)
   const setChompRef = useRef(setChomp)
   const policiesRef = useRef<AiPolicy[]>([])
@@ -16,12 +17,12 @@ export function RoundClock() {
   setChompRef.current = setChomp
 
   useEffect(() => {
-    if (ui !== 'playing') {
+    if (ui !== 'playing' || playMode !== 'practice') {
       policiesRef.current = []
       return
     }
     policiesRef.current = createPracticePolicies()
-  }, [ui, matchId])
+  }, [ui, matchId, playMode])
 
   useEffect(() => {
     if (ui !== 'playing') return

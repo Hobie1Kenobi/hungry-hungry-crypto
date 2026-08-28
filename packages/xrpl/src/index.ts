@@ -11,5 +11,5 @@ export function assertPhase0NoLedgerWrites(): void {
 }
 
 export function submitDisabled(): never {
-  throw new Error('Phase 0: XRPL submits are disabled. Identity/assets/receipts/settlement ship later.')
+  throw new Error('Phase 2: XRPL submits are disabled. Identity/assets/receipts/settlement ship later.')
 }

@@ -160,6 +160,42 @@ h2,
   cursor: not-allowed;
 }
 
+.private-panel {
+  margin-top: 12px;
+  display: grid;
+  gap: 10px;
+  padding: 12px;
+  border: 1px solid rgba(0, 229, 255, 0.18);
+  background: rgba(0, 229, 255, 0.04);
+}
+
+.join-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px;
+}
+
+.join-row input {
+  background: rgba(4, 8, 16, 0.8);
+  border: 1px solid var(--line);
+  color: var(--text);
+  padding: 12px 14px;
+  letter-spacing: 0.18em;
+  font-family: Orbitron, sans-serif;
+  text-transform: uppercase;
+}
+
+.room-code {
+  margin: 16px 0 0;
+  font-family: Orbitron, sans-serif;
+  letter-spacing: 0.12em;
+  font-size: 18px;
+}
+
+.room-code strong {
+  color: var(--cyan);
+}
+
 .phase-tag {
   font-size: 11px;
   font-family: Orbitron, sans-serif;
