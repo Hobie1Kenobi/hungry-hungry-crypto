@@ -93,6 +93,28 @@ Faucet + TrustSet only:
 pnpm --filter @hhc/xrpl live
 ```
 
+### Phase 4 Testnet log (real hashes)
+
+Durable issuer: `rNRohSqpNF6RUgCdvtrXqao1hMRcjK2x5b`  
+Treasury: `rDYMbqXWZhNRccTbjcWMpHKmT2rUD5ks87`  
+Guest (bound human seat): `rpHembF8Y3odbbZ3ZQFMn2UoSDMtkc9VGm`  
+HungryRoom match: `hhc-FHyOpNGKP`
+
+Full table: [`PUBLIC_TESTNET_REPORT.md`](PUBLIC_TESTNET_REPORT.md). Explorer: [testnet.xrpl.org](https://testnet.xrpl.org).
+
+| What | Hash | Ledger | Result |
+| ---- | ---- | ------ | ------ |
+| Issuer faucet | `C49A9724800E43A3C49A6AEBEE04A1F3CC0962ECAE9B4326794D3E42786205E9` | — | tesSUCCESS |
+| AccountSet DefaultRipple | `7F20CF1B18D749B08FFC67483B82F57501F337AA228A85C8A4841726CA7251B0` | 20292068 | tesSUCCESS |
+| Treasury faucet | `3B72C0D21E8EDE107961D1F23169BAF3E634F84025BDE86140A502525ECE659A` | — | tesSUCCESS |
+| TrustSet CRUMB treasury | `48F54CE18DD0ACBEB1D11095922E26A6C4E7845D8593F020C74D44906DBC7AF6` | 20292070 | tesSUCCESS |
+| Issue treasury CRUMB | `DBC605D5642B11E03C2FC1258C98DC275AA2A075798AEDD9B5DAD94B50DCE987` | 20292072 | tesSUCCESS |
+| Guest faucet | `32B1273BA9E4D21FED865DB8334475CDB0146D844CFF693714BF0EDB0D5F5AC0` | — | tesSUCCESS |
+| Guest TrustSet CRUMB | `C4F006F0DDFB91D453C18D4AF396F27D04FDF5298888938D1B49AF3083616766` | 20292089 | tesSUCCESS |
+| settleMatch CRUMB Payment | `C7EF6B98CB3C8981605EA980D8E9D85D5A7544B1173C040B2F8B18CF69120795` | 20292092 | tesSUCCESS |
+
+CRUMB on Testnet has no value. This is not money.
+
 ## Smoke: 4-seat fill
 
 `pnpm --filter server test` starts HungryRoom on an ephemeral port, connects one human, fills the other three seats with AI, completes a shortened round, and asserts an unbound match does **not** submit Payments (`txHashes: []`, `xrplSubmitted: false`). It also creates a private room, looks up the code, joins by id, and binds a sample r-address to a seat.

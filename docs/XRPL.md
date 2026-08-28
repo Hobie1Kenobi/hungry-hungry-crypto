@@ -78,3 +78,23 @@ Shared `Address` is `` `r${string}` `` — classic XRPL accounts only.
 - Never spend real XRP from this repo.
 - Never invent Testnet transaction hashes in docs or UI.
 - Never Payment on every pellet eat.
+
+## Phase 4 Testnet log
+
+Real hashes from `pnpm --filter server rehearse` against `wss://s.altnet.rippletest.net:51233`. Never invented.
+
+Durable issuer: `rNRohSqpNF6RUgCdvtrXqao1hMRcjK2x5b`  
+Treasury: `rDYMbqXWZhNRccTbjcWMpHKmT2rUD5ks87`  
+Guest: `rpHembF8Y3odbbZ3ZQFMn2UoSDMtkc9VGm`
+
+| What | Hash | Ledger | Result |
+| ---- | ---- | ------ | ------ |
+| Issuer faucet | `C49A9724800E43A3C49A6AEBEE04A1F3CC0962ECAE9B4326794D3E42786205E9` | — | tesSUCCESS |
+| AccountSet DefaultRipple | `7F20CF1B18D749B08FFC67483B82F57501F337AA228A85C8A4841726CA7251B0` | 20292068 | tesSUCCESS |
+| Treasury faucet | `3B72C0D21E8EDE107961D1F23169BAF3E634F84025BDE86140A502525ECE659A` | — | tesSUCCESS |
+| TrustSet CRUMB treasury | `48F54CE18DD0ACBEB1D11095922E26A6C4E7845D8593F020C74D44906DBC7AF6` | 20292070 | tesSUCCESS |
+| Issue treasury CRUMB | `DBC605D5642B11E03C2FC1258C98DC275AA2A075798AEDD9B5DAD94B50DCE987` | 20292072 | tesSUCCESS |
+| Guest faucet | `32B1273BA9E4D21FED865DB8334475CDB0146D844CFF693714BF0EDB0D5F5AC0` | — | tesSUCCESS |
+| Guest TrustSet CRUMB | `C4F006F0DDFB91D453C18D4AF396F27D04FDF5298888938D1B49AF3083616766` | 20292089 | tesSUCCESS |
+| settleMatch CRUMB Payment | `C7EF6B98CB3C8981605EA980D8E9D85D5A7544B1173C040B2F8B18CF69120795` | 20292092 | tesSUCCESS |
+
