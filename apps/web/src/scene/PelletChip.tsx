@@ -27,9 +27,10 @@ export function PelletChip({ pellet }: { pellet: Pellet }) {
   const spin = dumpT * 8 + delay * 20
 
   const land = Math.max(0, Math.min(1, (dumpT - delay) / 0.32))
-  const flight = refill ? 0 : land
-  const spread = easeOut(flight)
-  const y = refill ? 4.1 : 4.1 + (0.12 - 4.1) * easeOut(land)
+  const refillAge =
+    typeof performance !== 'undefined' ? Math.max(0, Math.min(1, (performance.now() - born.current) / 420)) : 1
+  const spread = easeOut(refill ? refillAge : land)
+  const y = 4.1 + (0.12 - 4.1) * spread
 
   useFrame(() => {
     if (!group.current || pellet.eatenBy !== undefined) return
