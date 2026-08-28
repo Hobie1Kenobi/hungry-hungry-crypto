@@ -1,5 +1,5 @@
 import type { Pellet, Seat } from '@hhc/shared'
-import { BEAST_OFFSET, pelletInChompZone } from '@hhc/shared'
+import { BEAST_OFFSET, pelletInLane } from '@hhc/shared'
 
 export function mouthPoint(seat: Seat): { x: number; z: number } {
   const origin = BEAST_OFFSET - 0.35
@@ -27,7 +27,7 @@ export function nearestPelletToMouth(pellets: readonly Pellet[], seat: Seat): Pe
   let bestD = Infinity
   for (const pellet of pellets) {
     if (pellet.eatenBy !== undefined) continue
-    if (!pelletInChompZone(pellet, seat, 1)) continue
+    if (!pelletInLane(pellet, seat)) continue
     const d = dist2(pellet.x, pellet.z, mouth.x, mouth.z)
     if (d < bestD) {
       bestD = d

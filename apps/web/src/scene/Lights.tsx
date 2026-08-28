@@ -9,15 +9,16 @@ export function Lights() {
 
   return (
     <>
-      <ambientLight intensity={0.28} />
+      <ambientLight intensity={0.48} />
+      <hemisphereLight args={['#9ad4ff', '#0a1218', 0.42]} />
       <directionalLight
         castShadow
-        position={[6, 14, 8]}
-        intensity={1.15}
+        position={[4, 16, -6]}
+        intensity={1.35}
         shadow-mapSize-width={1024}
         shadow-mapSize-height={1024}
       />
-      <pointLight position={[0, 6, 0]} intensity={1.4} distance={18} color="#7fd7ff" />
+      <pointLight position={[0, 5.2, 0]} intensity={2.1} distance={16} color="#b8e8ff" />
       <pointLight position={[0, 1.4, -6.2]} intensity={1.6} distance={10} color={cyan} />
       <pointLight position={[6.2, 1.4, 0]} intensity={1.6} distance={10} color={magenta} />
       <pointLight position={[0, 1.4, 6.2]} intensity={1.6} distance={10} color={chartreuse} />

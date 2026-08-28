@@ -46,7 +46,11 @@ export const POND_HALF = POND_SIZE / 2
 
 export const BEAST_OFFSET = 5.2
 
-export const CHOMP_HALF_WIDTH = 1.28
+export const CHOMP_HALF_WIDTH = 0.78
+
+export const CHOMP_MOUTH_DEPTH = 0.66
+
+export const CHOMP_MOUTH_PAD = 0.14
 
 export const NECK_BASE = 0.95
 
@@ -54,13 +58,13 @@ export const NECK_EXTRA = 4.85
 
 export const DUMP_SECONDS = 1.15
 
-export const EAT_DUMP_THRESHOLD = 0.38
+export const EAT_DUMP_THRESHOLD = 0.72
 
-export const NECK_EXTEND_SPEED = 16
+export const NECK_EXTEND_SPEED = 2.15
 
-export const NECK_RETRACT_SPEED = 7
+export const NECK_RETRACT_SPEED = 3.4
 
-export const CHOMP_PULSE_MS = 240
+export const CHOMP_PULSE_MS = 180
 
 export type Cardinal = 'north' | 'east' | 'south' | 'west'
 
@@ -145,9 +149,9 @@ export function chompReach(extend: number): number {
   return NECK_BASE + extend * NECK_EXTRA
 }
 
-export function pelletInChompZone(pellet: Pellet, seat: Seat, extend: number): boolean {
-  if (pellet.eatenBy !== undefined || extend < 0.18) return false
-  const reach = chompReach(extend)
+export function pelletInLane(pellet: Pellet, seat: Seat): boolean {
+  if (pellet.eatenBy !== undefined) return false
+  const reach = chompReach(1)
   const w = CHOMP_HALF_WIDTH
   const origin = BEAST_OFFSET - 0.35
   switch (seat) {
@@ -159,6 +163,25 @@ export function pelletInChompZone(pellet: Pellet, seat: Seat, extend: number): b
       return Math.abs(pellet.x) <= w && pellet.z <= origin && pellet.z >= origin - reach
     case 3:
       return Math.abs(pellet.z) <= w && pellet.x >= -origin && pellet.x <= -origin + reach
+  }
+}
+
+export function pelletInChompZone(pellet: Pellet, seat: Seat, extend: number): boolean {
+  if (pellet.eatenBy !== undefined || extend < 0.12) return false
+  const reach = chompReach(extend)
+  const w = CHOMP_HALF_WIDTH
+  const origin = BEAST_OFFSET - 0.35
+  const along0 = reach - CHOMP_MOUTH_DEPTH
+  const along1 = reach + CHOMP_MOUTH_PAD
+  switch (seat) {
+    case 0:
+      return Math.abs(pellet.x) <= w && pellet.z >= -origin + along0 && pellet.z <= -origin + along1
+    case 1:
+      return Math.abs(pellet.z) <= w && pellet.x <= origin - along0 && pellet.x >= origin - along1
+    case 2:
+      return Math.abs(pellet.x) <= w && pellet.z <= origin - along0 && pellet.z >= origin - along1
+    case 3:
+      return Math.abs(pellet.z) <= w && pellet.x >= -origin + along0 && pellet.x <= -origin + along1
   }
 }
 
@@ -319,6 +342,10 @@ export function clampClientTime(clientTime: number, serverNow: number, skewMs = 
   return clientTime
 }
 
+export function isChompKey(code: string, key: string): boolean {
+  return code === 'Space' || key === ' ' || key === 'Spacebar'
+}
+
 export function isChompInputShape(value: unknown): value is ChompInput {
   if (!value || typeof value !== 'object') return false
   const o = value as Record<string, unknown>
@@ -333,66 +360,71 @@ function spawnRand(rng: () => number, min: number, max: number): number {
   return min + rng() * (max - min)
 }
 
-function spawnFarEnough(x: number, z: number, placed: Pellet[], minDist: number): boolean {
-  return placed.every((p) => {
-    const dx = p.x - x
-    const dz = p.z - z
-    return dx * dx + dz * dz >= minDist * minDist
-  })
-}
-
-function spawnPlace(
-  rng: () => number,
-  placed: Pellet[],
-  x0: number,
-  x1: number,
-  z0: number,
-  z1: number,
-  minDist: number,
-): { x: number; z: number } {
-  const inner = POND_HALF * 0.82
-  let x = spawnRand(rng, x0, x1)
-  let z = spawnRand(rng, z0, z1)
-  for (let attempt = 0; attempt < 28; attempt += 1) {
-    x = spawnRand(rng, x0, x1)
-    z = spawnRand(rng, z0, z1)
-    x = Math.max(-inner, Math.min(inner, x))
-    z = Math.max(-inner, Math.min(inner, z))
-    if (spawnFarEnough(x, z, placed, minDist)) break
-  }
-  return { x, z }
-}
-
 export function spawnPellets(rng: () => number = Math.random): Pellet[] {
-  const inner = POND_HALF * 0.82
   const pellets: Pellet[] = []
-  const perLane = 4
-  const lanes: Array<[number, number, number, number]> = [
-    [-1.05, 1.05, -3.05, -0.45],
-    [0.45, 3.05, -1.05, 1.05],
-    [-1.05, 1.05, 0.45, 3.05],
-    [-3.05, -0.45, -1.05, 1.05],
+  const jitter = (n: number) => (rng() - 0.5) * n
+  const laneSpots: Array<Array<[number, number]>> = [
+    [
+      [-0.48, -2.62],
+      [0.5, -2.38],
+      [0.06, -1.68],
+      [0.4, -0.98],
+    ],
+    [
+      [2.62, -0.48],
+      [2.38, 0.5],
+      [1.68, 0.06],
+      [0.98, 0.4],
+    ],
+    [
+      [0.48, 2.62],
+      [-0.5, 2.38],
+      [-0.06, 1.68],
+      [-0.4, 0.98],
+    ],
+    [
+      [-2.62, 0.48],
+      [-2.38, -0.5],
+      [-1.68, -0.06],
+      [-0.98, -0.4],
+    ],
   ]
 
   let i = 0
-  for (const [x0, x1, z0, z1] of lanes) {
-    for (let n = 0; n < perLane; n += 1) {
-      const { x, z } = spawnPlace(rng, pellets, x0, x1, z0, z1, 0.5)
-      pellets.push({ id: `crumb-${i}`, x, z, golden: false })
+  for (const spots of laneSpots) {
+    for (const [cx, cz] of spots) {
+      pellets.push({
+        id: `crumb-${i}`,
+        x: cx + jitter(0.16),
+        z: cz + jitter(0.16),
+        golden: false,
+      })
       i += 1
     }
   }
 
-  for (; i < NORMAL_PELLET_COUNT; i += 1) {
-    const { x, z } = spawnPlace(rng, pellets, -inner, inner, -inner, inner, 0.55)
-    pellets.push({ id: `crumb-${i}`, x, z, golden: false })
+  const scatter: Array<[number, number]> = [
+    [0.02, -0.52],
+    [0.52, 0.04],
+    [-0.04, 0.52],
+    [-0.52, -0.02],
+  ]
+  for (const [cx, cz] of scatter) {
+    if (i >= NORMAL_PELLET_COUNT) break
+    pellets.push({
+      id: `crumb-${i}`,
+      x: cx + jitter(0.1),
+      z: cz + jitter(0.1),
+      golden: false,
+    })
+    i += 1
   }
 
   for (let g = 0; g < GOLDEN_PELLET_COUNT; g += 1) {
     pellets.push({
       id: `crumb-golden-${g}`,
-      x: spawnRand(rng, -0.4, 0.4),
-      z: spawnRand(rng, -0.4, 0.4),
+      x: spawnRand(rng, -0.18, 0.18),
+      z: spawnRand(rng, -0.18, 0.18),
       golden: true,
     })
   }

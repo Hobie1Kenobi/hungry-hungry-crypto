@@ -8,11 +8,13 @@ export function createEasyPolicy(seat: Seat, options: PolicyOptions = {}): AiPol
   let armed = false
   let nextFlip = 0
   const reaction = mix(rng, 180, 420)
+  const landDump = 0.7
 
   return {
     seat,
     personality: 'easy',
     tick(world: ArenaView) {
+      if (world.dumpT < landDump) return null
       if (!armed) {
         armed = true
         nextFlip = world.now + reaction
