@@ -32,4 +32,4 @@ Match start payload: `{ matchId, seats }`. Match end: `MatchResult` with `txHash
 pnpm --filter server test
 ```
 
-Covers 1 human + 3 AI completing a shortened round, private room codes, and the settle stub (`xrplSubmitted: false`).
+Unit tests cover seat fill, desync clamp, private codes, and the settle stub. The smoke script (`tsx src/smoke.ts`) starts HungryRoom, connects one human, fills 3 AI seats, completes a shortened round (`txHashes: []`), then creates a private room and joins by code.

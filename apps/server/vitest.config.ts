@@ -5,6 +5,7 @@ export default defineConfig({
   test: {
     environment: 'node',
     include: ['src/**/*.test.ts'],
+    exclude: ['src/smoke.ts'],
     testTimeout: 20000,
     hookTimeout: 20000,
   },

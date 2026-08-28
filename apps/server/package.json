@@ -11,7 +11,7 @@
     "dev": "tsx watch src/index.ts",
     "start": "tsx src/index.ts",
     "typecheck": "tsc --noEmit --pretty false",
-    "test": "vitest run",
+    "test": "vitest run && tsx src/smoke.ts",
     "test:watch": "vitest"
   },
   "dependencies": {

@@ -1,5 +1,5 @@
 import { Client, type Room } from 'colyseus.js'
-import type { ChompInput, MatchResult, MatchStart, Pellet, Seat, SeatOccupant } from '@hhc/shared'
+import type { ChompInput, MatchResult, MatchStart, Seat, SeatOccupant } from '@hhc/shared'
 import { ROOM_NAME } from '@hhc/shared'
 import { useGameStore, type NetFrame } from '../store/gameStore'
 
@@ -30,40 +30,6 @@ function occupantsFromState(state: { seats?: Array<{ seat: number; kind: string;
     personality: row.personality as SeatOccupant['personality'],
     sessionId: row.sessionId || undefined,
   }))
-}
-
-function readFrame(state: {
-  dumpT: number
-  timeLeft: number
-  score0: number
-  score1: number
-  score2: number
-  score3: number
-  neck0: number
-  neck1: number
-  neck2: number
-  neck3: number
-  chomp0: boolean
-  chomp1: boolean
-  chomp2: boolean
-  chomp3: boolean
-  pellets: Array<{ id: string; x: number; z: number; golden: boolean; eatenBy: number }>
-}): NetFrame {
-  const pellets: Pellet[] = [...state.pellets].map((p) => ({
-    id: p.id,
-    x: p.x,
-    z: p.z,
-    golden: p.golden,
-    eatenBy: p.eatenBy < 0 ? undefined : (p.eatenBy as Seat),
-  }))
-  return {
-    dumpT: state.dumpT,
-    timeLeft: state.timeLeft,
-    pellets,
-    scores: { 0: state.score0, 1: state.score1, 2: state.score2, 3: state.score3 },
-    neckExtend: { 0: state.neck0, 1: state.neck1, 2: state.neck2, 3: state.neck3 },
-    chompDown: { 0: state.chomp0, 1: state.chomp1, 2: state.chomp2, 3: state.chomp3 },
-  }
 }
 
 function explainConnectError(err: unknown): string {
@@ -101,8 +67,19 @@ function bindRoom(joined: Room): void {
     )
   }
 
-  joined.onMessage('welcome', (msg: { seat: Seat; roomCode?: string }) => {
+  joined.onMessage('welcome', (msg: { seat: Seat; roomCode?: string; startAt?: number }) => {
     useGameStore.getState().applyWelcome(msg)
+    if (msg.startAt) {
+      useGameStore.getState().applyLobbySeats(useGameStore.getState().occupants, msg.startAt, msg.roomCode || '')
+    }
+  })
+
+  joined.onMessage('lobby', (msg: { code?: string; startAt?: number; seats: SeatOccupant[] }) => {
+    useGameStore.getState().applyLobbySeats(msg.seats, msg.startAt ?? 0, msg.code || '')
+  })
+
+  joined.onMessage('frame', (frame: NetFrame) => {
+    useGameStore.getState().applyNetFrame(frame)
   })
 
   joined.onMessage('matchStart', (payload: MatchStart) => {
@@ -118,9 +95,7 @@ function bindRoom(joined: Room): void {
 
   joined.onStateChange((state) => {
     const store = useGameStore.getState()
-    if (state.phase === 'playing' && store.ui === 'playing') {
-      store.applyNetFrame(readFrame(state))
-    } else if (state.phase === 'lobby') {
+    if (store.ui === 'waiting' && state.phase === 'lobby') {
       store.applyLobbySeats(
         occupantsFromState(state),
         state.startAt as number,
@@ -132,6 +107,8 @@ function bindRoom(joined: Room): void {
   joined.onError((_code, message) => {
     useGameStore.getState().setWaitError(message || 'Room error')
   })
+
+  joined.send('hello')
 }
 
 export async function joinQuickMatch(): Promise<void> {

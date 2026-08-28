@@ -86,6 +86,7 @@ export class HungryRoom extends Room<HungryState> {
 
     this.setMetadata({ mode: this.mode, code: this.code || undefined })
     this.onMessage('chomp', (client, payload) => this.onChomp(client, payload))
+    this.onMessage('hello', (client) => this.sendWelcome(client))
     this.setSimulationInterval((dt) => this.onSim(dt), 1000 / TICK_HZ)
   }
 
@@ -103,15 +104,14 @@ export class HungryRoom extends Room<HungryState> {
       throw new Error('room full')
     }
     this.sessionSeat.set(client.sessionId, seat)
-    this.syncSeatSchema()
-    client.send('welcome', { seat, roomCode: this.code, roomId: this.roomId })
-
     if (this.sessionSeat.size === 1) {
       this.state.startAt = Date.now() + this.fillMs
       this.fillTimer = this.clock.setTimeout(() => {
         void this.beginMatch()
       }, Math.max(50, this.fillMs))
     }
+    this.syncSeatSchema()
+    this.sendWelcome(client)
     if (this.sessionSeat.size >= 4) {
       void this.beginMatch()
     }
@@ -135,6 +135,24 @@ export class HungryRoom extends Room<HungryState> {
 
   onDispose(): void {
     unregisterRoom(this.roomId)
+  }
+
+  private sendWelcome(client: Client): void {
+    const seat = this.sessionSeat.get(client.sessionId)
+    if (seat === undefined) return
+    client.send('welcome', { seat, roomCode: this.code, roomId: this.roomId, startAt: this.state.startAt })
+    this.broadcast('lobby', {
+      code: this.code,
+      startAt: this.state.startAt,
+      seats: this.started
+        ? this.occupants
+        : planSeats(
+            [...this.sessionSeat.values()] as Seat[],
+            Object.fromEntries([...this.sessionSeat.entries()].map(([sessionId, s]) => [s, sessionId])) as Partial<
+              Record<Seat, string>
+            >,
+          ),
+    })
   }
 
   private onChomp(client: Client, payload: unknown): void {
@@ -244,6 +262,14 @@ export class HungryRoom extends Room<HungryState> {
     this.simNow += TICK_DT * 1000
     this.syncSim()
     this.syncPellets(false)
+    this.broadcast('frame', {
+      dumpT: this.sim.dumpT,
+      timeLeft: this.sim.timeLeft,
+      pellets: this.sim.pellets,
+      scores: this.sim.scores,
+      neckExtend: this.sim.neckExtend,
+      chompDown: this.sim.chompDown,
+    })
     if (stepped.ended) this.finishMatch()
   }
 
