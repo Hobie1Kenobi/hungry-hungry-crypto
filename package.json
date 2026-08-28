@@ -1,0 +1,16 @@
+{
+  "name": "hungry-hungry-crypto",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Hungry Hungry Crypto — original 3D arcade. XRPL Testnet first. Hybrid physics off-chain.",
+  "license": "MIT",
+  "packageManager": "pnpm@10.33.3",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "dev": "pnpm --filter web dev",
+    "build": "pnpm --filter web build",
+    "typecheck": "pnpm --filter web typecheck"
+  }
+}
