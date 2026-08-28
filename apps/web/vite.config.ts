@@ -7,6 +7,7 @@ export default defineConfig({
   resolve: {
     alias: {
       '@hhc/shared': path.resolve(__dirname, '../../packages/shared/src/index.ts'),
+      '@hhc/ai': path.resolve(__dirname, '../../packages/ai/src/index.ts'),
     },
   },
   server: {

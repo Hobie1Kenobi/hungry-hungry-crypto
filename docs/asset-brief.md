@@ -1,6 +1,6 @@
 # Asset brief — original mascots
 
-Hungry Hungry Crypto needs original 3D and 2D art. Phase 0 **must ship placeholder primitives** (boxes, capsules, hex chips). Do not wait on Blender.
+Hungry Hungry Crypto needs original 3D and 2D art. Phase 1 **must keep placeholder primitives** (boxes, capsules, hex chips). Do not wait on Blender.
 
 ## Beasts
 
@@ -23,7 +23,7 @@ Target mesh later: body, telescoping neck, upper/lower jaw, visor, two antenna n
 
 ## Audio / UI
 
-Phase 0 may use tiny synthesized blips. No third-party music beds. UI: dark arcade, beast-color accents, Orbitron-style headings.
+Phase 1 may use tiny synthesized blips. No third-party music beds. UI: dark arcade, beast-color accents, Orbitron-style headings.
 
 ## Landing zone
 

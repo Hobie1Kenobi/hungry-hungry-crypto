@@ -16,7 +16,8 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
     "paths": {
-      "@hhc/shared": ["../../packages/shared/src/index.ts"]
+      "@hhc/shared": ["../../packages/shared/src/index.ts"],
+      "@hhc/ai": ["../../packages/ai/src/index.ts"]
     }
   },
   "include": ["src"]

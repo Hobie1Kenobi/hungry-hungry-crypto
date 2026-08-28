@@ -1,3 +1,4 @@
+import { PRACTICE_AI_MAP } from '@hhc/ai'
 import { BEASTS, HUMAN_SEAT, SEATS } from '@hhc/shared'
 import { useGameStore } from '../store/gameStore'
 import { pointerChomp } from './useChompInput'
@@ -30,7 +31,7 @@ export function Hud() {
                 <div key={seat} className={`score-card${seat === HUMAN_SEAT ? ' you' : ''}`}>
                   <div className="name" style={{ color: b.color }}>
                     {b.name}
-                    {seat === HUMAN_SEAT ? ' · YOU' : ' · CPU'}
+                    {seat === 0 ? ' · YOU' : ` · ${PRACTICE_AI_MAP[seat].toUpperCase()}`}
                   </div>
                   <div className="pts">{scores[seat]}</div>
                 </div>
@@ -46,7 +47,9 @@ export function Hud() {
           <div className="hint">
             <strong>CHOMP</strong> — Space, click, or tap. Neck extends. Jaws eat on overlap.
             <div style={{ marginTop: 6, color: '#8aa0b8' }}>
-              {dumpT < 0.9 ? 'Hopper dumping chips…' : 'Board live. You are BYTEBITE (north).'}
+              {dumpT < 0.9
+                ? 'Hopper dumping chips…'
+                : 'Board live. You are BYTEBITE (north). RIPSAW Easy · GOLDGRUB Normal · BLOCKMAW Hungry.'}
             </div>
           </div>
         </div>

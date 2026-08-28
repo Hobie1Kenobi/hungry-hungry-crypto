@@ -31,7 +31,7 @@ export function Results() {
             ))}
           </ol>
           <p className="receipts">
-            On-chain receipts: none. txHashes: [] — Phase 0 submits zero XRPL transactions. CRUMB on
+            On-chain receipts: none. txHashes: [] — Phase 1 submits zero XRPL transactions. CRUMB on
             Testnet has no value.
           </p>
           <div className="actions" style={{ marginTop: 18 }}>
