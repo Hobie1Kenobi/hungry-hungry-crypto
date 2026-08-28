@@ -82,6 +82,32 @@ describe('AI chomp timing', () => {
     expect(easy.tick(dump)).toBeNull()
   })
 
+  it('BYTEBITE can eat a north-lane chip with a short ChompInput hold', () => {
+    const pellets = [crumb('north', 0.1, -2.5)]
+    const result = simulateRound({
+      pellets,
+      policies: [
+        {
+          seat: 0,
+          personality: 'idle',
+          tick(world) {
+            if (world.dumpT < 0.72) return null
+            if (world.now < 900 && !world.chompDown[0]) {
+              return { seat: 0, down: true, clientTime: world.now }
+            }
+            if (world.now >= 1200 && world.chompDown[0]) {
+              return { seat: 0, down: false, clientTime: world.now }
+            }
+            return null
+          },
+        },
+      ],
+      seconds: 3,
+    })
+    expect(result.scores[0]).toBeGreaterThan(0)
+    expect(result.pellets[0]?.eatenBy).toBe(0)
+  })
+
   it('Practice AI scores accrue after landing, not on the first half-second', () => {
     const pellets = spawnPellets(seededRng(99))
     const early = simulateRound({

@@ -124,11 +124,11 @@ export function beastYaw(seat: Seat): number {
     case 0:
       return 0
     case 1:
-      return Math.PI / 2
+      return -Math.PI / 2
     case 2:
       return Math.PI
     case 3:
-      return -Math.PI / 2
+      return Math.PI / 2
   }
 }
 
