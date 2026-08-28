@@ -301,8 +301,15 @@ h2,
 .hud-bottom {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
   gap: 12px;
+}
+
+.hud-top {
+  align-items: flex-start;
+}
+
+.hud-bottom {
+  align-items: flex-end;
 }
 
 .scoreboard {
@@ -340,7 +347,7 @@ h2,
   border: 1px solid var(--line);
   padding: 8px 12px;
   font-family: Orbitron, sans-serif;
-  min-width: 88px;
+  min-width: 108px;
   text-align: right;
 }
 
@@ -362,6 +369,29 @@ h2,
   touch-action: none;
   -webkit-user-select: none;
   user-select: none;
+}
+
+.chomp-btn {
+  pointer-events: auto;
+  appearance: none;
+  min-width: 148px;
+  min-height: 56px;
+  padding: 12px 22px;
+  border: 1px solid var(--cyan);
+  background: var(--cyan);
+  color: #041016;
+  font-family: Orbitron, sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  cursor: pointer;
+  touch-action: none;
+  box-shadow: 0 0 24px rgba(0, 229, 255, 0.35);
+}
+
+.chomp-btn:active {
+  transform: translateY(1px);
+  filter: brightness(0.92);
 }
 
 .results {

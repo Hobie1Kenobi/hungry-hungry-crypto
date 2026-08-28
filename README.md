@@ -61,7 +61,7 @@ Explorer: [testnet.xrpl.org](https://testnet.xrpl.org). WebSocket: `wss://s.altn
 ### Practice vs AI (local)
 
 1. Click **Practice vs AI**. This starts a local ~45s round. Empty seats are live AI, not idle dummies.
-2. **CHOMP** with Space, click, or tap. You are seat 0, **BYTEBITE** (north, cyan).
+2. **CHOMP** with Space (window/document listener — canvas focus is not required), click/tap the pond, or the on-screen **CHOMP** control. You are seat 0, **BYTEBITE** (north, cyan).
 3. Opponents use the **same** `ChompInput` as you: `{ seat, down, clientTime }`, piped through `setChomp`.
 4. Eat chips that overlap your jaws. Normal = 1, GOLDEN = 5.
 5. Round ends at ~45s or when the board is empty. Results are local only (`txHashes: []`).

@@ -1,47 +1,45 @@
 import type { Pellet, Seat } from '@hhc/shared'
-import { DUMP_SECONDS, pelletInChompZone } from '@hhc/shared'
-import { clonePellet, dist2, mouthPoint } from './mouth'
+import {
+  BEAST_OFFSET,
+  NECK_BASE,
+  NECK_EXTEND_SPEED,
+  NECK_EXTRA,
+  pelletInLane,
+} from '@hhc/shared'
+import { dist2, mouthPoint } from './mouth'
 import type { AiPolicy, ArenaView, PolicyOptions } from './types'
 
-const LOOK_AHEAD = 0.14
-const WINDUP_DUMP = 0.16
+const WINDUP_DUMP = 0.7
+const MIN_HOLD_MS = 140
+const MAX_HOLD_MS = 520
+const COOLDOWN_MS = 180
 
-interface Track {
-  x: number
-  z: number
-  t: number
-}
-
-function easeDump(t: number): number {
-  const u = Math.max(0, Math.min(1, t))
-  return 1 - (1 - u) * (1 - u)
-}
-
-function velocity(prev: Track | undefined, pellet: Pellet, now: number): { vx: number; vz: number } {
-  if (!prev || now <= prev.t) return { vx: 0, vz: 0 }
-  const dt = (now - prev.t) / 1000
-  if (dt < 1 / 240) return { vx: 0, vz: 0 }
-  return { vx: (pellet.x - prev.x) / dt, vz: (pellet.z - prev.z) / dt }
-}
-
-function predict(pellet: Pellet, dumpT: number, vx: number, vz: number, lookAhead: number): Pellet {
-  if (dumpT < 1) {
-    const futureDump = Math.min(1, dumpT + lookAhead / DUMP_SECONDS)
-    const eased = easeDump(futureDump)
-    return clonePellet(pellet, pellet.x * eased, pellet.z * eased)
+function holdMsFor(pellet: Pellet, seat: Seat): number {
+  const origin = BEAST_OFFSET - 0.35
+  let along = 0
+  switch (seat) {
+    case 0:
+      along = pellet.z + origin
+      break
+    case 1:
+      along = origin - pellet.x
+      break
+    case 2:
+      along = origin - pellet.z
+      break
+    case 3:
+      along = pellet.x + origin
+      break
   }
-  return clonePellet(pellet, pellet.x + vx * lookAhead, pellet.z + vz * lookAhead)
-}
-
-function reachableSoon(pellet: Pellet, seat: Seat, dumpT: number, vx: number, vz: number): boolean {
-  if (pelletInChompZone(pellet, seat, 1)) return true
-  const projected = predict(pellet, dumpT, vx, vz, LOOK_AHEAD)
-  return pelletInChompZone(projected, seat, 1)
+  const need = Math.max(0, Math.min(1, (along - NECK_BASE) / NECK_EXTRA))
+  return Math.max(MIN_HOLD_MS, Math.min(MAX_HOLD_MS, (need / NECK_EXTEND_SPEED) * 1000 + 80))
 }
 
 export function createHungryPolicy(seat: Seat, _options: PolicyOptions = {}): AiPolicy {
-  const tracks = new Map<string, Track>()
   let down = false
+  let holdUntil = 0
+  let coolUntil = 0
+  let targetId: string | undefined
 
   return {
     seat,
@@ -53,26 +51,41 @@ export function createHungryPolicy(seat: Seat, _options: PolicyOptions = {}): Ai
 
       for (const pellet of world.pellets) {
         if (pellet.eatenBy !== undefined) continue
-        const prev = tracks.get(pellet.id)
-        const { vx, vz } = velocity(prev, pellet, world.now)
-        tracks.set(pellet.id, { x: pellet.x, z: pellet.z, t: world.now })
-        if (!reachableSoon(pellet, seat, world.dumpT, vx, vz)) continue
-        const projected = predict(pellet, world.dumpT, vx, vz, LOOK_AHEAD)
-        const closeness = 80 - Math.sqrt(dist2(projected.x, projected.z, mouth.x, mouth.z))
-        const score = (pellet.golden ? 10_000 : 0) + closeness
+        if (!pelletInLane(pellet, seat)) continue
+        const closeness = 80 - Math.sqrt(dist2(pellet.x, pellet.z, mouth.x, mouth.z))
+        const score = (pellet.golden ? 2.5 : 0) + closeness
         if (score > bestScore) {
           bestScore = score
           best = pellet
         }
       }
 
-      for (const id of [...tracks.keys()]) {
-        if (!world.pellets.some((p) => p.id === id)) tracks.delete(id)
+      const targetLive =
+        targetId === undefined
+          ? undefined
+          : world.pellets.find((pellet) => pellet.id === targetId && pellet.eatenBy === undefined)
+
+      const canWindup = world.dumpT >= WINDUP_DUMP
+      let want = down
+
+      if (down) {
+        const eaten = targetId !== undefined && !targetLive
+        const timedOut = world.now >= holdUntil
+        want = !eaten && !timedOut
+      } else if (world.now >= coolUntil && best && canWindup) {
+        want = true
       }
 
-      const want = Boolean(best) && world.dumpT >= WINDUP_DUMP
       if (want === down) return null
       down = want
+      if (down && best) {
+        targetId = best.id
+        holdUntil = world.now + holdMsFor(best, seat)
+      } else {
+        coolUntil = world.now + COOLDOWN_MS
+        holdUntil = 0
+        targetId = undefined
+      }
       return { seat, down, clientTime: world.now }
     },
   }

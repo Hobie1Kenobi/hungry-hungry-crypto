@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import type { ChompInput, Pellet, Seat } from '@hhc/shared'
-import { pelletInChompZone } from '@hhc/shared'
+import { pelletInLane } from '@hhc/shared'
 import { createEasyPolicy } from './easy'
 import { createHungryPolicy } from './hungry'
 import { createIdleFill, createPracticePolicies, PRACTICE_AI_MAP, seededRng } from './fill'
@@ -40,7 +40,7 @@ function createPerfectStandIn(seat: Seat): AiPolicy {
     personality: 'idle',
     tick(world) {
       const want = world.pellets.some(
-        (pellet) => pellet.eatenBy === undefined && pelletInChompZone(pellet, seat, 1) && world.dumpT >= 0.2,
+        (pellet) => pellet.eatenBy === undefined && pelletInLane(pellet, seat) && world.dumpT >= 0.7,
       )
       if (want === down) return null
       down = want
@@ -60,7 +60,7 @@ describe('ChompInput schema', () => {
     const bot = createEasyPolicy(1, { rng: seededRng(7) })
     const seen: ChompInput[] = []
     for (let i = 0; i < 120; i += 1) {
-      const input = bot.tick(emptyView({ now: i * 16 }))
+      const input = bot.tick(emptyView({ now: i * 16, dumpT: 0.75 }))
       if (input) seen.push(input)
     }
     expect(seen.length).toBeGreaterThan(2)
@@ -149,7 +149,7 @@ describe('round outcomes', () => {
     const input = bot.tick(
       emptyView({
         now: 200,
-        dumpT: 0.5,
+        dumpT: 0.75,
         pellets: [far, near],
       }),
     )

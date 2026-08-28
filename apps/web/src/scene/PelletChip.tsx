@@ -17,10 +17,10 @@ export function PelletChip({ pellet }: { pellet: Pellet }) {
   const delay = useMemo(() => hashDelay(pellet.id), [pellet.id])
   const land = Math.max(0, Math.min(1, (dumpT - delay) / 0.32))
   const y = pellet.eatenBy !== undefined ? -2 : 4.1 + (0.12 - 4.1) * easeOut(land)
-  const scale = pellet.eatenBy !== undefined ? 0 : pellet.golden ? 1.55 : 1
-  const r = pellet.golden ? 0.32 : 0.2
-  const color = pellet.golden ? '#f0c14b' : '#1b242e'
-  const rim = pellet.golden ? '#fff3c4' : '#00e5ff'
+  const scale = pellet.eatenBy !== undefined ? 0 : pellet.golden ? 1.35 : 1
+  const r = pellet.golden ? 0.4 : 0.3
+  const color = pellet.golden ? '#f0c14b' : '#7ad4ff'
+  const rim = pellet.golden ? '#fff3c4' : '#e9fbff'
   const spin = dumpT * 8 + delay * 20
 
   if (pellet.eatenBy !== undefined) return null
@@ -28,18 +28,18 @@ export function PelletChip({ pellet }: { pellet: Pellet }) {
   return (
     <group position={[pellet.x, y, pellet.z]} rotation={[0, spin, 0]} scale={scale}>
       <mesh castShadow receiveShadow>
-        <cylinderGeometry args={[r, r, 0.08, 6]} />
+        <cylinderGeometry args={[r, r, 0.1, 6]} />
         <meshStandardMaterial
           color={color}
-          metalness={0.65}
-          roughness={0.28}
-          emissive={pellet.golden ? '#8a6a12' : '#032028'}
-          emissiveIntensity={pellet.golden ? 0.7 : 0.25}
+          metalness={0.55}
+          roughness={0.22}
+          emissive={pellet.golden ? '#c49214' : '#147a99'}
+          emissiveIntensity={pellet.golden ? 1.15 : 0.9}
         />
       </mesh>
-      <mesh position={[0, 0.05, 0]}>
+      <mesh position={[0, 0.06, 0]}>
         <cylinderGeometry args={[r * 0.72, r * 0.72, 0.02, 6]} />
-        <meshStandardMaterial color={rim} emissive={rim} emissiveIntensity={0.35} metalness={0.4} roughness={0.4} />
+        <meshStandardMaterial color={rim} emissive={rim} emissiveIntensity={0.7} metalness={0.4} roughness={0.35} />
       </mesh>
       <mesh position={[0, 0.07, 0]} rotation={[0, 0, Math.PI / 4]}>
         <boxGeometry args={[r * 0.95, 0.02, r * 0.18]} />
