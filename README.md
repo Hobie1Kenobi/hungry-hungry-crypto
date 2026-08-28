@@ -61,10 +61,19 @@ Explorer: [testnet.xrpl.org](https://testnet.xrpl.org). WebSocket: `wss://s.altn
 ### Practice vs AI (local)
 
 1. Click **Practice vs AI**. This starts a local ~45s round. Empty seats are live AI, not idle dummies.
-2. **CHOMP** with Space (window/document listener — canvas focus is not required), click/tap the pond, or the on-screen **CHOMP** control. You are seat 0, **BYTEBITE** (north, cyan).
+2. **Hold CHOMP** with Space, pointer, tap, or the CHOMP control. You are seat 0, **BYTEBITE** (north, cyan). The cyan neck should reach into the pond from the behind-camera view. Short taps nibble near chips; a hold reaches the center.
 3. Opponents use the **same** `ChompInput` as you: `{ seat, down, clientTime }`, piped through `setChomp`.
-4. Eat chips that overlap your jaws. Normal = 1, GOLDEN = 5.
-5. Round ends at ~45s or when the board is empty. Results are local only (`txHashes: []`).
+4. Eat chips that overlap your jaws. Normal = 1, GOLDEN = 5. Hopper dumps extra waves when the pond thins (still local, no ledger writes).
+5. Round ends at ~45s or when the board is empty after the last refill. Results are local only (`txHashes: []`).
+
+### 8-Minute Audit
+
+Practice vs AI on `main` left BYTEBITE at 0 with a stub neck, a thin center strip of chips, and AI scores frozen after the opening. This change:
+
+- Latches seat 0 `ChompInput` from a held Space / CHOMP pointer (polled every tick) so a tap or hold actually extends BYTEBITE’s neck and can score.
+- Spreads the hopper dump into a 28+1 field across all four lanes, refills when live chips drop to 11, and keeps Easy / Normal / Hungry on a nibble/release rhythm through the 45s.
+
+**Verify (local, no XRPL):** `pnpm --filter web dev` → Practice vs AI → hold Space or CHOMP. Cyan neck must reach into the pond and BYTEBITE’s score must leave 0. Pond should look busy at dump; hopper shakes and drops another wave when chips thin. RIPSAW / GOLDGRUB / BLOCKMAW scores should keep moving after the first 10s. HUD still reads `LOCAL RESULT · NO LEDGER WRITES`.
 
 ### Quick Match (local Colyseus)
 

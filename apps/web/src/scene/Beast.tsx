@@ -48,11 +48,11 @@ export function Beast({ seat }: { seat: Seat }) {
   const neckLen = chompReach(extend)
   const squat = 1 - extend * 0.08
   const fromBehind = seat === 0
-  const pitch = fromBehind ? 0.22 : 0.05
-  const lift = fromBehind ? 1.16 : 0.62
-  const side = fromBehind ? 0.34 : 0
-  const neckW = fromBehind ? 0.64 : 0.42
-  const neckH = fromBehind ? 0.46 : 0.3
+  const pitch = 0.05
+  const lift = fromBehind ? 0.78 : 0.62
+  const side = 0
+  const neckW = fromBehind ? 0.58 : 0.42
+  const neckH = fromBehind ? 0.4 : 0.3
 
   return (
     <group position={[x, y, z]} rotation={[0, yaw, 0]}>
@@ -106,7 +106,7 @@ export function Beast({ seat }: { seat: Seat }) {
             metalness={0.4}
             roughness={0.32}
             emissive={spec.color}
-            emissiveIntensity={fromBehind ? 0.55 + extend * 0.7 : 0.12}
+            emissiveIntensity={fromBehind ? 0.7 + extend * 0.9 : 0.12}
           />
         </mesh>
         <group position={[0, 0, neckLen]}>

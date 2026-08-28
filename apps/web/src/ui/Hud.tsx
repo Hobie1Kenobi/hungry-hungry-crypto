@@ -98,11 +98,12 @@ export function Hud() {
         role="presentation"
         onPointerDown={(e) => {
           e.preventDefault()
+          e.currentTarget.setPointerCapture(e.pointerId)
           pointerChomp(true)
         }}
         onPointerUp={() => pointerChomp(false)}
-        onPointerLeave={() => pointerChomp(false)}
         onPointerCancel={() => pointerChomp(false)}
+        onLostPointerCapture={() => pointerChomp(false)}
       />
       <div className="hud">
         <div className="hud-top">
@@ -114,10 +115,10 @@ export function Hud() {
             <strong>CHOMP</strong> — Space, click, tap, or the CHOMP control. Neck extends. Jaws eat on overlap.
             <div style={{ marginTop: 6, color: '#8aa0b8' }}>
               {dumpT < 0.9
-                ? 'Hopper dumping chips…'
+                ? 'Hopper dumping chips — hold CHOMP, neck reaches in.'
                 : playMode === 'online'
                   ? `Server-authoritative. You are ${you.name} (seat ${localSeat}). Client predictions are cosmetic.`
-                  : `Board live. You are ${you.name}. RIPSAW Easy · GOLDGRUB Normal · BLOCKMAW Hungry.`}
+                  : `Board live. You are ${you.name}. Hold CHOMP to reach. RIPSAW Easy · GOLDGRUB Normal · BLOCKMAW Hungry.`}
             </div>
           </div>
           <button
@@ -127,11 +128,12 @@ export function Hud() {
             onPointerDown={(e) => {
               e.preventDefault()
               e.currentTarget.blur()
+              e.currentTarget.setPointerCapture(e.pointerId)
               pointerChomp(true)
             }}
             onPointerUp={() => pointerChomp(false)}
-            onPointerLeave={() => pointerChomp(false)}
             onPointerCancel={() => pointerChomp(false)}
+            onLostPointerCapture={() => pointerChomp(false)}
           >
             CHOMP
           </button>

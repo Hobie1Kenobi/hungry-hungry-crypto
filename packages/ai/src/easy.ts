@@ -7,7 +7,7 @@ export function createEasyPolicy(seat: Seat, options: PolicyOptions = {}): AiPol
   let down = false
   let armed = false
   let nextFlip = 0
-  const reaction = mix(rng, 280, 640)
+  const reaction = mix(rng, 240, 520)
   const landDump = 0.7
 
   return {
@@ -22,9 +22,9 @@ export function createEasyPolicy(seat: Seat, options: PolicyOptions = {}): AiPol
       }
       if (world.now < nextFlip) return null
       down = !down
-      const hold = mix(rng, 70, 150)
-      const gap = mix(rng, 560, 1100)
-      nextFlip = world.now + (down ? hold : gap + reaction * 0.25)
+      const hold = mix(rng, 280, 520)
+      const gap = mix(rng, 360, 680)
+      nextFlip = world.now + (down ? hold : gap + reaction * 0.2)
       return { seat, down, clientTime: world.now }
     },
   }

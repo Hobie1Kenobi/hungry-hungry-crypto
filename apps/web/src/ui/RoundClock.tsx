@@ -31,6 +31,10 @@ export function RoundClock() {
     const loop = (now: number) => {
       const dt = Math.min(0.05, (now - last) / 1000)
       last = now
+      const s = useGameStore.getState()
+      if (s.playMode === 'practice') {
+        setChompRef.current({ seat: s.localSeat, down: s.chompHeld, clientTime: now })
+      }
       const world = arenaView(now)
       for (const policy of policiesRef.current) {
         const input = policy.tick(world)

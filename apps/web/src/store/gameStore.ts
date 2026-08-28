@@ -52,10 +52,12 @@ interface GameState {
   lastEatAt: Record<Seat, number>
   refillCount: number
   lastRefillAt: number
+  chompHeld: boolean
   result: MatchResult | null
   netSend: ((input: ChompInput) => void) | null
   netLeave: (() => void) | null
   setChomp: (input: ChompInput) => void
+  setChompHeld: (down: boolean) => void
   startPractice: () => void
   tick: (dt: number, now?: number) => void
   backToLobby: () => void
@@ -104,6 +106,7 @@ export const useGameStore = create<GameState>((set, get) => ({
   lastEatAt: emptyLastEat(),
   refillCount: 0,
   lastRefillAt: 0,
+  chompHeld: false,
   result: null,
   netSend: null,
   netLeave: null,
@@ -123,6 +126,13 @@ export const useGameStore = create<GameState>((set, get) => ({
         chompPulseUntil: applied.chompPulseUntil,
       }
     })
+  },
+
+  setChompHeld: (down) => {
+    const state = get()
+    if (state.ui !== 'playing') return
+    set({ chompHeld: down })
+    get().setChomp({ seat: state.localSeat, down, clientTime: performance.now() })
   },
 
   startPractice: () => {
@@ -147,6 +157,7 @@ export const useGameStore = create<GameState>((set, get) => ({
       lastEatAt: emptyLastEat(),
       refillCount: 0,
       lastRefillAt: 0,
+      chompHeld: false,
       result: null,
       netSend: null,
       netLeave: null,
@@ -162,13 +173,27 @@ export const useGameStore = create<GameState>((set, get) => ({
       return
     }
 
+    let chompDown = state.chompDown
+    let chompPulseUntil = state.chompPulseUntil
+    const held = applyChompInput(
+      chompDown,
+      chompPulseUntil,
+      { seat: state.localSeat, down: state.chompHeld, clientTime: now },
+      now,
+    )
+    if (held) {
+      chompDown = held.chompDown
+      chompPulseUntil = held.chompPulseUntil
+      if (held.started) sfxChomp()
+    }
+
     const stepped = stepArena(
       {
         pellets: state.pellets,
         scores: state.scores,
         neckExtend: state.neckExtend,
-        chompDown: state.chompDown,
-        chompPulseUntil: state.chompPulseUntil,
+        chompDown,
+        chompPulseUntil,
         dumpT: state.dumpT,
         timeLeft: state.timeLeft,
         lastEatAt: state.lastEatAt,
@@ -205,6 +230,7 @@ export const useGameStore = create<GameState>((set, get) => ({
       startAt: 0,
       chompDown: emptyChomp(),
       chompPulseUntil: emptyPulse(),
+      chompHeld: false,
       neckExtend: emptyNecks(),
       netSend: null,
       netLeave: null,
@@ -261,6 +287,7 @@ export const useGameStore = create<GameState>((set, get) => ({
       lastEatAt: emptyLastEat(),
       refillCount: 0,
       lastRefillAt: 0,
+      chompHeld: false,
       result: null,
     })
   },

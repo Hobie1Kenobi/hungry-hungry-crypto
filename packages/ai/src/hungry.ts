@@ -10,9 +10,10 @@ import { dist2, mouthPoint } from './mouth'
 import type { AiPolicy, ArenaView, PolicyOptions } from './types'
 
 const WINDUP_DUMP = 0.7
-const MIN_HOLD_MS = 150
-const MAX_HOLD_MS = 920
-const COOLDOWN_MS = 700
+const MIN_HOLD_MS = 220
+const MAX_HOLD_MS = 780
+const SEARCH_HOLD_MS = 400
+const COOLDOWN_MS = 420
 
 function holdMsFor(pellet: Pellet, seat: Seat): number {
   const origin = BEAST_OFFSET - 0.35
@@ -32,7 +33,7 @@ function holdMsFor(pellet: Pellet, seat: Seat): number {
       break
   }
   const need = Math.max(0, Math.min(1, (along - NECK_BASE) / NECK_EXTRA))
-  return Math.max(MIN_HOLD_MS, Math.min(MAX_HOLD_MS, (need / NECK_EXTEND_SPEED) * 1000 + 90))
+  return Math.max(MIN_HOLD_MS, Math.min(MAX_HOLD_MS, (need / NECK_EXTEND_SPEED) * 1000 + 120))
 }
 
 export function createHungryPolicy(seat: Seat, _options: PolicyOptions = {}): AiPolicy {
@@ -69,18 +70,18 @@ export function createHungryPolicy(seat: Seat, _options: PolicyOptions = {}): Ai
       let want = down
 
       if (down) {
-        const eaten = targetId !== undefined && !targetLive
         const timedOut = world.now >= holdUntil
-        want = !eaten && !timedOut
-      } else if (world.now >= coolUntil && best && canWindup) {
+        const eaten = targetId !== undefined && !targetLive
+        want = !timedOut && !eaten
+      } else if (world.now >= coolUntil && canWindup) {
         want = true
       }
 
       if (want === down) return null
       down = want
-      if (down && best) {
-        targetId = best.id
-        holdUntil = world.now + holdMsFor(best, seat)
+      if (down) {
+        targetId = best?.id
+        holdUntil = world.now + (best ? holdMsFor(best, seat) : SEARCH_HOLD_MS)
       } else {
         coolUntil = world.now + COOLDOWN_MS
         holdUntil = 0

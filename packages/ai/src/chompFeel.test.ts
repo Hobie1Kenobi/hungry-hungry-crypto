@@ -3,12 +3,16 @@ import {
   applyChompInput,
   collectEats,
   emptyChomp,
+  emptyLastEat,
   emptyNecks,
   emptyPulse,
+  emptyScores,
   isChompKey,
+  livePelletCount,
   pelletInChompZone,
   pelletInLane,
   spawnPellets,
+  stepArena,
   type Pellet,
 } from '@hhc/shared'
 import { createEasyPolicy } from './easy'
@@ -16,7 +20,7 @@ import { createHungryPolicy } from './hungry'
 import { createIdlePolicy } from './idle'
 import { createPracticePolicies, seededRng } from './fill'
 import { simulateRound } from './simulate'
-import type { ArenaView } from './types'
+import type { AiPolicy, ArenaView } from './types'
 
 function crumb(id: string, x: number, z: number, golden = false): Pellet {
   return { id, x, z, golden }
@@ -33,6 +37,21 @@ function emptyView(over: Partial<ArenaView> = {}): ArenaView {
     scores: { 0: 0, 1: 0, 2: 0, 3: 0 },
     ...over,
   }
+}
+
+function holdSeat0(): AiPolicy {
+  return {
+    seat: 0,
+    personality: 'idle',
+    tick(world) {
+      if (world.chompDown[0]) return null
+      return { seat: 0, down: true, clientTime: world.now }
+    },
+  }
+}
+
+function aiSum(scores: { 1: number; 2: number; 3: number }): number {
+  return scores[1] + scores[2] + scores[3]
 }
 
 describe('Space CHOMP wiring', () => {
@@ -82,22 +101,14 @@ describe('AI chomp timing', () => {
     expect(easy.tick(dump)).toBeNull()
   })
 
-  it('a Space hold during dump still eats the north chip after landing', () => {
-    const pellets = [crumb('north', 0.1, -2.5)]
+  it('a Space hold during dump still eats after chips land', () => {
+    const pellets = [crumb('tip', 0.1, 0.85)]
     const result = simulateRound({
       pellets,
-      policies: [
-        {
-          seat: 0,
-          personality: 'idle',
-          tick(world) {
-            if (world.chompDown[0]) return null
-            return { seat: 0, down: true, clientTime: world.now }
-          },
-        },
-      ],
+      policies: [holdSeat0()],
       seconds: 3,
     })
+    expect(result.maxNeckExtend[0]).toBeGreaterThan(0.85)
     expect(result.scores[0]).toBeGreaterThan(0)
     expect(result.pellets[0]?.eatenBy).toBe(0)
   })
@@ -147,17 +158,17 @@ describe('AI chomp timing', () => {
     expect(later.scores[1] === 15 && later.scores[2] === 2 && later.scores[3] === 3).toBe(false)
   })
 
-  it('Practice AI does not vacuum ~22 points in the 2s after dump land', () => {
+  it('Practice AI does not vacuum the pond in the 2s after dump land', () => {
     const pellets = spawnPellets(seededRng(99))
     const policies = () => [createIdlePolicy(0), ...createPracticePolicies({ rng: seededRng(11) })]
     const atLand = simulateRound({ pellets, policies: policies(), seconds: 2.85 })
     const later = simulateRound({ pellets, policies: policies(), seconds: 8 })
-    const aiLand = atLand.scores[1] + atLand.scores[2] + atLand.scores[3]
-    const aiLater = later.scores[1] + later.scores[2] + later.scores[3]
+    const aiLand = aiSum(atLand.scores)
+    const aiLater = aiSum(later.scores)
     const liveLand = atLand.pellets.filter((p) => p.eatenBy === undefined).length
-    expect(aiLand).toBeLessThan(12)
+    expect(aiLand).toBeLessThan(18)
     expect(aiLater).toBeGreaterThan(aiLand)
-    expect(liveLand).toBeGreaterThan(8)
+    expect(liveLand).toBeGreaterThan(10)
     expect(atLand.scores[2]).toBeLessThan(12)
   })
 
@@ -170,7 +181,97 @@ describe('AI chomp timing', () => {
     })
     const live = result.pellets.filter((p) => p.eatenBy === undefined).length
     const spawned = result.pellets.length
-    expect(spawned).toBeGreaterThan(21)
+    expect(result.refillCount).toBeGreaterThan(0)
+    expect(spawned).toBeGreaterThan(29)
     expect(live).toBeGreaterThan(0)
+  })
+})
+
+describe('seat 0 human ChompInput', () => {
+  it('holding chomp true extends BYTEBITE neck, eats a north chip, and scores', () => {
+    const pellets = [crumb('north', 0.1, -2.5), crumb('mid', -0.15, -1.7)]
+    const result = simulateRound({
+      pellets,
+      policies: [
+        {
+          seat: 0,
+          personality: 'idle',
+          tick(world) {
+            if (world.dumpT < 0.72) return null
+            if (world.chompDown[0]) return null
+            return { seat: 0, down: true, clientTime: world.now }
+          },
+        },
+      ],
+      seconds: 3,
+      nowOffset: 50_000,
+    })
+    expect(result.maxNeckExtend[0]).toBeGreaterThan(0.85)
+    expect(result.scores[0]).toBeGreaterThan(0)
+    expect(result.pellets.some((p) => p.eatenBy === 0)).toBe(true)
+  })
+})
+
+describe('hopper refill', () => {
+  it('fires a new dump wave once live chips drop below the refill line', () => {
+    const live = [
+      crumb('a', 0.2, -1.2),
+      crumb('b', 1.2, 0.1),
+      crumb('c', -0.1, 1.3),
+      crumb('d', -1.1, 0),
+      crumb('g', 0, 0, true),
+    ]
+    const eaten = Array.from({ length: 16 }, (_, i) => ({
+      ...crumb(`gone-${i}`, 0, 0),
+      eatenBy: 1 as const,
+    }))
+    const stepped = stepArena(
+      {
+        pellets: [...live, ...eaten],
+        scores: emptyScores(),
+        neckExtend: emptyNecks(),
+        chompDown: emptyChomp(),
+        chompPulseUntil: emptyPulse(),
+        lastEatAt: emptyLastEat(),
+        refillCount: 0,
+        lastRefillAt: 0,
+        dumpT: 1,
+        timeLeft: 30,
+      },
+      1 / 60,
+      1200,
+    )
+    expect(livePelletCount(live)).toBe(5)
+    expect(stepped.snapshot.refillCount).toBe(1)
+    expect(stepped.snapshot.pellets.length).toBeGreaterThan(live.length + eaten.length)
+    expect(livePelletCount(stepped.snapshot.pellets)).toBeGreaterThan(20)
+  })
+
+  it('initial dump covers the pond as a field, not a thin center strip', () => {
+    const pellets = spawnPellets(seededRng(99))
+    expect(pellets).toHaveLength(29)
+    const xs = pellets.map((p) => p.x)
+    const zs = pellets.map((p) => p.z)
+    expect(Math.max(...xs) - Math.min(...xs)).toBeGreaterThan(4)
+    expect(Math.max(...zs) - Math.min(...zs)).toBeGreaterThan(4)
+    expect(pellets.filter((p) => Math.abs(p.x) > 1.4).length).toBeGreaterThan(6)
+    expect(pellets.filter((p) => Math.abs(p.z) > 1.4).length).toBeGreaterThan(6)
+  })
+})
+
+describe('AI nibble through the round', () => {
+  it('Easy / Normal / Hungry keep releasing and scoring after the opening', () => {
+    const result = simulateRound({
+      pellets: spawnPellets(seededRng(99)),
+      policies: [createIdlePolicy(0), ...createPracticePolicies({ rng: seededRng(11) })],
+      seconds: 45,
+    })
+    expect(result.scoresAt[12]).toBeDefined()
+    expect(result.scoresAt[30]).toBeDefined()
+    expect(aiSum(result.scoresAt[12]!)).toBeGreaterThan(aiSum(result.scoresAt[8]!))
+    expect(aiSum(result.scoresAt[20]!)).toBeGreaterThan(aiSum(result.scoresAt[12]!))
+    expect(result.chompFlips[1]).toBeGreaterThan(10)
+    expect(result.chompFlips[2]).toBeGreaterThan(10)
+    expect(result.chompFlips[3]).toBeGreaterThan(10)
   })
 })

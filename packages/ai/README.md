@@ -8,9 +8,9 @@ Phase 1 replaces idle dummies with live Easy / Normal / Hungry opponents. Phase 
 
 | Personality | How it CHOMPS |
 | ----------- | ------------- |
-| **Easy** | Reaction delay + random mash |
-| **Normal** | Pellet nearest its own mouth + cooldown |
-| **Hungry** | Waits for chips to land, then nibbles toward GOLDEN with cooldown — same `ChompInput` path, cannot vacuum a lane |
+| **Easy** | Reaction delay + nibble/release mash all round |
+| **Normal** | Pellet nearest its own mouth, then nibble/release even if the lane is empty |
+| **Hungry** | Waits for chips to land, then distance-timed nibbles toward GOLDEN — same `ChompInput` path, cannot vacuum a lane |
 
 Idle remains available for tests and empty-seat fallbacks.
 

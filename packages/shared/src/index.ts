@@ -30,7 +30,7 @@ export const HUMAN_SEAT: Seat = 0
 
 export const ROUND_SECONDS = 45
 
-export const NORMAL_PELLET_COUNT = 20
+export const NORMAL_PELLET_COUNT = 28
 
 export const GOLDEN_PELLET_COUNT = 1
 
@@ -46,11 +46,11 @@ export const POND_HALF = POND_SIZE / 2
 
 export const BEAST_OFFSET = 5.2
 
-export const CHOMP_HALF_WIDTH = 0.78
+export const CHOMP_HALF_WIDTH = 0.92
 
-export const CHOMP_MOUTH_DEPTH = 0.66
+export const CHOMP_MOUTH_DEPTH = 1.28
 
-export const CHOMP_MOUTH_PAD = 0.14
+export const CHOMP_MOUTH_PAD = 0.28
 
 export const NECK_BASE = 0.95
 
@@ -60,21 +60,21 @@ export const DUMP_SECONDS = 1.15
 
 export const EAT_DUMP_THRESHOLD = 0.72
 
-export const NECK_EXTEND_SPEED = 2.15
+export const NECK_EXTEND_SPEED = 2.8
 
 export const NECK_RETRACT_SPEED = 3.4
 
-export const CHOMP_PULSE_MS = 180
+export const CHOMP_PULSE_MS = 280
 
-export const CHOMP_EAT_COOLDOWN_MS = 540
+export const CHOMP_EAT_COOLDOWN_MS = 400
 
-export const POND_REFILL_LIVE = 6
+export const POND_REFILL_LIVE = 11
 
-export const POND_REFILL_MAX = 2
+export const POND_REFILL_MAX = 3
 
 export const POND_REFILL_MIN_TIME_LEFT = 7
 
-export const POND_REFILL_GAP_MS = 7500
+export const POND_REFILL_GAP_MS = 6500
 
 export type Cardinal = 'north' | 'east' | 'south' | 'west'
 
@@ -400,58 +400,32 @@ function waveRng(seed: number): () => number {
 export function spawnPellets(rng: () => number = Math.random, idPrefix = ''): Pellet[] {
   const pellets: Pellet[] = []
   const jitter = (n: number) => (rng() - 0.5) * n
-  const laneSpots: Array<Array<[number, number]>> = [
-    [
-      [-0.48, -2.62],
-      [0.5, -2.38],
-      [0.06, -1.68],
-      [0.4, -0.98],
-    ],
-    [
-      [2.62, -0.48],
-      [2.38, 0.5],
-      [1.68, 0.06],
-      [0.98, 0.4],
-    ],
-    [
-      [0.48, 2.62],
-      [-0.5, 2.38],
-      [-0.06, 1.68],
-      [-0.4, 0.98],
-    ],
-    [
-      [-2.62, 0.48],
-      [-2.38, -0.5],
-      [-1.68, -0.06],
-      [-0.98, -0.4],
-    ],
-  ]
+  const wave = idPrefix.startsWith('w') ? Number.parseInt(idPrefix.slice(1), 10) || 1 : 0
+  const shift = wave === 0 ? 0 : wave % 2 === 1 ? 0.36 : -0.36
+  const col = 0.58
+  const spots: Array<[number, number]> = []
+
+  for (const x of [-col, col]) {
+    for (const z of [-2.72, -1.82, -0.92]) spots.push([x, z + shift])
+  }
+  for (const z of [-col, col]) {
+    for (const x of [0.92, 1.82, 2.72]) spots.push([x + shift, z])
+  }
+  for (const x of [-col, col]) {
+    for (const z of [0.92, 1.82, 2.72]) spots.push([x, z - shift])
+  }
+  for (const z of [-col, col]) {
+    for (const x of [-0.92, -1.82, -2.72]) spots.push([x - shift, z])
+  }
+  spots.push([0.1, -0.5 + shift], [0.5 + shift, 0.1], [-0.1, 0.5 - shift], [-0.5 - shift, -0.1])
 
   let i = 0
-  for (const spots of laneSpots) {
-    for (const [cx, cz] of spots) {
-      pellets.push({
-        id: `${idPrefix}crumb-${i}`,
-        x: cx + jitter(0.16),
-        z: cz + jitter(0.16),
-        golden: false,
-      })
-      i += 1
-    }
-  }
-
-  const scatter: Array<[number, number]> = [
-    [0.02, -0.52],
-    [0.52, 0.04],
-    [-0.04, 0.52],
-    [-0.52, -0.02],
-  ]
-  for (const [cx, cz] of scatter) {
+  for (const [cx, cz] of spots) {
     if (i >= NORMAL_PELLET_COUNT) break
     pellets.push({
       id: `${idPrefix}crumb-${i}`,
-      x: cx + jitter(0.1),
-      z: cz + jitter(0.1),
+      x: cx + jitter(0.12),
+      z: cz + jitter(0.12),
       golden: false,
     })
     i += 1
@@ -460,8 +434,8 @@ export function spawnPellets(rng: () => number = Math.random, idPrefix = ''): Pe
   for (let g = 0; g < GOLDEN_PELLET_COUNT; g += 1) {
     pellets.push({
       id: `${idPrefix}crumb-golden-${g}`,
-      x: spawnRand(rng, -0.18, 0.18),
-      z: spawnRand(rng, -0.18, 0.18),
+      x: spawnRand(rng, -0.22, 0.22),
+      z: spawnRand(rng, -0.22, 0.22),
       golden: true,
     })
   }
@@ -472,14 +446,7 @@ export function spawnPellets(rng: () => number = Math.random, idPrefix = ''): Pe
 export function stepArena(state: ArenaSnapshot, dt: number, now: number): StepResult {
   const dumpT = Math.min(1, state.dumpT + dt / DUMP_SECONDS)
   const timeLeft = Math.max(0, state.timeLeft - dt)
-  const landed = dumpT > EAT_DUMP_THRESHOLD
-  const neckExtend = stepNeckExtend(
-    state.neckExtend,
-    landed ? state.chompDown : emptyChomp(),
-    landed ? state.chompPulseUntil : emptyPulse(),
-    now,
-    dt,
-  )
+  const neckExtend = stepNeckExtend(state.neckExtend, state.chompDown, state.chompPulseUntil, now, dt)
 
   let pellets = state.pellets
   let scores = state.scores
@@ -500,12 +467,13 @@ export function stepArena(state: ArenaSnapshot, dt: number, now: number): StepRe
   let refillCount = state.refillCount ?? 0
   let lastRefillAt = state.lastRefillAt ?? 0
   const live = livePelletCount(pellets)
+  const gapOk = refillCount === 0 || now - lastRefillAt >= POND_REFILL_GAP_MS
   const canRefill =
     dumpT >= 1 &&
     live <= POND_REFILL_LIVE &&
     refillCount < POND_REFILL_MAX &&
     timeLeft > POND_REFILL_MIN_TIME_LEFT &&
-    now - lastRefillAt >= POND_REFILL_GAP_MS
+    gapOk
   if (canRefill) {
     refillCount += 1
     lastRefillAt = now
