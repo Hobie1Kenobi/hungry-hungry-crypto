@@ -1,17 +1,13 @@
 import type { Pellet, Seat } from '@hhc/shared'
 import {
-  DUMP_SECONDS,
   ROUND_SECONDS,
-  allPelletsEaten,
   applyChompInput,
-  collectEats,
   emptyChomp,
   emptyNecks,
   emptyPulse,
   emptyScores,
-  pelletValue,
   pickWinner,
-  stepNeckExtend,
+  stepArena,
 } from '@hhc/shared'
 import type { AiPolicy, ArenaView } from './types'
 
@@ -43,46 +39,45 @@ function view(
 export function simulateRound(options: SimulateOptions): SimulateResult {
   const dt = options.dt ?? 1 / 60
   const seconds = options.seconds ?? ROUND_SECONDS
-  let pellets = options.pellets.map((p) => ({ ...p }))
-  let scores = emptyScores()
-  let neckExtend = emptyNecks()
-  let chompDown = emptyChomp()
-  let chompPulseUntil = emptyPulse()
-  let dumpT = 0
-  let timeLeft = seconds
+  let snapshot = {
+    pellets: options.pellets.map((p) => ({ ...p })),
+    scores: emptyScores(),
+    neckExtend: emptyNecks(),
+    chompDown: emptyChomp(),
+    chompPulseUntil: emptyPulse(),
+    dumpT: 0,
+    timeLeft: seconds,
+  }
   let now = 0
 
   const steps = Math.ceil(seconds / dt)
   for (let i = 0; i < steps; i += 1) {
-    const world = view(now, dumpT, timeLeft, pellets, neckExtend, chompDown, scores)
+    const world = view(
+      now,
+      snapshot.dumpT,
+      snapshot.timeLeft,
+      snapshot.pellets,
+      snapshot.neckExtend,
+      snapshot.chompDown,
+      snapshot.scores,
+    )
     for (const policy of options.policies) {
       const input = policy.tick(world)
       if (!input) continue
-      const applied = applyChompInput(chompDown, chompPulseUntil, input, now)
+      const applied = applyChompInput(snapshot.chompDown, snapshot.chompPulseUntil, input, now)
       if (!applied) continue
-      chompDown = applied.chompDown
-      chompPulseUntil = applied.chompPulseUntil
-    }
-
-    dumpT = Math.min(1, dumpT + dt / DUMP_SECONDS)
-    timeLeft = Math.max(0, timeLeft - dt)
-    neckExtend = stepNeckExtend(neckExtend, chompDown, chompPulseUntil, now, dt)
-
-    const hits = collectEats(pellets, neckExtend, dumpT)
-    if (hits.length > 0) {
-      pellets = pellets.map((p) => ({ ...p }))
-      scores = { ...scores }
-      for (const hit of hits) {
-        const live = pellets.find((p) => p.id === hit.id)
-        if (!live || live.eatenBy !== undefined) continue
-        live.eatenBy = hit.seat
-        scores[hit.seat] += pelletValue(live)
+      snapshot = {
+        ...snapshot,
+        chompDown: applied.chompDown,
+        chompPulseUntil: applied.chompPulseUntil,
       }
     }
 
+    const stepped = stepArena(snapshot, dt, now)
+    snapshot = stepped.snapshot
     now += dt * 1000
-    if (timeLeft <= 0 || allPelletsEaten(pellets)) break
+    if (stepped.ended) break
   }
 
-  return { scores, winner: pickWinner(scores), pellets }
+  return { scores: snapshot.scores, winner: pickWinner(snapshot.scores), pellets: snapshot.pellets }
 }

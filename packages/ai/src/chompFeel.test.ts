@@ -82,6 +82,26 @@ describe('AI chomp timing', () => {
     expect(easy.tick(dump)).toBeNull()
   })
 
+  it('a Space hold during dump still eats the north chip after landing', () => {
+    const pellets = [crumb('north', 0.1, -2.5)]
+    const result = simulateRound({
+      pellets,
+      policies: [
+        {
+          seat: 0,
+          personality: 'idle',
+          tick(world) {
+            if (world.chompDown[0]) return null
+            return { seat: 0, down: true, clientTime: world.now }
+          },
+        },
+      ],
+      seconds: 3,
+    })
+    expect(result.scores[0]).toBeGreaterThan(0)
+    expect(result.pellets[0]?.eatenBy).toBe(0)
+  })
+
   it('BYTEBITE can eat a north-lane chip with a short ChompInput hold', () => {
     const pellets = [crumb('north', 0.1, -2.5)]
     const result = simulateRound({

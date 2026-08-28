@@ -435,7 +435,14 @@ export function spawnPellets(rng: () => number = Math.random): Pellet[] {
 export function stepArena(state: ArenaSnapshot, dt: number, now: number): StepResult {
   const dumpT = Math.min(1, state.dumpT + dt / DUMP_SECONDS)
   const timeLeft = Math.max(0, state.timeLeft - dt)
-  const neckExtend = stepNeckExtend(state.neckExtend, state.chompDown, state.chompPulseUntil, now, dt)
+  const landed = dumpT > EAT_DUMP_THRESHOLD
+  const neckExtend = stepNeckExtend(
+    state.neckExtend,
+    landed ? state.chompDown : emptyChomp(),
+    landed ? state.chompPulseUntil : emptyPulse(),
+    now,
+    dt,
+  )
 
   let pellets = state.pellets
   let scores = state.scores
