@@ -29,6 +29,11 @@ async function main(): Promise<void> {
     if (!healthBody.ok || healthBody.room !== ROOM_NAME || healthBody.xrplWrites !== false) {
       throw new Error(`health check failed: ${JSON.stringify(healthBody)}`)
     }
+    const cfg = await fetch(`http://127.0.0.1:${started.port}/xrpl/config`)
+    const cfgBody = (await cfg.json()) as { network: string; wsUrl: string }
+    if (cfgBody.network !== 'testnet' || cfgBody.wsUrl !== 'wss://s.altnet.rippletest.net:51233') {
+      throw new Error(`xrpl config failed: ${JSON.stringify(cfgBody)}`)
+    }
 
     const client = new Client(url)
     const room = await client.joinOrCreate(ROOM_NAME, { fillMs: 0, roundSeconds: 1.5 })
@@ -87,7 +92,21 @@ async function main(): Promise<void> {
     created.leave()
     joined.leave()
 
-    console.info('[smoke] ok — 1 human + 3 AI round, private room code, no XRPL writes')
+    const identified = await new Client(url).joinOrCreate(ROOM_NAME, {
+      address: 'rPT1Sjq2YGrBMTttX4GZHjKu9dyfzbpAWe',
+      fillMs: 12_000,
+      roundSeconds: 1,
+    })
+    identified.onMessage('welcome', () => {})
+    identified.onMessage('lobby', () => {})
+    await new Promise((r) => setTimeout(r, 80))
+    const bound = [...identified.state.seats].find((s) => s.sessionId === identified.sessionId)
+    if (!bound || bound.address !== 'rPT1Sjq2YGrBMTttX4GZHjKu9dyfzbpAWe') {
+      throw new Error(`expected seat bind, got ${JSON.stringify(bound)}`)
+    }
+    identified.leave()
+
+    console.info('[smoke] ok — 1 human + 3 AI round, private room code, r-address seat bind, no settlement writes')
   } finally {
     await started.shutdown()
   }

@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "private": true,
   "type": "module",
-  "description": "Colyseus HungryRoom — Phase 2 authoritative match server. No XRPL writes.",
+  "description": "Colyseus HungryRoom — Phase 3 identity + TrustSet. Server still authoritative for eats. No settlement Payments.",
   "engines": {
     "node": ">=22"
   },
@@ -20,6 +20,8 @@
     "@colyseus/ws-transport": "0.16.5",
     "@hhc/ai": "workspace:*",
     "@hhc/shared": "workspace:*",
+    "@hhc/xrpl": "workspace:*",
+    "xrpl": "^4.4.1",
     "colyseus": "0.16.5",
     "cors": "^2.8.5",
     "express": "^4.21.2"

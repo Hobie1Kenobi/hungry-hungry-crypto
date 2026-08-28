@@ -1,19 +1,23 @@
 import { Client, type Room } from 'colyseus.js'
-import type { ChompInput, MatchResult, MatchStart, Seat, SeatOccupant } from '@hhc/shared'
+import type { Address, ChompInput, MatchResult, MatchStart, Seat, SeatOccupant } from '@hhc/shared'
 import { ROOM_NAME } from '@hhc/shared'
 import { useGameStore, type NetFrame } from '../store/gameStore'
+import { useWalletStore } from '../wallet/walletStore'
+import { gameServerHttpUrl, gameServerUrl } from './url'
 
-const DEFAULT_WS = 'ws://localhost:2567'
+export { gameServerHttpUrl, gameServerUrl }
 
 let client: Client | null = null
 let room: Room | null = null
 
-export function gameServerUrl(): string {
-  return import.meta.env.VITE_GAME_SERVER_URL || DEFAULT_WS
+function joinOpts(extra: Record<string, unknown> = {}): Record<string, unknown> {
+  const address = useWalletStore.getState().address
+  return address ? { ...extra, address } : extra
 }
 
-export function gameServerHttpUrl(): string {
-  return gameServerUrl().replace(/^ws/i, 'http')
+function sendBoundAddress(joined: Room): void {
+  const address = useWalletStore.getState().address
+  if (address) joined.send('bindAddress', { address })
 }
 
 function getClient(): Client {
@@ -22,7 +26,9 @@ function getClient(): Client {
   return client
 }
 
-function occupantsFromState(state: { seats?: Array<{ seat: number; kind: string; personality?: string; sessionId?: string }> }): SeatOccupant[] {
+function occupantsFromState(state: {
+  seats?: Array<{ seat: number; kind: string; personality?: string; sessionId?: string; address?: string }>
+}): SeatOccupant[] {
   const seats = state.seats ? [...state.seats] : []
   return seats.map((row) => ({
     seat: row.seat as Seat,
@@ -30,6 +36,17 @@ function occupantsFromState(state: { seats?: Array<{ seat: number; kind: string;
     personality: row.personality as SeatOccupant['personality'],
     sessionId: row.sessionId || undefined,
   }))
+}
+
+function addressesFromState(state: {
+  seats?: Array<{ seat: number; address?: string }>
+}): Partial<Record<Seat, Address>> | undefined {
+  const seats = state.seats ? [...state.seats] : []
+  const out: Partial<Record<Seat, Address>> = {}
+  for (const row of seats) {
+    if (row.address && row.address.startsWith('r')) out[row.seat as Seat] = row.address as Address
+  }
+  return Object.keys(out).length ? out : undefined
 }
 
 function explainConnectError(err: unknown): string {
@@ -64,19 +81,36 @@ function bindRoom(joined: Room): void {
       occupantsFromState(joined.state),
       joined.state.startAt as number,
       code,
+      addressesFromState(joined.state),
     )
   }
 
-  joined.onMessage('welcome', (msg: { seat: Seat; roomCode?: string; startAt?: number }) => {
-    useGameStore.getState().applyWelcome(msg)
-    if (msg.startAt) {
-      useGameStore.getState().applyLobbySeats(useGameStore.getState().occupants, msg.startAt, msg.roomCode || '')
-    }
-  })
+  joined.onMessage(
+    'welcome',
+    (msg: { seat: Seat; roomCode?: string; startAt?: number; address?: Address | null }) => {
+      useGameStore.getState().applyWelcome(msg)
+      if (msg.startAt) {
+        useGameStore.getState().applyLobbySeats(
+          useGameStore.getState().occupants,
+          msg.startAt,
+          msg.roomCode || '',
+          useGameStore.getState().seatAddresses,
+        )
+      }
+    },
+  )
 
-  joined.onMessage('lobby', (msg: { code?: string; startAt?: number; seats: SeatOccupant[] }) => {
-    useGameStore.getState().applyLobbySeats(msg.seats, msg.startAt ?? 0, msg.code || '')
-  })
+  joined.onMessage(
+    'lobby',
+    (msg: {
+      code?: string
+      startAt?: number
+      seats: SeatOccupant[]
+      addresses?: Partial<Record<Seat, Address>>
+    }) => {
+      useGameStore.getState().applyLobbySeats(msg.seats, msg.startAt ?? 0, msg.code || '', msg.addresses)
+    },
+  )
 
   joined.onMessage('frame', (frame: NetFrame) => {
     useGameStore.getState().applyNetFrame(frame)
@@ -100,6 +134,7 @@ function bindRoom(joined: Room): void {
         occupantsFromState(state),
         state.startAt as number,
         (state.code as string) || store.roomCode,
+        addressesFromState(state),
       )
     }
   })
@@ -109,13 +144,14 @@ function bindRoom(joined: Room): void {
   })
 
   joined.send('hello')
+  sendBoundAddress(joined)
 }
 
 export async function joinQuickMatch(): Promise<void> {
   const store = useGameStore.getState()
   store.beginWaiting({ queueMode: 'quick', hint: 'Quick Match · humans first, then AI fill' })
   try {
-    const joined = await getClient().joinOrCreate(ROOM_NAME)
+    const joined = await getClient().joinOrCreate(ROOM_NAME, joinOpts())
     bindRoom(joined)
   } catch (err) {
     store.setWaitError(explainConnectError(err))
@@ -126,7 +162,7 @@ export async function createPrivateRoom(): Promise<void> {
   const store = useGameStore.getState()
   store.beginWaiting({ queueMode: 'private', hint: 'Private room · share the code' })
   try {
-    const joined = await getClient().create(ROOM_NAME, { mode: 'private' })
+    const joined = await getClient().create(ROOM_NAME, joinOpts({ mode: 'private' }))
     bindRoom(joined)
   } catch (err) {
     store.setWaitError(explainConnectError(err))
@@ -148,7 +184,7 @@ export async function joinPrivateRoom(code: string): Promise<void> {
       return
     }
     const body = (await res.json()) as { roomId: string }
-    const joined = await getClient().joinById(body.roomId, { mode: 'private' })
+    const joined = await getClient().joinById(body.roomId, joinOpts({ mode: 'private' }))
     bindRoom(joined)
   } catch (err) {
     store.setWaitError(explainConnectError(err))

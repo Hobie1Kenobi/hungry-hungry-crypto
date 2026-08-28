@@ -3,6 +3,7 @@ import { BEASTS, SEATS } from '@hhc/shared'
 import { useState } from 'react'
 import { createPrivateRoom, joinPrivateRoom, joinQuickMatch } from '../net/session'
 import { useGameStore } from '../store/gameStore'
+import { WalletPanel } from './WalletPanel'
 
 function seatControl(seat: (typeof SEATS)[number]): string {
   if (seat === 0) return 'You (practice) / first human online'
@@ -17,12 +18,12 @@ export function Lobby() {
   return (
     <div className="lobby">
       <div className="lobby-card">
-        <p className="kicker">HHC · Phase 2 · Testnet first</p>
+        <p className="kicker">HHC · Phase 3 · XRPL Testnet</p>
         <h1>Hungry Hungry Crypto</h1>
         <p className="tag">
           Original 3D arcade. Four crypto mascots chomp liquidity chips on a square pond. Physics stays
-          off-chain. The Colyseus room is authoritative for Quick Match and Private Room. This build
-          submits nothing to XRPL.
+          off-chain. The Colyseus room is authoritative for eats. Connect a Testnet wallet, set a CRUMB
+          TrustLine, and bind your r-address to a seat. Settlement Payments ship in Phase 4.
         </p>
         <div className="beast-row">
           {SEATS.map((seat) => {
@@ -80,11 +81,8 @@ export function Lobby() {
             </form>
           </div>
         ) : null}
-        <div className="wallet-stub">
-          <span>Wallet / XRPL identity</span>
-          <span className="phase-tag">Phase 3</span>
-        </div>
-        <p className="disclaimer">CRUMB on Testnet has no value. Phase 2 has zero ledger writes.</p>
+        <WalletPanel />
+        <p className="disclaimer">CRUMB on Testnet has no value. Guest seeds stay on the server. Phase 4 owns settlement.</p>
       </div>
     </div>
   )

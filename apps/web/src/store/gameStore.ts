@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import type { ChompInput, MatchResult, Pellet, Seat, SeatOccupant } from '@hhc/shared'
+import type { Address, ChompInput, MatchResult, Pellet, Seat, SeatOccupant } from '@hhc/shared'
 import {
   ROUND_SECONDS,
   applyChompInput,
@@ -14,6 +14,7 @@ import {
   stepNeckExtend,
 } from '@hhc/shared'
 import { sfxChomp, sfxEat, sfxEnd } from '../game/sfx'
+import { useWalletStore } from '../wallet/walletStore'
 
 export type UiPhase = 'lobby' | 'waiting' | 'playing' | 'results'
 export type PlayMode = 'practice' | 'online'
@@ -34,6 +35,7 @@ interface GameState {
   queueMode: QueueMode
   localSeat: Seat
   occupants: SeatOccupant[]
+  seatAddresses: Partial<Record<Seat, Address>>
   roomCode: string
   waitHint: string
   waitError: string
@@ -55,7 +57,12 @@ interface GameState {
   backToLobby: () => void
   beginWaiting: (opts: { queueMode: 'quick' | 'private'; hint: string; roomCode?: string }) => void
   applyWelcome: (msg: { seat: Seat; roomCode?: string }) => void
-  applyLobbySeats: (occupants: SeatOccupant[], startAt: number, roomCode: string) => void
+  applyLobbySeats: (
+    occupants: SeatOccupant[],
+    startAt: number,
+    roomCode: string,
+    addresses?: Partial<Record<Seat, Address>>,
+  ) => void
   applyMatchStart: (matchId: string, seats: SeatOccupant[], localSeat: Seat) => void
   applyNetFrame: (frame: NetFrame) => void
   applyMatchEnd: (result: MatchResult) => void
@@ -64,7 +71,9 @@ interface GameState {
 }
 
 function finishLocal(state: GameState): Pick<GameState, 'ui' | 'result' | 'chompDown'> {
-  const result = makeMatchResult(state.matchId, state.scores, {})
+  const wallet = useWalletStore.getState().address
+  const addresses: Partial<Record<Seat, Address>> = wallet ? { [state.localSeat]: wallet } : {}
+  const result = makeMatchResult(state.matchId, state.scores, addresses)
   sfxEnd()
   return { ui: 'results', result, chompDown: emptyChomp() }
 }
@@ -75,6 +84,7 @@ export const useGameStore = create<GameState>((set, get) => ({
   queueMode: 'practice',
   localSeat: 0,
   occupants: [],
+  seatAddresses: {},
   roomCode: '',
   waitHint: '',
   waitError: '',
@@ -116,6 +126,7 @@ export const useGameStore = create<GameState>((set, get) => ({
       queueMode: 'practice',
       localSeat: 0,
       occupants: planSeats([0]),
+      seatAddresses: {},
       roomCode: '',
       waitError: '',
       matchId: `local-${crypto.randomUUID()}`,
@@ -174,6 +185,7 @@ export const useGameStore = create<GameState>((set, get) => ({
       pellets: [],
       result: null,
       occupants: [],
+      seatAddresses: {},
       roomCode: '',
       waitHint: '',
       waitError: '',
@@ -197,6 +209,7 @@ export const useGameStore = create<GameState>((set, get) => ({
       waitError: '',
       startAt: 0,
       occupants: [],
+      seatAddresses: {},
       result: null,
       localSeat: 0,
     })
@@ -209,11 +222,12 @@ export const useGameStore = create<GameState>((set, get) => ({
     })
   },
 
-  applyLobbySeats: (occupants, startAt, roomCode) => {
+  applyLobbySeats: (occupants, startAt, roomCode, addresses) => {
     set({
       occupants,
       startAt,
       roomCode: roomCode || get().roomCode,
+      seatAddresses: addresses ?? get().seatAddresses,
     })
   },
 

@@ -20,12 +20,14 @@ export class SeatState extends Schema {
   kind = 'ai'
   personality = ''
   sessionId = ''
+  address = ''
 }
 defineTypes(SeatState, {
   seat: 'uint8',
   kind: 'string',
   personality: 'string',
   sessionId: 'string',
+  address: 'string',
 })
 
 export class HungryState extends Schema {
