@@ -46,7 +46,7 @@ export const POND_HALF = POND_SIZE / 2
 
 export const BEAST_OFFSET = 5.2
 
-export const CHOMP_HALF_WIDTH = 0.92
+export const CHOMP_HALF_WIDTH = 1.55
 
 export const CHOMP_MOUTH_DEPTH = 1.28
 
@@ -68,13 +68,13 @@ export const CHOMP_PULSE_MS = 280
 
 export const CHOMP_EAT_COOLDOWN_MS = 400
 
-export const POND_REFILL_LIVE = 11
+export const POND_REFILL_LIVE = 16
 
-export const POND_REFILL_MAX = 3
+export const POND_REFILL_MAX = 4
 
-export const POND_REFILL_MIN_TIME_LEFT = 7
+export const POND_REFILL_MIN_TIME_LEFT = 6
 
-export const POND_REFILL_GAP_MS = 6500
+export const POND_REFILL_GAP_MS = 4200
 
 export type Cardinal = 'north' | 'east' | 'south' | 'west'
 
@@ -401,31 +401,26 @@ export function spawnPellets(rng: () => number = Math.random, idPrefix = ''): Pe
   const pellets: Pellet[] = []
   const jitter = (n: number) => (rng() - 0.5) * n
   const wave = idPrefix.startsWith('w') ? Number.parseInt(idPrefix.slice(1), 10) || 1 : 0
-  const shift = wave === 0 ? 0 : wave % 2 === 1 ? 0.36 : -0.36
-  const col = 0.58
+  const shift = wave === 0 ? 0 : wave % 2 === 1 ? 0.28 : -0.28
   const spots: Array<[number, number]> = []
+  const axis = [-2.35, -1.18, 0, 1.18, 2.35]
 
-  for (const x of [-col, col]) {
-    for (const z of [-2.72, -1.82, -0.92]) spots.push([x, z + shift])
+  for (const x of axis) {
+    for (const z of axis) {
+      if (Math.abs(x) > 1.6 && Math.abs(z) > 1.6) continue
+      spots.push([x + shift * Math.sign(x || 1) * 0.15, z + shift * Math.sign(z || 1) * 0.15])
+    }
   }
-  for (const z of [-col, col]) {
-    for (const x of [0.92, 1.82, 2.72]) spots.push([x + shift, z])
-  }
-  for (const x of [-col, col]) {
-    for (const z of [0.92, 1.82, 2.72]) spots.push([x, z - shift])
-  }
-  for (const z of [-col, col]) {
-    for (const x of [-0.92, -1.82, -2.72]) spots.push([x - shift, z])
-  }
-  spots.push([0.1, -0.5 + shift], [0.5 + shift, 0.1], [-0.1, 0.5 - shift], [-0.5 - shift, -0.1])
+  spots.push([-1.75, -0.55 + shift], [1.75, 0.55 - shift], [-0.55 + shift, 1.75], [0.55 - shift, -1.75])
+  spots.push([-1.75, 0.55 - shift], [1.75, -0.55 + shift], [0.55 - shift, 1.75], [-0.55 + shift, -1.75])
 
   let i = 0
   for (const [cx, cz] of spots) {
     if (i >= NORMAL_PELLET_COUNT) break
     pellets.push({
       id: `${idPrefix}crumb-${i}`,
-      x: cx + jitter(0.12),
-      z: cz + jitter(0.12),
+      x: cx + jitter(0.1),
+      z: cz + jitter(0.1),
       golden: false,
     })
     i += 1
@@ -434,8 +429,8 @@ export function spawnPellets(rng: () => number = Math.random, idPrefix = ''): Pe
   for (let g = 0; g < GOLDEN_PELLET_COUNT; g += 1) {
     pellets.push({
       id: `${idPrefix}crumb-golden-${g}`,
-      x: spawnRand(rng, -0.22, 0.22),
-      z: spawnRand(rng, -0.22, 0.22),
+      x: spawnRand(rng, -0.28, 0.28),
+      z: spawnRand(rng, -0.28, 0.28),
       golden: true,
     })
   }

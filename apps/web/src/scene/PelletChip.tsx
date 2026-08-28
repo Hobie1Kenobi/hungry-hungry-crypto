@@ -20,26 +20,31 @@ export function PelletChip({ pellet }: { pellet: Pellet }) {
   const refill = pellet.id.startsWith('w')
   const born = useRef(performance.now())
   const group = useRef<Group>(null)
-  const scale = pellet.eatenBy !== undefined ? 0 : pellet.golden ? 1.35 : 1
-  const r = pellet.golden ? 0.4 : 0.3
+  const scale = pellet.eatenBy !== undefined ? 0 : pellet.golden ? 1.4 : 1
+  const r = pellet.golden ? 0.42 : 0.34
   const color = pellet.golden ? '#f0c14b' : '#7ad4ff'
   const rim = pellet.golden ? '#fff3c4' : '#e9fbff'
   const spin = dumpT * 8 + delay * 20
+
+  const land = Math.max(0, Math.min(1, (dumpT - delay) / 0.32))
+  const flight = refill ? 0 : land
+  const spread = easeOut(flight)
+  const y = refill ? 4.1 : 4.1 + (0.12 - 4.1) * easeOut(land)
 
   useFrame(() => {
     if (!group.current || pellet.eatenBy !== undefined) return
     if (!refill) return
     const t = Math.max(0, Math.min(1, (performance.now() - born.current) / 420))
-    group.current.position.y = 4.1 + (0.12 - 4.1) * easeOut(t)
+    const e = easeOut(t)
+    group.current.position.x = pellet.x * e
+    group.current.position.y = 4.1 + (0.12 - 4.1) * e
+    group.current.position.z = pellet.z * e
   })
 
   if (pellet.eatenBy !== undefined) return null
 
-  const land = Math.max(0, Math.min(1, (dumpT - delay) / 0.32))
-  const y = refill ? 4.1 : 4.1 + (0.12 - 4.1) * easeOut(land)
-
   return (
-    <group ref={group} position={[pellet.x, y, pellet.z]} rotation={[0, spin, 0]} scale={scale}>
+    <group ref={group} position={[pellet.x * spread, y, pellet.z * spread]} rotation={[0, spin, 0]} scale={scale}>
       <mesh castShadow receiveShadow>
         <cylinderGeometry args={[r, r, 0.1, 6]} />
         <meshStandardMaterial
