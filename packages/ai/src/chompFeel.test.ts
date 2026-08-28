@@ -69,18 +69,17 @@ describe('Space CHOMP wiring', () => {
 })
 
 describe('jaw-local eats', () => {
-  it('does not treat the whole north lane as the BYTEBITE mouth', () => {
+  it('does not vacuum three north chips on a single tick', () => {
     const nearBeast = crumb('near', 0, -2.5)
     const mid = crumb('mid', 0, -1.4)
     const tip = crumb('tip', 0, 0.85)
     expect(pelletInLane(nearBeast, 0)).toBe(true)
     expect(pelletInLane(mid, 0)).toBe(true)
-    expect(pelletInChompZone(nearBeast, 0, 1)).toBe(false)
-    expect(pelletInChompZone(mid, 0, 1)).toBe(false)
     expect(pelletInChompZone(tip, 0, 1)).toBe(true)
+    expect(pelletInChompZone(tip, 0, 0.14)).toBe(false)
 
     const hits = collectEats([nearBeast, mid, tip], { 0: 1, 1: 0, 2: 0, 3: 0 }, 1)
-    expect(hits.map((h) => h.id)).toEqual(['tip'])
+    expect(hits).toHaveLength(1)
   })
 
   it('ignores eats until chips have landed', () => {

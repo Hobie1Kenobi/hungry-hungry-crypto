@@ -185,7 +185,7 @@ export function pelletInChompZone(pellet: Pellet, seat: Seat, extend: number): b
   const reach = chompReach(extend)
   const w = CHOMP_HALF_WIDTH
   const origin = BEAST_OFFSET - 0.35
-  const along0 = reach - CHOMP_MOUTH_DEPTH
+  const along0 = 0.32
   const along1 = reach + CHOMP_MOUTH_PAD
   switch (seat) {
     case 0:
@@ -404,26 +404,26 @@ export function spawnPellets(rng: () => number = Math.random, idPrefix = ''): Pe
   const pellets: Pellet[] = []
   const jitter = (n: number) => (rng() - 0.5) * n
   const wave = idPrefix.startsWith('w') ? Number.parseInt(idPrefix.slice(1), 10) || 1 : 0
-  const shift = wave === 0 ? 0 : wave % 2 === 1 ? 0.28 : -0.28
+  const phase = wave === 0 ? 0 : wave % 2 === 1 ? 0.68 : -0.68
   const spots: Array<[number, number]> = []
   const axis = [-2.35, -1.18, 0, 1.18, 2.35]
 
   for (const x of axis) {
     for (const z of axis) {
       if (Math.abs(x) > 1.6 && Math.abs(z) > 1.6) continue
-      spots.push([x + shift * Math.sign(x || 1) * 0.15, z + shift * Math.sign(z || 1) * 0.15])
+      spots.push([x + phase, z + phase * 0.35])
     }
   }
-  spots.push([-1.75, -0.55 + shift], [1.75, 0.55 - shift], [-0.55 + shift, 1.75], [0.55 - shift, -1.75])
-  spots.push([-1.75, 0.55 - shift], [1.75, -0.55 + shift], [0.55 - shift, 1.75], [-0.55 + shift, -1.75])
+  spots.push([-1.75 + phase, -0.55], [1.75 + phase, 0.55], [-0.55, 1.75 + phase], [0.55, -1.75 + phase])
+  spots.push([-1.75 + phase, 0.55], [1.75 + phase, -0.55], [0.55, 1.75 + phase], [-0.55, -1.75 + phase])
 
   let i = 0
   for (const [cx, cz] of spots) {
     if (i >= NORMAL_PELLET_COUNT) break
     pellets.push({
       id: `${idPrefix}crumb-${i}`,
-      x: cx + jitter(0.1),
-      z: cz + jitter(0.1),
+        x: cx + jitter(0.2),
+        z: cz + jitter(0.2),
       golden: false,
     })
     i += 1
