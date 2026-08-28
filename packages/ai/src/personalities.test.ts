@@ -35,15 +35,29 @@ function isChompInput(value: ChompInput): void {
 
 function createPerfectStandIn(seat: Seat): AiPolicy {
   let down = false
+  let holdUntil = 0
+  let coolUntil = 0
   return {
     seat,
     personality: 'idle',
     tick(world) {
-      const want = world.pellets.some(
+      const inLane = world.pellets.some(
         (pellet) => pellet.eatenBy === undefined && pelletInLane(pellet, seat) && world.dumpT >= 0.7,
       )
+      let want = down
+      if (down) {
+        want = inLane && world.now < holdUntil
+      } else if (inLane && world.now >= coolUntil && world.neckExtend[seat] < 0.16) {
+        want = true
+      }
       if (want === down) return null
       down = want
+      if (down) {
+        holdUntil = world.now + 220
+      } else {
+        coolUntil = world.now + 120
+        holdUntil = 0
+      }
       return { seat, down, clientTime: world.now }
     },
   }
@@ -59,7 +73,7 @@ describe('ChompInput schema', () => {
   it('Easy mashes with { seat, down, clientTime }', () => {
     const bot = createEasyPolicy(1, { rng: seededRng(7) })
     const seen: ChompInput[] = []
-    for (let i = 0; i < 120; i += 1) {
+    for (let i = 0; i < 240; i += 1) {
       const input = bot.tick(emptyView({ now: i * 16, dumpT: 0.75 }))
       if (input) seen.push(input)
     }

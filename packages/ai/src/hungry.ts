@@ -10,9 +10,9 @@ import { dist2, mouthPoint } from './mouth'
 import type { AiPolicy, ArenaView, PolicyOptions } from './types'
 
 const WINDUP_DUMP = 0.7
-const MIN_HOLD_MS = 140
-const MAX_HOLD_MS = 520
-const COOLDOWN_MS = 180
+const MIN_HOLD_MS = 150
+const MAX_HOLD_MS = 920
+const COOLDOWN_MS = 700
 
 function holdMsFor(pellet: Pellet, seat: Seat): number {
   const origin = BEAST_OFFSET - 0.35
@@ -32,7 +32,7 @@ function holdMsFor(pellet: Pellet, seat: Seat): number {
       break
   }
   const need = Math.max(0, Math.min(1, (along - NECK_BASE) / NECK_EXTRA))
-  return Math.max(MIN_HOLD_MS, Math.min(MAX_HOLD_MS, (need / NECK_EXTEND_SPEED) * 1000 + 80))
+  return Math.max(MIN_HOLD_MS, Math.min(MAX_HOLD_MS, (need / NECK_EXTEND_SPEED) * 1000 + 90))
 }
 
 export function createHungryPolicy(seat: Seat, _options: PolicyOptions = {}): AiPolicy {

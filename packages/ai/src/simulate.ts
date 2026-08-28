@@ -3,6 +3,7 @@ import {
   ROUND_SECONDS,
   applyChompInput,
   emptyChomp,
+  emptyLastEat,
   emptyNecks,
   emptyPulse,
   emptyScores,
@@ -45,6 +46,9 @@ export function simulateRound(options: SimulateOptions): SimulateResult {
     neckExtend: emptyNecks(),
     chompDown: emptyChomp(),
     chompPulseUntil: emptyPulse(),
+    lastEatAt: emptyLastEat(),
+    refillCount: 0,
+    lastRefillAt: 0,
     dumpT: 0,
     timeLeft: seconds,
   }

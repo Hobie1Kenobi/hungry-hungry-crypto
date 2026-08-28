@@ -146,4 +146,31 @@ describe('AI chomp timing', () => {
     expect(laterAi).toBeGreaterThan(earlyAi)
     expect(later.scores[1] === 15 && later.scores[2] === 2 && later.scores[3] === 3).toBe(false)
   })
+
+  it('Practice AI does not vacuum ~22 points in the 2s after dump land', () => {
+    const pellets = spawnPellets(seededRng(99))
+    const policies = () => [createIdlePolicy(0), ...createPracticePolicies({ rng: seededRng(11) })]
+    const atLand = simulateRound({ pellets, policies: policies(), seconds: 2.85 })
+    const later = simulateRound({ pellets, policies: policies(), seconds: 8 })
+    const aiLand = atLand.scores[1] + atLand.scores[2] + atLand.scores[3]
+    const aiLater = later.scores[1] + later.scores[2] + later.scores[3]
+    const liveLand = atLand.pellets.filter((p) => p.eatenBy === undefined).length
+    expect(aiLand).toBeLessThan(12)
+    expect(aiLater).toBeGreaterThan(aiLand)
+    expect(liveLand).toBeGreaterThan(8)
+    expect(atLand.scores[2]).toBeLessThan(12)
+  })
+
+  it('a hopper refill restocks a sparse pond before the round ends', () => {
+    const pellets = spawnPellets(seededRng(99))
+    const result = simulateRound({
+      pellets,
+      policies: [createIdlePolicy(0), ...createPracticePolicies({ rng: seededRng(11) })],
+      seconds: 45,
+    })
+    const live = result.pellets.filter((p) => p.eatenBy === undefined).length
+    const spawned = result.pellets.length
+    expect(spawned).toBeGreaterThan(21)
+    expect(live).toBeGreaterThan(0)
+  })
 })

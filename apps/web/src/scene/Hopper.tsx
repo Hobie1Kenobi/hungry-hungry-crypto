@@ -6,13 +6,17 @@ import { useGameStore } from '../store/gameStore'
 export function Hopper() {
   const dumpT = useGameStore((s) => s.dumpT)
   const ui = useGameStore((s) => s.ui)
+  const refillCount = useGameStore((s) => s.refillCount)
+  const lastRefillAt = useGameStore((s) => s.lastRefillAt)
   const ref = useRef<Group>(null)
 
   useFrame((_, dt) => {
     if (!ref.current) return
-    const shaking = ui === 'playing' && dumpT < 0.85
-    ref.current.rotation.z = shaking ? Math.sin(dumpT * 40) * 0.05 : 0
-    const pulse = shaking ? 1 + Math.sin(dumpT * 28) * 0.03 : 1
+    const refillShake = refillCount > 0 && performance.now() - lastRefillAt < 720
+    const phase = refillShake ? performance.now() / 1000 : dumpT
+    const shaking = ui === 'playing' && (dumpT < 0.85 || refillShake)
+    ref.current.rotation.z = shaking ? Math.sin(phase * 40) * 0.05 : 0
+    const pulse = shaking ? 1 + Math.sin(phase * 28) * 0.03 : 1
     ref.current.scale.setScalar(pulse)
     if (!shaking) {
       ref.current.rotation.y += dt * 0.15
