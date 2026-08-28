@@ -18,7 +18,7 @@
     "dev": "pnpm --filter web dev",
     "dev:server": "pnpm --filter server dev",
     "build": "pnpm --filter web build",
-    "test": "pnpm --filter @hhc/ai test && pnpm --filter server test",
+    "test": "pnpm --filter @hhc/ai test && pnpm --filter @hhc/xrpl test && pnpm --filter server test",
     "typecheck": "pnpm --filter web typecheck && pnpm --filter server typecheck"
   }
 }

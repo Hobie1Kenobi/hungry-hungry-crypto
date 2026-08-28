@@ -17,7 +17,7 @@ export function Results() {
     <div className="overlay">
       <div className="results">
         <div className="results-card">
-          <p className="kicker">{playMode === 'online' ? 'HungryRoom result · no ledger' : 'Local result · no ledger'}</p>
+          <p className="kicker">{playMode === 'online' ? 'HungryRoom result · identity only' : 'Local result · identity only'}</p>
           <h2 style={{ color: champ.color }}>{champ.name} wins</h2>
           <p className="tag" style={{ marginTop: 0 }}>
             Match {result.matchId}
@@ -34,8 +34,11 @@ export function Results() {
             ))}
           </ol>
           <p className="receipts">
-            On-chain receipts: none. txHashes: {hashes} — Phase 2 submits zero XRPL transactions. CRUMB
-            on Testnet has no value.
+            Seat identity:{' '}
+            {SEATS.map((seat) => result.addresses[seat])
+              .filter(Boolean)
+              .join(' · ') || 'none bound'}
+            . Settlement receipts stay empty this phase. txHashes: {hashes}. CRUMB on Testnet has no value.
           </p>
           <div className="actions" style={{ marginTop: 18 }}>
             <button

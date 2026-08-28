@@ -8,10 +8,12 @@ export default defineConfig({
     alias: {
       '@hhc/shared': path.resolve(__dirname, '../../packages/shared/src/index.ts'),
       '@hhc/ai': path.resolve(__dirname, '../../packages/ai/src/index.ts'),
+      '@hhc/xrpl': path.resolve(__dirname, '../../packages/xrpl/src/browser.ts'),
     },
   },
   optimizeDeps: {
     include: ['colyseus.js'],
+    exclude: ['@crossmarkio/sdk'],
   },
   server: {
     host: true,

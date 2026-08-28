@@ -7,6 +7,7 @@ import { ROOM_NAME, pickWinner } from '@hhc/shared'
 import { HungryRoom } from './rooms/HungryRoom'
 import { lookupRoomId } from './rooms/codes'
 import { getSettlement, listSettlements, settleMatch } from './settle/settleMatch'
+import { mountXrplRoutes } from './xrpl/routes'
 
 export const DEFAULT_PORT = 2567
 
@@ -23,8 +24,16 @@ export function createHttpApp(): express.Express {
   app.use(express.json())
 
   app.get('/health', (_req, res) => {
-    res.json({ ok: true, room: ROOM_NAME, xrplWrites: false })
+    res.json({
+      ok: true,
+      room: ROOM_NAME,
+      phase: 3,
+      xrplWrites: false,
+      xrplIdentity: true,
+    })
   })
+
+  mountXrplRoutes(app)
 
   app.get('/rooms/:code', (req, res) => {
     const roomId = lookupRoomId(String(req.params.code ?? ''))

@@ -9,6 +9,7 @@ export function Waiting() {
   const occupants = useGameStore((s) => s.occupants)
   const startAt = useGameStore((s) => s.startAt)
   const localSeat = useGameStore((s) => s.localSeat)
+  const seatAddresses = useGameStore((s) => s.seatAddresses)
   const backToLobby = useGameStore((s) => s.backToLobby)
   const [, setTick] = useState(0)
   useEffect(() => {
@@ -20,7 +21,7 @@ export function Waiting() {
   return (
     <div className="lobby">
       <div className="lobby-card">
-        <p className="kicker">HHC · Phase 2 · HungryRoom</p>
+        <p className="kicker">HHC · Phase 3 · HungryRoom</p>
         <h1>Table filling</h1>
         <p className="tag">{waitError || waitHint}</p>
         {roomCode ? (
@@ -33,6 +34,7 @@ export function Waiting() {
             const b = BEASTS[seat]
             const occ = occupants.find((o) => o.seat === seat)
             const you = seat === localSeat && occ?.kind === 'human'
+            const addr = seatAddresses[seat]
             const label = !occ
               ? '…'
               : occ.kind === 'human'
@@ -45,6 +47,7 @@ export function Waiting() {
                 <strong style={{ color: b.color }}>{b.name}</strong>
                 <span>
                   Seat {seat} · {label}
+                  {addr ? ` · ${addr.slice(0, 6)}…` : ''}
                 </span>
               </div>
             )

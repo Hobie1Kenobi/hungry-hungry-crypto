@@ -15,7 +15,11 @@ pnpm --filter server dev
 
 Listens on `ws://localhost:2567` (override with `GAME_SERVER_PORT`).
 
-Health: `GET http://localhost:2567/health`
+Health: `GET http://localhost:2567/health`  
+XRPL config: `GET http://localhost:2567/xrpl/config`  
+Guest Testnet wallet: `POST /wallet/guest` then `POST /wallet/guest/fund` and `POST /wallet/guest/trustline` with `sessionId`. The guest seed stays in server memory and is never returned.
+
+Join options may include `{ address: 'r…' }`. The room binds that classic address to the Colyseus seat. `settleMatch` still records addresses and **does not** submit Payments.
 
 ## Match flow
 
@@ -24,7 +28,7 @@ Health: `GET http://localhost:2567/health`
 | Quick Match | `joinOrCreate('hungry')` |
 | Private Room | `create('hungry', { mode: 'private' })` then share the 5-character `code`. Joiners `GET /rooms/:code` and `joinById(roomId)`. |
 
-Match start payload: `{ matchId, seats }`. Match end: `MatchResult` with `txHashes: []`.
+Match start payload: `{ matchId, seats }`. Match end: `MatchResult` with `txHashes: []` and any bound r-addresses.
 
 ## Smoke (4-seat fill)
 

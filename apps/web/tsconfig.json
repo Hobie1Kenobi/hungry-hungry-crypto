@@ -17,7 +17,8 @@
     "noFallthroughCasesInSwitch": true,
     "paths": {
       "@hhc/shared": ["../../packages/shared/src/index.ts"],
-      "@hhc/ai": ["../../packages/ai/src/index.ts"]
+      "@hhc/ai": ["../../packages/ai/src/index.ts"],
+      "@hhc/xrpl": ["../../packages/xrpl/src/browser.ts"]
     }
   },
   "include": ["src"]

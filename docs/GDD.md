@@ -1,6 +1,6 @@
 # Game Design Document — Hungry Hungry Crypto
 
-Status: **Phase 2 locked.** Orchestrator: ATLAS. Owner: Hobie Cunningham.
+Status: **Phase 3 locked.** Orchestrator: ATLAS. Owner: Hobie Cunningham.
 
 ## Pitch
 
@@ -8,7 +8,7 @@ Four original crypto-mascot beasts sit on the cardinal sides of a square **liqui
 
 ## Hybrid rule (non-negotiable)
 
-Real-time physics and input are **off-chain**. XRPL is identity, assets, receipts, and settlement only. Phase 2 performs **zero** XRPL transactions.
+Real-time physics and input are **off-chain**. XRPL is identity, assets, receipts, and settlement only. Phase 3 performs TrustSet (and faucet) writes for identity. It does **not** submit settlement Payments.
 
 ## Players
 
@@ -46,16 +46,16 @@ Placeholder boxes/capsules are required. Do not block on Blender.
 - GOLDEN pellet = **5**.
 - Round length ~**45 seconds** or until the board is empty.
 - Winner = highest score (ties → lowest seat index).
-- `MatchResult.txHashes` stays `[]` in Phase 2.
+- `MatchResult.txHashes` stays `[]` in Phase 3. Bound r-addresses may appear in `addresses`.
 
 ## Modes (lobby)
 
-| Control        | Phase 2                                      |
+| Control        | Phase 3                                      |
 | -------------- | -------------------------------------------- |
 | Practice vs AI | **Live** — local round, AI fill seats 1–3    |
 | Quick Match    | **Live** — local Colyseus `hungry` room      |
 | Private Room   | **Live** — 5-character code, then AI fill    |
-| Wallet         | Stub, labeled Phase 3                        |
+| Wallet         | **Live** — Crossmark / Xaman / guest Testnet |
 
 ## Shared types
 
@@ -68,11 +68,11 @@ Canonical TypeScript lives in `packages/shared` (`Seat`, `Address`, `Pellet`, `C
 | 0     | Scaffold, docs, playable local placeholder arena   |
 | 1     | AI policy for empty seats (`packages/ai`)          |
 | 2     | Colyseus HungryRoom (`hungry`), Quick Match, Private Room |
-| 3     | Wallet / XRPL identity (Testnet)                   |
-| 4     | CRUMB TrustLines, XLS-20, Payment-first settlement |
+| 3     | Wallet / XRPL identity + CRUMB TrustSet (Testnet) |
+| 4     | CRUMB issuance, XLS-20, Payment-first settlement |
 | Gate  | Mainnet only after Orchestrator Launch Gate        |
 
-Phase 2 stops here. Do not add wallets or XRPL writes.
+Phase 3 stops here. Do not add settlement Payments, winner CRUMB, or trophy NFTs.
 
 ## Feel
 

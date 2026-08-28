@@ -49,6 +49,24 @@ describe('settleMatch stub', () => {
     expect(record.xrplSubmitted).toBe(false)
     expect(record.txHashes).toEqual([])
   })
+
+  it('records a bound classic address without submitting XRPL settlement', () => {
+    resetSettlementsForTests()
+    const record = settleMatch(
+      {
+        matchId: 'hhc-bound',
+        scores: { 0: 1, 1: 0, 2: 0, 3: 0 },
+        addresses: { 0: 'rPT1Sjq2YGrBMTttX4GZHjKu9dyfzbpAWe' },
+        winner: 0,
+        txHashes: [],
+      },
+      planSeats([0]),
+    )
+    expect(record.addresses[0]).toBe('rPT1Sjq2YGrBMTttX4GZHjKu9dyfzbpAWe')
+    expect(record.addresses[1]).toBeNull()
+    expect(record.xrplSubmitted).toBe(false)
+    expect(record.txHashes).toEqual([])
+  })
 })
 
 describe('private room codes', () => {

@@ -18,7 +18,9 @@
     "react-dom": "^18.3.1",
     "three": "^0.170.0",
     "zustand": "^4.5.6",
-    "colyseus.js": "0.16.22"
+    "colyseus.js": "0.16.22",
+    "@hhc/xrpl": "workspace:*",
+    "@crossmarkio/sdk": "^0.4.0"
   },
   "devDependencies": {
     "@types/react": "^18.3.18",

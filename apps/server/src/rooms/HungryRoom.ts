@@ -1,6 +1,8 @@
 import { type Client, Room } from 'colyseus'
 import type { AiPolicy } from '@hhc/ai'
 import { createPolicy } from '@hhc/ai'
+import type { Address } from '@hhc/shared'
+import { parseClassicAddress } from '@hhc/xrpl'
 import type {
   ArenaSnapshot,
   ChompInput,
@@ -38,6 +40,7 @@ export interface HungryRoomOptions {
   code?: string
   fillMs?: number
   roundSeconds?: number
+  address?: string
 }
 
 function allowTestOptions(): boolean {
@@ -52,6 +55,7 @@ export class HungryRoom extends Room<HungryState> {
   private policies: AiPolicy[] = []
   private occupants: SeatOccupant[] = []
   private sessionSeat = new Map<string, Seat>()
+  private seatAddress = new Map<Seat, Address>()
   private started = false
   private finished = false
   private fillTimer: ReturnType<Room['clock']['setTimeout']> | null = null
@@ -87,6 +91,7 @@ export class HungryRoom extends Room<HungryState> {
     this.setMetadata({ mode: this.mode, code: this.code || undefined })
     this.onMessage('chomp', (client, payload) => this.onChomp(client, payload))
     this.onMessage('hello', (client) => this.sendWelcome(client))
+    this.onMessage('bindAddress', (client, payload) => this.onBindAddress(client, payload))
     this.setSimulationInterval((dt) => this.onSim(dt), 1000 / TICK_HZ)
   }
 
@@ -94,7 +99,7 @@ export class HungryRoom extends Room<HungryState> {
     return !this.started && this.sessionSeat.size < this.maxClients
   }
 
-  onJoin(client: Client): void {
+  onJoin(client: Client, options: HungryRoomOptions = {}): void {
     if (this.mode === 'private' && this.code) {
       registerRoomCode(this.code, this.roomId)
     }
@@ -104,6 +109,8 @@ export class HungryRoom extends Room<HungryState> {
       throw new Error('room full')
     }
     this.sessionSeat.set(client.sessionId, seat)
+    const bound = parseClassicAddress(options.address)
+    if (bound) this.seatAddress.set(seat, bound)
     if (this.sessionSeat.size === 1) {
       this.state.startAt = Date.now() + this.fillMs
       this.fillTimer = this.clock.setTimeout(() => {
@@ -137,13 +144,40 @@ export class HungryRoom extends Room<HungryState> {
     unregisterRoom(this.roomId)
   }
 
+  private addressSnapshot(): Partial<Record<Seat, Address>> {
+    const out: Partial<Record<Seat, Address>> = {}
+    for (const [seat, address] of this.seatAddress) out[seat] = address
+    return out
+  }
+
+  private onBindAddress(client: Client, payload: unknown): void {
+    const seat = this.sessionSeat.get(client.sessionId)
+    if (seat === undefined) return
+    const address =
+      parseClassicAddress(payload) ??
+      parseClassicAddress(
+        payload && typeof payload === 'object' ? (payload as { address?: unknown }).address : undefined,
+      )
+    if (!address) return
+    this.seatAddress.set(seat, address)
+    this.syncSeatSchema()
+    this.sendWelcome(client)
+  }
+
   private sendWelcome(client: Client): void {
     const seat = this.sessionSeat.get(client.sessionId)
     if (seat === undefined) return
-    client.send('welcome', { seat, roomCode: this.code, roomId: this.roomId, startAt: this.state.startAt })
+    client.send('welcome', {
+      seat,
+      roomCode: this.code,
+      roomId: this.roomId,
+      startAt: this.state.startAt,
+      address: this.seatAddress.get(seat) ?? null,
+    })
     this.broadcast('lobby', {
       code: this.code,
       startAt: this.state.startAt,
+      addresses: this.addressSnapshot(),
       seats: this.started
         ? this.occupants
         : planSeats(
@@ -276,7 +310,7 @@ export class HungryRoom extends Room<HungryState> {
   private finishMatch(): void {
     if (this.finished || !this.sim) return
     this.finished = true
-    const result: MatchResult = makeMatchResult(this.state.matchId, this.sim.scores, {})
+    const result: MatchResult = makeMatchResult(this.state.matchId, this.sim.scores, this.addressSnapshot())
     settleMatch(result, this.occupants)
     this.state.phase = 'results'
     this.broadcast('matchEnd', result)
@@ -296,6 +330,7 @@ export class HungryRoom extends Room<HungryState> {
       row.kind = occupant.kind
       row.personality = occupant.personality ?? ''
       row.sessionId = occupant.sessionId ?? ''
+      row.address = this.seatAddress.get(occupant.seat) ?? ''
       this.state.seats.push(row)
     }
   }

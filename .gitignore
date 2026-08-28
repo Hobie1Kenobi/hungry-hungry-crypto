@@ -21,6 +21,7 @@ keys/
 secrets/
 *.seed
 *.secret
+*.local.ts
 
 .idea
 .vscode/*
