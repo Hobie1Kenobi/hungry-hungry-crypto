@@ -6,12 +6,19 @@
   "license": "MIT",
   "packageManager": "pnpm@10.33.3",
   "engines": {
-    "node": ">=20"
+    "node": ">=22"
+  },
+  "pnpm": {
+    "overrides": {
+      "@colyseus/core": "0.16.24",
+      "@colyseus/schema": "3.0.76"
+    }
   },
   "scripts": {
     "dev": "pnpm --filter web dev",
+    "dev:server": "pnpm --filter server dev",
     "build": "pnpm --filter web build",
-    "test": "pnpm --filter @hhc/ai test",
-    "typecheck": "pnpm --filter web typecheck"
+    "test": "pnpm --filter @hhc/ai test && pnpm --filter server test",
+    "typecheck": "pnpm --filter web typecheck && pnpm --filter server typecheck"
   }
 }

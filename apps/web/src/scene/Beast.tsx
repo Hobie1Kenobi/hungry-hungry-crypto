@@ -1,6 +1,6 @@
 import { Billboard, Text } from '@react-three/drei'
 import type { Seat } from '@hhc/shared'
-import { BEASTS, HUMAN_SEAT, beastPosition, beastYaw, chompReach } from '@hhc/shared'
+import { BEASTS, beastPosition, beastYaw, chompReach } from '@hhc/shared'
 import { useGameStore } from '../store/gameStore'
 
 function Jaws({ open, color, accent }: { open: number; color: string; accent: string }) {
@@ -42,7 +42,7 @@ function Jaws({ open, color, accent }: { open: number; color: string; accent: st
 export function Beast({ seat }: { seat: Seat }) {
   const spec = BEASTS[seat]
   const extend = useGameStore((s) => s.neckExtend[seat])
-  const you = seat === HUMAN_SEAT
+  const you = useGameStore((s) => s.localSeat === seat)
   const [x, y, z] = beastPosition(seat)
   const yaw = beastYaw(seat)
   const neckLen = chompReach(extend)

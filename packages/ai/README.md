@@ -2,7 +2,7 @@
 
 Empty-seat fill for Hungry Hungry Crypto. Policies emit the same `ChompInput` as a human: `{ seat, down, clientTime }`.
 
-Phase 1 replaces idle dummies with live Easy / Normal / Hungry opponents. No Colyseus, wallets, or XRPL writes.
+Phase 1 replaces idle dummies with live Easy / Normal / Hungry opponents. Phase 2 runs the same policies on the Colyseus server for empty HungryRoom seats. No wallets or XRPL writes.
 
 ## Personalities
 

@@ -222,3 +222,215 @@ export function applyChompInput(
     started: false,
   }
 }
+
+export const ROOM_NAME = 'hungry'
+
+export const TICK_HZ = 20
+
+export const TICK_DT = 1 / TICK_HZ
+
+export const DESYNC_MS = 250
+
+export const QUICK_FILL_MS = 3000
+
+export const PRIVATE_FILL_MS = 5000
+
+export type SeatOccupantKind = 'human' | 'ai'
+
+export type FillPersonality = 'idle' | 'easy' | 'normal' | 'hungry'
+
+export interface SeatOccupant {
+  seat: Seat
+  kind: SeatOccupantKind
+  personality?: FillPersonality
+  sessionId?: string
+}
+
+export interface MatchStart {
+  matchId: string
+  seats: SeatOccupant[]
+}
+
+export interface ArenaSnapshot {
+  pellets: Pellet[]
+  scores: Record<Seat, number>
+  neckExtend: Record<Seat, number>
+  chompDown: Record<Seat, boolean>
+  chompPulseUntil: Record<Seat, number>
+  dumpT: number
+  timeLeft: number
+}
+
+export interface StepResult {
+  snapshot: ArenaSnapshot
+  hits: { id: string; seat: Seat }[]
+  ended: boolean
+}
+
+export function personalityForEmptySeat(seat: Seat): Exclude<FillPersonality, 'idle'> {
+  switch (seat) {
+    case 0:
+      return 'easy'
+    case 1:
+      return 'easy'
+    case 2:
+      return 'normal'
+    case 3:
+      return 'hungry'
+  }
+}
+
+export function planSeats(
+  humanSeats: readonly Seat[],
+  sessionBySeat: Partial<Record<Seat, string>> = {},
+): SeatOccupant[] {
+  return SEATS.map((seat) => {
+    if (humanSeats.includes(seat)) {
+      return { seat, kind: 'human', sessionId: sessionBySeat[seat] }
+    }
+    return { seat, kind: 'ai', personality: personalityForEmptySeat(seat) }
+  })
+}
+
+export function nextOpenSeat(occupied: ReadonlySet<Seat>): Seat | null {
+  for (const seat of SEATS) {
+    if (!occupied.has(seat)) return seat
+  }
+  return null
+}
+
+export function makeMatchResult(
+  matchId: string,
+  scores: Record<Seat, number>,
+  addresses: Partial<Record<Seat, Address>> = {},
+): MatchResult {
+  return {
+    matchId,
+    scores: { 0: scores[0], 1: scores[1], 2: scores[2], 3: scores[3] },
+    addresses: { ...addresses },
+    winner: pickWinner(scores),
+    txHashes: [],
+  }
+}
+
+export function clampClientTime(clientTime: number, serverNow: number, skewMs = DESYNC_MS): number {
+  if (!Number.isFinite(clientTime)) return serverNow
+  if (Math.abs(clientTime - serverNow) > skewMs) return serverNow
+  return clientTime
+}
+
+export function isChompInputShape(value: unknown): value is ChompInput {
+  if (!value || typeof value !== 'object') return false
+  const o = value as Record<string, unknown>
+  return (
+    (o.seat === 0 || o.seat === 1 || o.seat === 2 || o.seat === 3) &&
+    typeof o.down === 'boolean' &&
+    typeof o.clientTime === 'number'
+  )
+}
+
+function spawnRand(rng: () => number, min: number, max: number): number {
+  return min + rng() * (max - min)
+}
+
+function spawnFarEnough(x: number, z: number, placed: Pellet[], minDist: number): boolean {
+  return placed.every((p) => {
+    const dx = p.x - x
+    const dz = p.z - z
+    return dx * dx + dz * dz >= minDist * minDist
+  })
+}
+
+function spawnPlace(
+  rng: () => number,
+  placed: Pellet[],
+  x0: number,
+  x1: number,
+  z0: number,
+  z1: number,
+  minDist: number,
+): { x: number; z: number } {
+  const inner = POND_HALF * 0.82
+  let x = spawnRand(rng, x0, x1)
+  let z = spawnRand(rng, z0, z1)
+  for (let attempt = 0; attempt < 28; attempt += 1) {
+    x = spawnRand(rng, x0, x1)
+    z = spawnRand(rng, z0, z1)
+    x = Math.max(-inner, Math.min(inner, x))
+    z = Math.max(-inner, Math.min(inner, z))
+    if (spawnFarEnough(x, z, placed, minDist)) break
+  }
+  return { x, z }
+}
+
+export function spawnPellets(rng: () => number = Math.random): Pellet[] {
+  const inner = POND_HALF * 0.82
+  const pellets: Pellet[] = []
+  const perLane = 4
+  const lanes: Array<[number, number, number, number]> = [
+    [-1.05, 1.05, -3.05, -0.45],
+    [0.45, 3.05, -1.05, 1.05],
+    [-1.05, 1.05, 0.45, 3.05],
+    [-3.05, -0.45, -1.05, 1.05],
+  ]
+
+  let i = 0
+  for (const [x0, x1, z0, z1] of lanes) {
+    for (let n = 0; n < perLane; n += 1) {
+      const { x, z } = spawnPlace(rng, pellets, x0, x1, z0, z1, 0.5)
+      pellets.push({ id: `crumb-${i}`, x, z, golden: false })
+      i += 1
+    }
+  }
+
+  for (; i < NORMAL_PELLET_COUNT; i += 1) {
+    const { x, z } = spawnPlace(rng, pellets, -inner, inner, -inner, inner, 0.55)
+    pellets.push({ id: `crumb-${i}`, x, z, golden: false })
+  }
+
+  for (let g = 0; g < GOLDEN_PELLET_COUNT; g += 1) {
+    pellets.push({
+      id: `crumb-golden-${g}`,
+      x: spawnRand(rng, -0.4, 0.4),
+      z: spawnRand(rng, -0.4, 0.4),
+      golden: true,
+    })
+  }
+
+  return pellets
+}
+
+export function stepArena(state: ArenaSnapshot, dt: number, now: number): StepResult {
+  const dumpT = Math.min(1, state.dumpT + dt / DUMP_SECONDS)
+  const timeLeft = Math.max(0, state.timeLeft - dt)
+  const neckExtend = stepNeckExtend(state.neckExtend, state.chompDown, state.chompPulseUntil, now, dt)
+
+  let pellets = state.pellets
+  let scores = state.scores
+  const hits = collectEats(pellets, neckExtend, dumpT)
+  if (hits.length > 0) {
+    pellets = pellets.map((p) => ({ ...p }))
+    scores = { ...scores }
+    for (const hit of hits) {
+      const live = pellets.find((p) => p.id === hit.id)
+      if (!live || live.eatenBy !== undefined) continue
+      live.eatenBy = hit.seat
+      scores[hit.seat] += pelletValue(live)
+    }
+  }
+
+  const snapshot: ArenaSnapshot = {
+    pellets,
+    scores,
+    neckExtend,
+    chompDown: state.chompDown,
+    chompPulseUntil: state.chompPulseUntil,
+    dumpT,
+    timeLeft,
+  }
+  return {
+    snapshot,
+    hits,
+    ended: timeLeft <= 0 || allPelletsEaten(pellets),
+  }
+}
