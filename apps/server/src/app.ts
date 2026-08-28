@@ -6,7 +6,7 @@ import { WebSocketTransport } from '@colyseus/ws-transport'
 import { ROOM_NAME, pickWinner } from '@hhc/shared'
 import { HungryRoom } from './rooms/HungryRoom'
 import { lookupRoomId } from './rooms/codes'
-import { getSettlement, listSettlements, settleMatch } from './settle/settleMatch'
+import { getSettlement, listSettlements, settlementLiveEnabled, settleMatch } from './settle/settleMatch'
 import { mountXrplRoutes } from './xrpl/routes'
 
 export const DEFAULT_PORT = 2567
@@ -27,9 +27,10 @@ export function createHttpApp(): express.Express {
     res.json({
       ok: true,
       room: ROOM_NAME,
-      phase: 3,
-      xrplWrites: false,
+      phase: 4,
+      xrplWrites: true,
       xrplIdentity: true,
+      settlementLive: settlementLiveEnabled(),
     })
   })
 
@@ -44,27 +45,30 @@ export function createHttpApp(): express.Express {
     res.json({ roomId, room: ROOM_NAME })
   })
 
-  app.post('/settle-match', (req, res) => {
-    const body = req.body as {
-      matchId?: string
-      scores?: { 0: number; 1: number; 2: number; 3: number }
-      seats?: Parameters<typeof settleMatch>[1]
-    }
-    if (!body?.matchId || !body.scores) {
-      res.status(400).json({ error: 'matchId and scores required' })
-      return
-    }
-    const record = settleMatch(
-      {
-        matchId: body.matchId,
-        scores: body.scores,
-        addresses: {},
-        winner: pickWinner(body.scores),
-        txHashes: [],
-      },
-      body.seats ?? [],
-    )
-    res.json(record)
+  app.post('/settle-match', (req, res, next) => {
+    void (async () => {
+      const body = req.body as {
+        matchId?: string
+        scores?: { 0: number; 1: number; 2: number; 3: number }
+        addresses?: Parameters<typeof settleMatch>[0]['addresses']
+        seats?: Parameters<typeof settleMatch>[1]
+      }
+      if (!body?.matchId || !body.scores) {
+        res.status(400).json({ error: 'matchId and scores required' })
+        return
+      }
+      const record = await settleMatch(
+        {
+          matchId: body.matchId,
+          scores: body.scores,
+          addresses: body.addresses ?? {},
+          winner: pickWinner(body.scores),
+          txHashes: [],
+        },
+        body.seats ?? [],
+      )
+      res.json(record)
+    })().catch(next)
   })
 
   app.get('/settlements/:matchId', (req, res) => {

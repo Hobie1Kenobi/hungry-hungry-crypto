@@ -41,8 +41,9 @@ export function WalletPanel() {
       </div>
       <p className="wallet-copy">
         Connect an r-address, set a CRUMB TrustLine toward the Testnet issuer, then Quick Match / Private Room
-        binds that address to your Colyseus seat. Guest seeds stay on the game server — never in git, never sent
-        to other clients.
+        binds that address to your Colyseus seat. After a HungryRoom round the server pays CRUMB from the
+        treasury to bound addresses with a TrustLine. Guest seeds stay on the game server — never in git, never
+        sent to other clients.
       </p>
       {config && !config.issuer ? (
         <p className="wallet-warn">

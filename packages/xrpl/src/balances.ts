@@ -1,4 +1,5 @@
 import type { Address } from '@hhc/shared'
+import type { Client } from 'xrpl'
 import { dropsToXrp } from 'xrpl'
 import { withTestnet } from './client'
 import { CRUMB_NAME, crumbCurrency, explorerAccountUrl } from './xrplConfig'
@@ -61,23 +62,30 @@ export function printBalances(balances: PrintedBalances): void {
   )
 }
 
+export async function hasCrumbTrustlineOnClient(
+  client: Client,
+  address: Address,
+  issuer: Address,
+  currency = crumbCurrency(CRUMB_NAME),
+): Promise<boolean> {
+  try {
+    const lines = await client.request({
+      command: 'account_lines',
+      account: address,
+      peer: issuer,
+      ledger_index: 'validated',
+    })
+    return lines.result.lines.some((l) => l.currency === currency)
+  } catch (err) {
+    if (isAccountMissing(err)) return false
+    throw err
+  }
+}
+
 export async function hasCrumbTrustline(
   address: Address,
   issuer: Address,
   currency = crumbCurrency(CRUMB_NAME),
 ): Promise<boolean> {
-  return withTestnet(async (client) => {
-    try {
-      const lines = await client.request({
-        command: 'account_lines',
-        account: address,
-        peer: issuer,
-        ledger_index: 'validated',
-      })
-      return lines.result.lines.some((l) => l.currency === currency)
-    } catch (err) {
-      if (isAccountMissing(err)) return false
-      throw err
-    }
-  })
+  return withTestnet(async (client) => hasCrumbTrustlineOnClient(client, address, issuer, currency))
 }

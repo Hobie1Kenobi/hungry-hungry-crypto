@@ -1,0 +1,61 @@
+{
+  "network": "testnet",
+  "wsUrl": "wss://s.altnet.rippletest.net:51233",
+  "faucetUrl": "https://faucet.altnet.rippletest.net/",
+  "explorerUrl": "https://testnet.xrpl.org",
+  "issuer": "rNRohSqpNF6RUgCdvtrXqao1hMRcjK2x5b",
+  "treasury": "rDYMbqXWZhNRccTbjcWMpHKmT2rUD5ks87",
+  "guest": "rpHembF8Y3odbbZ3ZQFMn2UoSDMtkc9VGm",
+  "matchId": "hhc-FHyOpNGKP",
+  "crumbName": "CRUMB",
+  "crumbCurrency": "4352554D42000000000000000000000000000000",
+  "disclaimer": "CRUMB on Testnet has no value. This is not money.",
+  "status": "ok",
+  "transactions": [
+    {
+      "what": "Issuer faucet",
+      "hash": "C49A9724800E43A3C49A6AEBEE04A1F3CC0962ECAE9B4326794D3E42786205E9",
+      "result": "tesSUCCESS"
+    },
+    {
+      "what": "AccountSet DefaultRipple",
+      "hash": "7F20CF1B18D749B08FFC67483B82F57501F337AA228A85C8A4841726CA7251B0",
+      "ledgerIndex": 20292068,
+      "result": "tesSUCCESS"
+    },
+    {
+      "what": "Treasury faucet",
+      "hash": "3B72C0D21E8EDE107961D1F23169BAF3E634F84025BDE86140A502525ECE659A",
+      "result": "tesSUCCESS"
+    },
+    {
+      "what": "TrustSet CRUMB treasury",
+      "hash": "48F54CE18DD0ACBEB1D11095922E26A6C4E7845D8593F020C74D44906DBC7AF6",
+      "ledgerIndex": 20292070,
+      "result": "tesSUCCESS"
+    },
+    {
+      "what": "Issue treasury CRUMB",
+      "hash": "DBC605D5642B11E03C2FC1258C98DC275AA2A075798AEDD9B5DAD94B50DCE987",
+      "ledgerIndex": 20292072,
+      "result": "tesSUCCESS"
+    },
+    {
+      "what": "Guest faucet",
+      "hash": "32B1273BA9E4D21FED865DB8334475CDB0146D844CFF693714BF0EDB0D5F5AC0",
+      "result": "tesSUCCESS"
+    },
+    {
+      "what": "Guest TrustSet CRUMB",
+      "hash": "C4F006F0DDFB91D453C18D4AF396F27D04FDF5298888938D1B49AF3083616766",
+      "ledgerIndex": 20292089,
+      "result": "tesSUCCESS"
+    },
+    {
+      "what": "settleMatch CRUMB Payment dest=rpHembF8Y3odbbZ3ZQFMn2UoSDMtkc9VGm",
+      "hash": "C7EF6B98CB3C8981605EA980D8E9D85D5A7544B1173C040B2F8B18CF69120795",
+      "ledgerIndex": 20292092,
+      "result": "tesSUCCESS"
+    }
+  ]
+}

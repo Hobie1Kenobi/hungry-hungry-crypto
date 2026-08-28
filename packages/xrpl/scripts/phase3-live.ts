@@ -2,51 +2,37 @@ import { resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { Wallet } from 'xrpl'
 import {
-  createThrowawayIssuer,
-  enableDefaultRipple,
+  createDurableIssuer,
   envPathAtRepoRoot,
   getBalances,
-  loadIssuerSeed,
+  loadDotEnv,
   parseClassicAddress,
+  PHASE3_THROWAWAY_ISSUER,
   requestFaucet,
   setCrumbTrustline,
-  storeIssuerInEnv,
 } from '../src/index.ts'
 
 const repoRoot = resolve(fileURLToPath(new URL('.', import.meta.url)), '../../..')
 const envPath = envPathAtRepoRoot(repoRoot)
 
-function loadDotEnv(): void {
-  try {
-    process.loadEnvFile(envPath)
-  } catch {
-    /* optional */
-  }
-}
-
 async function main(): Promise<void> {
-  loadDotEnv()
+  loadDotEnv(envPath)
 
-  let issuerAddress = parseClassicAddress(process.env.XRPL_ISSUER_ADDRESS)
-  let loaded = loadIssuerSeed(process.env)
-  if (!issuerAddress || !loaded) {
-    const created = await createThrowawayIssuer(envPath)
-    storeIssuerInEnv(envPath, created.issuer.address, created.seed)
-    process.env.XRPL_ISSUER_ADDRESS = created.issuer.address
-    process.env.XRPL_ISSUER_SEED = created.seed
-    issuerAddress = created.issuer.address
-    loaded = { address: created.issuer.address, seed: created.seed }
-    console.info(`[xrpl] created throwaway issuer ${issuerAddress}`)
-  } else {
-    console.info(`[xrpl] using issuer ${issuerAddress}`)
-    const issuerWallet = Wallet.fromSeed(loaded.seed)
-    const ripple = await enableDefaultRipple(issuerWallet)
+  if (process.env.XRPL_ISSUER_ADDRESS === PHASE3_THROWAWAY_ISSUER) {
+    delete process.env.XRPL_ISSUER_ADDRESS
+    delete process.env.XRPL_ISSUER_SEED
+  }
+
+  const setup = await createDurableIssuer(envPath)
+  const issuerAddress = parseClassicAddress(setup.issuer)
+  if (!issuerAddress) throw new Error('issuer address missing')
+  console.info(`[xrpl] durable issuer ${issuerAddress}`)
+  console.info(`[xrpl] treasury ${setup.treasury}`)
+  for (const write of setup.writes) {
     console.info(
-      `[xrpl] DefaultRipple hash=${ripple.hash} ledgerIndex=${ripple.ledgerIndex ?? 'n/a'} result=${ripple.result}`,
+      `[xrpl] ${write.what} hash=${write.hash} ledgerIndex=${write.ledgerIndex ?? 'n/a'} result=${write.result}`,
     )
   }
-
-  if (!issuerAddress) throw new Error('issuer address missing')
 
   const guest = Wallet.generate()
   const address = guest.classicAddress
@@ -56,7 +42,7 @@ async function main(): Promise<void> {
   const trust = await setCrumbTrustline(guest, issuerAddress)
   await getBalances(address as `r${string}`, issuerAddress)
   console.info(`[xrpl] TrustSet hash=${trust.hash} ledgerIndex=${trust.ledgerIndex ?? 'n/a'} result=${trust.result}`)
-  console.info('[xrpl] CRUMB on Testnet has no value. Phase 4 owns durable issuer + treasury issuance.')
+  console.info('[xrpl] CRUMB on Testnet has no value. This is not money.')
 }
 
 main().catch((err) => {

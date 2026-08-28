@@ -21,7 +21,7 @@ export function Waiting() {
   return (
     <div className="lobby">
       <div className="lobby-card">
-        <p className="kicker">HHC · Phase 3 · HungryRoom</p>
+        <p className="kicker">HHC · Phase 4 · HungryRoom</p>
         <h1>Table filling</h1>
         <p className="tag">{waitError || waitHint}</p>
         {roomCode ? (

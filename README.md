@@ -2,11 +2,11 @@
 
 Original 3D arcade. Orchestrator: **ATLAS**. Owner: **Hobie Cunningham**.
 
-Four original crypto-mascot beasts chomp XRP-styled chips on a square liquidity pond. Real-time physics and input run **off-chain**. XRPL Testnet is identity: connect a wallet, set a CRUMB TrustLine, bind the classic `r…` address to a Colyseus seat. **Phase 3 does not settle matches, issue CRUMB to winners, or mint trophy NFTs.**
+Four original crypto-mascot beasts chomp XRP-styled chips on a square liquidity pond. Real-time physics and input run **off-chain**. XRPL Testnet is identity and Payment-first settlement: connect a wallet, set a CRUMB TrustLine, bind the classic `r…` address to a Colyseus seat. After `finishMatch` the **server** (never the client) submits CRUMB IOU Payment(s) from the treasury to bound addresses that have a TrustLine.
 
-**CRUMB on Testnet has no value.** Do not treat Testnet balances, TrustLines, or issued tokens as money.
+**CRUMB on Testnet has no value.** This is not money. Do not treat Testnet balances, TrustLines, or issued tokens as money.
 
-Brand and IP rules: [`docs/LEGAL.md`](docs/LEGAL.md).
+Brand and IP rules: [`docs/LEGAL.md`](docs/LEGAL.md). Public Testnet log: [`PUBLIC_TESTNET_REPORT.md`](PUBLIC_TESTNET_REPORT.md).
 
 ## How to run server + web
 
@@ -26,15 +26,25 @@ pnpm --filter web dev
 
 Copy `.env.example` to `.env`. Never commit `.env` or seeds.
 
-### Testnet issuer (once)
+## Durable Testnet issuer + CRUMB treasury (once)
 
-CRUMB TrustSet needs an issuer r-address. If you do not have one yet:
+Phase 3 throwaway issuer `rDQ8Wdf5511AGtZmv6njtt5xh9af5LAMcW` is TrustSet-demo only. Its seed is not available. Create a **new** durable issuer:
 
 ```bash
 pnpm --filter @hhc/xrpl create-issuer
 ```
 
-This faucets a **throwaway** Testnet account, enables DefaultRipple, prints the r-address, and stores the seed in `.env` only. **Phase 4 owns the durable issuer and CRUMB treasury issuance.** This throwaway is for TrustSet demos.
+This faucets a Testnet issuer, enables **DefaultRipple**, faucets a server-held treasury, TrustSets CRUMB on the treasury, and issues treasury stock (IOU Payment from issuer → treasury). It prints r-addresses and tx hashes only. Seeds are stored in `.env` as `XRPL_ISSUER_SEED` / `XRPL_TREASURY_SEED` (gitignored). **Never print seeds.**
+
+Then run a 4-seat HungryRoom and settle:
+
+```bash
+pnpm --filter server rehearse
+```
+
+That script: create-issuer (or reuse) → guest faucet + TrustSet → HungryRoom (1 human bound address + 3 AI, short round) → `settleMatch` submits at least one CRUMB Payment → writes [`deployments/testnet.json`](deployments/testnet.json) and [`PUBLIC_TESTNET_REPORT.md`](PUBLIC_TESTNET_REPORT.md).
+
+If Testnet/faucet is down the script exits `BLOCKED:` with the exact error. Hashes are never invented.
 
 ### Connect a wallet and set a TrustLine
 
@@ -44,7 +54,7 @@ This faucets a **throwaway** Testnet account, enables DefaultRipple, prints the 
    - **Xaman** — opens a TrustSet sign-request link (`xaman.app/detect/…` / xApp deeplink). Use Testnet in Xaman, paste your `r…` address, then refresh.
    - **Guest** — first-time play. **Guest wallet** generates a Testnet account **on the game server**. **Get Test XRP** hits `https://faucet.altnet.rippletest.net/`. Then **TrustSet CRUMB**. The guest seed lives only in server memory / `.env`. It is never written to git and never sent to other clients.
 3. The lobby shows your classic r-address. After TrustSet, Quick Match / Private Room bind `Address r…` ↔ Colyseus seat.
-4. Practice vs AI still runs locally. Online eats stay **server-authoritative**.
+4. Practice vs AI still runs locally (no ledger writes). Online eats stay **server-authoritative**. After the round the server pays CRUMB to bound TrustLined addresses.
 
 Explorer: [testnet.xrpl.org](https://testnet.xrpl.org). WebSocket: `wss://s.altnet.rippletest.net:51233` only.
 
@@ -58,17 +68,17 @@ Explorer: [testnet.xrpl.org](https://testnet.xrpl.org). WebSocket: `wss://s.altn
 
 ### Quick Match (local Colyseus)
 
-1. Start the server, then the web client. Connect a wallet first if you want the r-address on your seat.
+1. Start the server, then the web client. Connect a wallet first if you want CRUMB settlement.
 2. Click **Quick Match**. You join room `hungry`. Humans fill seats first.
 3. After a short wait, empty seats become Easy / Normal / Hungry AI from `packages/ai`.
 4. The **server** decides eats. Client chomp / neck motion is cosmetic prediction.
-5. Match start payload is `{ matchId, seats }`. Match end is `MatchResult` with `txHashes: []` and any bound addresses.
+5. Match start payload is `{ matchId, seats }`. Match end is `MatchResult` with `txHashes` populated only for `tesSUCCESS` CRUMB Payments.
 
 ### Private Room (code)
 
 1. Click **Private Room** → **Create room**. Share the 5-character code.
 2. A second browser **Join**s with that code (`GET /rooms/:code` then `joinById`).
-3. Empty seats still AI-fill after the wait. Same `ChompInput`. Same authoritative eats.
+3. Empty seats still AI-fill after the wait. Same `ChompInput`. Same authoritative eats. Same Payment-first settlement.
 
 ```bash
 pnpm --filter web build
@@ -77,29 +87,37 @@ pnpm --filter @hhc/xrpl test
 pnpm --filter server test
 ```
 
-Live faucet + TrustSet (prints real hashes or `BLOCKED:` plus the RPC error):
+Faucet + TrustSet only:
 
 ```bash
 pnpm --filter @hhc/xrpl live
 ```
 
-### Phase 3 Testnet log (real hashes)
+### Phase 4 Testnet log (real hashes)
 
-Throwaway TrustSet demo issuer (not the Phase 4 durable issuer): `rDQ8Wdf5511AGtZmv6njtt5xh9af5LAMcW`
+Durable issuer: `rNRohSqpNF6RUgCdvtrXqao1hMRcjK2x5b`  
+Treasury: `rDYMbqXWZhNRccTbjcWMpHKmT2rUD5ks87`  
+Guest (bound human seat): `rpHembF8Y3odbbZ3ZQFMn2UoSDMtkc9VGm`  
+HungryRoom match: `hhc-FHyOpNGKP`
+
+Full table: [`PUBLIC_TESTNET_REPORT.md`](PUBLIC_TESTNET_REPORT.md). Explorer: [testnet.xrpl.org](https://testnet.xrpl.org).
 
 | What | Hash | Ledger | Result |
 | ---- | ---- | ------ | ------ |
-| Issuer faucet | `6A6327085E90F90E40C4750ABA21482F5B144999918B1FBB2AAD6C4AB5ACD0C4` | — | tesSUCCESS |
-| AccountSet DefaultRipple | `49D31329D39F8CBB760CD69DC1EDF7CBC60EFB7F2794AE41811C6A3E80E61608` | 20291720 | tesSUCCESS |
-| Guest faucet | `4A3E9C804EEAD464724EFCA218C3EC081F3F35943720D8C83ECAEA30264D94BA` | — | tesSUCCESS |
-| Guest faucet (lobby) | `11D7626BF19C68DC6EE13F29F75D2713E7181A68254B3AAB41256D6E6359FD13` | — | tesSUCCESS |
-| TrustSet CRUMB | `37F37EECCA35F0F367720924228CB7FCC89F8AB21052E3CFE87786115FA31C66` | 20291738 | tesSUCCESS |
+| Issuer faucet | `C49A9724800E43A3C49A6AEBEE04A1F3CC0962ECAE9B4326794D3E42786205E9` | — | tesSUCCESS |
+| AccountSet DefaultRipple | `7F20CF1B18D749B08FFC67483B82F57501F337AA228A85C8A4841726CA7251B0` | 20292068 | tesSUCCESS |
+| Treasury faucet | `3B72C0D21E8EDE107961D1F23169BAF3E634F84025BDE86140A502525ECE659A` | — | tesSUCCESS |
+| TrustSet CRUMB treasury | `48F54CE18DD0ACBEB1D11095922E26A6C4E7845D8593F020C74D44906DBC7AF6` | 20292070 | tesSUCCESS |
+| Issue treasury CRUMB | `DBC605D5642B11E03C2FC1258C98DC275AA2A075798AEDD9B5DAD94B50DCE987` | 20292072 | tesSUCCESS |
+| Guest faucet | `32B1273BA9E4D21FED865DB8334475CDB0146D844CFF693714BF0EDB0D5F5AC0` | — | tesSUCCESS |
+| Guest TrustSet CRUMB | `C4F006F0DDFB91D453C18D4AF396F27D04FDF5298888938D1B49AF3083616766` | 20292089 | tesSUCCESS |
+| settleMatch CRUMB Payment | `C7EF6B98CB3C8981605EA980D8E9D85D5A7544B1173C040B2F8B18CF69120795` | 20292092 | tesSUCCESS |
 
-Guest r-addresses: `r4McfvYaDywCH4157ZXTD2DFJZd6p1hVaq` (script), `rMPGwc7qxRxUnVmWyJtEvaaTdQPZB4mSj9` (lobby). Explorer: [testnet.xrpl.org](https://testnet.xrpl.org). CRUMB on Testnet has no value.
+CRUMB on Testnet has no value. This is not money.
 
 ## Smoke: 4-seat fill
 
-`pnpm --filter server test` starts HungryRoom on an ephemeral port, connects one human, fills the other three seats with AI, completes a shortened round, and asserts `MatchResult.txHashes === []` plus a `settleMatch` record (`xrplSubmitted: false`). It also creates a private room, looks up the code, joins by id, and binds a sample r-address to a seat.
+`pnpm --filter server test` starts HungryRoom on an ephemeral port, connects one human, fills the other three seats with AI, completes a shortened round, and asserts an unbound match does **not** submit Payments (`txHashes: []`, `xrplSubmitted: false`). It also creates a private room, looks up the code, joins by id, and binds a sample r-address to a seat.
 
 ## Locked beasts (not animals from any licensed table game)
 
@@ -115,30 +133,30 @@ Placeholder boxes and capsules are required until original Blender meshes land. 
 ## Hybrid architecture
 
 - **Off-chain:** arena physics, chomp input, overlap eats, scoreboard, empty-seat AI, Colyseus HungryRoom.
-- **On-chain this phase:** XRPL Testnet identity, CRUMB TrustSet toward `XRPL_ISSUER_ADDRESS`.
-- **On-chain later (Phase 4):** CRUMB treasury issuance, XLS-20 pellets, Payment-first settlement receipts.
+- **On-chain this phase:** XRPL Testnet identity, CRUMB TrustSet, treasury issuance, Payment-first `settleMatch` after match end.
 - Default network is XRPL **Testnet**:
   - WebSocket `wss://s.altnet.rippletest.net:51233`
   - Faucet `https://faucet.altnet.rippletest.net/`
   - Explorer `https://testnet.xrpl.org`
 - The game server holds treasury and guest seeds. The client never does.
-- `settleMatch` is still a REST/WS hook stub: it records `matchId` + 4 address slots + seat map and **does not** submit XRPL Payments.
+- `settleMatch` is server-only. It Payment-first sends CRUMB from the treasury to bound classic r-addresses that have a TrustLine. AI seats with no address skip. `xrplSubmitted` is true only for hashes that landed `tesSUCCESS`. `tec` codes are logged, never faked as success. One settlement after match end — not per pellet.
 
 ## Repo
 
 ```
 apps/web          Playable Vite + React 18 + R3F client
-apps/server       Colyseus HungryRoom (room name: hungry) + guest faucet/TrustSet
+apps/server       Colyseus HungryRoom (room name: hungry) + guest faucet/TrustSet + settleMatch
 packages/shared   Seats, pellets, chomp input, match results
-packages/xrpl     Testnet config, faucet, TrustSet, balances
+packages/xrpl     Testnet config, faucet, TrustSet, issuer, treasury, Payments
 packages/ai       Easy / Normal / Hungry fill
 assets/           Original art landing zone
+deployments/      Public Testnet issuer + hashes (no seeds)
 docs/             GDD, XRPL, launch gate, art, legal
 ```
 
-## Phase 3 scope
+## Phase 4 scope
 
-Wallet connect (Crossmark, Xaman, guest), CRUMB TrustLine on Testnet, bind r-address to Colyseus seat. No settlement Payments, no winner CRUMB, no trophy NFTs, no Mainnet.
+Durable Testnet issuer, CRUMB treasury stock, Payment-first settlement after HungryRoom `finishMatch`. No Hooks. No EVM sidechain. Trophy NFTs are optional and must not block. No Mainnet.
 
 ## License
 

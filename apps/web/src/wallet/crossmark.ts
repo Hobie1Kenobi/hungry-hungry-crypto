@@ -51,7 +51,7 @@ export async function isCrossmarkAvailable(): Promise<boolean> {
 function refuseMainnet(network: unknown): void {
   const name = typeof network === 'string' ? network : (network as { name?: string } | undefined)?.name
   if (name && /main/i.test(name)) {
-    throw new Error('Crossmark is on Mainnet. Switch the wallet to XRPL Testnet. Phase 3 never uses Mainnet.')
+    throw new Error('Crossmark is on Mainnet. Switch the wallet to XRPL Testnet. Hungry Hungry Crypto never uses Mainnet until Launch Gate.')
   }
 }
 

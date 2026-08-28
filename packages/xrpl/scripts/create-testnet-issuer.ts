@@ -1,38 +1,37 @@
 import { resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import {
-  createThrowawayIssuer,
+  createDurableIssuer,
   envPathAtRepoRoot,
-  parseClassicAddress,
-  storeIssuerInEnv,
+  loadDotEnv,
+  PHASE3_THROWAWAY_ISSUER,
 } from '../src/index.ts'
 
 const repoRoot = resolve(fileURLToPath(new URL('.', import.meta.url)), '../../..')
 const envPath = envPathAtRepoRoot(repoRoot)
 
 async function main(): Promise<void> {
-  const existing = parseClassicAddress(process.env.XRPL_ISSUER_ADDRESS)
-  if (existing && process.env.XRPL_ISSUER_SEED) {
-    console.info(`[xrpl] issuer already in env address=${existing}`)
-    console.info('[xrpl] Phase 4 owns the durable issuer + CRUMB treasury issuance.')
-    return
+  loadDotEnv(envPath)
+
+  if (process.env.XRPL_ISSUER_ADDRESS === PHASE3_THROWAWAY_ISSUER) {
+    console.info(
+      `[xrpl] ignoring lost Phase 3 throwaway issuer ${PHASE3_THROWAWAY_ISSUER} (seed unavailable). Creating a new durable Testnet issuer.`,
+    )
+    delete process.env.XRPL_ISSUER_ADDRESS
+    delete process.env.XRPL_ISSUER_SEED
   }
 
-  const { issuer, seed } = await createThrowawayIssuer()
-  if (!seed) throw new Error('issuer wallet produced no seed')
-  storeIssuerInEnv(envPath, issuer.address, seed)
-  console.info(`[xrpl] throwaway Testnet issuer address=${issuer.address}`)
-  console.info(`[xrpl] seed stored in ${envPath} only (gitignored). Not printed.`)
-  if (issuer.faucet?.hash) {
-    console.info(`[xrpl] faucet hash=${issuer.faucet.hash}`)
-  }
-  if (issuer.defaultRipple) {
+  const setup = await createDurableIssuer(envPath)
+  console.info(`[xrpl] durable Testnet issuer address=${setup.issuer}`)
+  console.info(`[xrpl] treasury address=${setup.treasury}`)
+  console.info(`[xrpl] seeds stored in ${envPath} only (gitignored). Not printed.`)
+  console.info(`[xrpl] reused=${setup.reused}`)
+  for (const write of setup.writes) {
     console.info(
-      `[xrpl] DefaultRipple hash=${issuer.defaultRipple.hash} ledgerIndex=${issuer.defaultRipple.ledgerIndex ?? 'n/a'} result=${issuer.defaultRipple.result}`,
+      `[xrpl] ${write.what} hash=${write.hash} ledgerIndex=${write.ledgerIndex ?? 'n/a'} result=${write.result}`,
     )
   }
-  console.info('[xrpl] Phase 4 owns the durable issuer + CRUMB treasury issuance. This issuer is throwaway TrustSet demo only.')
-  console.info('[xrpl] CRUMB on Testnet has no value.')
+  console.info('[xrpl] CRUMB on Testnet has no value. This is not money.')
 }
 
 main().catch((err) => {

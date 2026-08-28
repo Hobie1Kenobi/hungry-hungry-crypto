@@ -304,14 +304,20 @@ export class HungryRoom extends Room<HungryState> {
       neckExtend: this.sim.neckExtend,
       chompDown: this.sim.chompDown,
     })
-    if (stepped.ended) this.finishMatch()
+    if (stepped.ended) void this.finishMatch()
   }
 
-  private finishMatch(): void {
+  private async finishMatch(): Promise<void> {
     if (this.finished || !this.sim) return
     this.finished = true
     const result: MatchResult = makeMatchResult(this.state.matchId, this.sim.scores, this.addressSnapshot())
-    settleMatch(result, this.occupants)
+    try {
+      const record = await settleMatch(result, this.occupants)
+      result.txHashes = record.txHashes
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err)
+      console.error(`[hungry] settleMatch ${result.matchId} ${msg}`)
+    }
     this.state.phase = 'results'
     this.broadcast('matchEnd', result)
   }

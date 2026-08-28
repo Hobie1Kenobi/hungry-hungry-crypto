@@ -2,13 +2,15 @@
 
 Hungry Hungry Crypto is **hybrid**. The arena is not a smart contract. The ledger never simulates CHOMP.
 
-## Phase 3
+## Phase 4
 
-**Identity + TrustLine on XRPL Testnet.** Connect Crossmark, Xaman, or a server-hosted guest wallet. Fund guest dust from the Testnet faucet. Submit a CRUMB TrustSet toward `XRPL_ISSUER_ADDRESS`. Bind the classic `r…` address to a Colyseus seat.
+**Durable Testnet issuer + CRUMB treasury + Payment-first settlement.** After HungryRoom `finishMatch`, the **server** (never the client) submits CRUMB IOU Payment(s) from the treasury to bound classic `r…` addresses that have a TrustLine. AI seats with no address skip. `MatchResult.txHashes` is filled only with hashes that landed `tesSUCCESS`. `tec` codes are logged and are never recorded as success. One settlement after match end — not per pellet eat.
 
-**Not in Phase 3:** match settlement Payments, CRUMB issuance to winners, trophy NFTs, Hooks, EVM sidechain, Mainnet.
+**Not in Phase 4:** Hooks, EVM sidechain, Mainnet. Trophy NFTs are an optional stub and must not block settlement.
 
-`settleMatch` still records `matchId` + 4 address slots + seat map with `xrplSubmitted: false`. `MatchResult.txHashes` stays `[]`.
+**CRUMB on Testnet has no value. This is not money.**
+
+Public hashes: [`PUBLIC_TESTNET_REPORT.md`](../PUBLIC_TESTNET_REPORT.md) and [`deployments/testnet.json`](../deployments/testnet.json).
 
 ## Default network: Testnet
 
@@ -19,8 +21,6 @@ Hungry Hungry Crypto is **hybrid**. The arena is not a smart contract. The ledge
 | Explorer  | `https://testnet.xrpl.org`               |
 
 Config belongs in `.env` (see `.env.example`). Do not hardcode Mainnet URLs in app code.
-
-**CRUMB on Testnet has no value.**
 
 ## Currency
 
@@ -36,24 +36,31 @@ Every XRPL write in `packages/xrpl`:
 
 Logs **hash**, **ledger index**, and `tesSUCCESS` or `tec` code. Hashes are never invented. If Testnet is down, the helper throws `BLOCKED:` plus the exact RPC/HTTP error.
 
-Guest seeds live in server memory (and optionally `.env`). They are never sent to other clients and never committed.
+Guest / issuer / treasury seeds live in server memory (and `.env`). They are never sent to other clients and never committed.
 
-## Throwaway issuer
-
-If no issuer exists yet:
+## Durable issuer + treasury
 
 ```bash
 pnpm --filter @hhc/xrpl create-issuer
 ```
 
-This faucets a throwaway Testnet account, sets DefaultRipple, prints the r-address, and stores the seed in `.env` only. **Phase 4 owns the durable issuer and CRUMB treasury issuance.**
+Creates a **new** Testnet issuer (faucet), enables DefaultRipple, faucets a treasury account, TrustSets CRUMB on the treasury, and issues treasury stock (issuer → treasury Payment). Prints r-addresses and hashes only.
+
+Phase 3 throwaway issuer `rDQ8Wdf5511AGtZmv6njtt5xh9af5LAMcW` is TrustSet-demo only. Its seed lived on a destroyed cloud VM and is **not** reused.
+
+Then:
+
+```bash
+pnpm --filter server rehearse
+```
+
+Guest faucet + TrustSet toward the new issuer, a 4-seat HungryRoom (1 human bound address + 3 AI), then `settleMatch` CRUMB Payment(s).
 
 ## What XRPL is for
 
 - **Identity** — classic `r…` addresses bound to seats.
-- **Assets (Phase 3)** — CRUMB TrustLines toward the issuer.
-- **Assets (Phase 4)** — CRUMB issued IOU / XLS-20 pellet representations.
-- **Receipts / settlement (Phase 4)** — Payment-first. Not this phase.
+- **Assets** — CRUMB TrustLines toward the issuer; treasury stock issued as IOUs.
+- **Receipts / settlement** — Payment-first CRUMB from treasury to bound TrustLined addresses after match end.
 
 ## What XRPL is not for (v1)
 
@@ -65,23 +72,29 @@ This faucets a throwaway Testnet account, sets DefaultRipple, prints the r-addre
 
 Shared `Address` is `` `r${string}` `` — classic XRPL accounts only.
 
-## Phase 3 Testnet log
-
-Real hashes from `pnpm --filter @hhc/xrpl live` against `wss://s.altnet.rippletest.net:51233`. Never invented.
-
-Throwaway issuer: `rDQ8Wdf5511AGtZmv6njtt5xh9af5LAMcW`  
-Guest: `r4McfvYaDywCH4157ZXTD2DFJZd6p1hVaq`
-
-| What | Hash | Ledger | Result |
-| ---- | ---- | ------ | ------ |
-| Issuer faucet | `6A6327085E90F90E40C4750ABA21482F5B144999918B1FBB2AAD6C4AB5ACD0C4` | — | tesSUCCESS |
-| AccountSet DefaultRipple | `49D31329D39F8CBB760CD69DC1EDF7CBC60EFB7F2794AE41811C6A3E80E61608` | 20291720 | tesSUCCESS |
-| Guest faucet | `4A3E9C804EEAD464724EFCA218C3EC081F3F35943720D8C83ECAEA30264D94BA` | — | tesSUCCESS |
-| Guest faucet (lobby) | `11D7626BF19C68DC6EE13F29F75D2713E7181A68254B3AAB41256D6E6359FD13` | — | tesSUCCESS |
-| TrustSet CRUMB | `37F37EECCA35F0F367720924228CB7FCC89F8AB21052E3CFE87786115FA31C66` | 20291738 | tesSUCCESS |
-
 ## Safety
 
 - Never commit seeds, secret keys, or family seeds.
 - Never spend real XRP from this repo.
 - Never invent Testnet transaction hashes in docs or UI.
+- Never Payment on every pellet eat.
+
+## Phase 4 Testnet log
+
+Real hashes from `pnpm --filter server rehearse` against `wss://s.altnet.rippletest.net:51233`. Never invented.
+
+Durable issuer: `rNRohSqpNF6RUgCdvtrXqao1hMRcjK2x5b`  
+Treasury: `rDYMbqXWZhNRccTbjcWMpHKmT2rUD5ks87`  
+Guest: `rpHembF8Y3odbbZ3ZQFMn2UoSDMtkc9VGm`
+
+| What | Hash | Ledger | Result |
+| ---- | ---- | ------ | ------ |
+| Issuer faucet | `C49A9724800E43A3C49A6AEBEE04A1F3CC0962ECAE9B4326794D3E42786205E9` | — | tesSUCCESS |
+| AccountSet DefaultRipple | `7F20CF1B18D749B08FFC67483B82F57501F337AA228A85C8A4841726CA7251B0` | 20292068 | tesSUCCESS |
+| Treasury faucet | `3B72C0D21E8EDE107961D1F23169BAF3E634F84025BDE86140A502525ECE659A` | — | tesSUCCESS |
+| TrustSet CRUMB treasury | `48F54CE18DD0ACBEB1D11095922E26A6C4E7845D8593F020C74D44906DBC7AF6` | 20292070 | tesSUCCESS |
+| Issue treasury CRUMB | `DBC605D5642B11E03C2FC1258C98DC275AA2A075798AEDD9B5DAD94B50DCE987` | 20292072 | tesSUCCESS |
+| Guest faucet | `32B1273BA9E4D21FED865DB8334475CDB0146D844CFF693714BF0EDB0D5F5AC0` | — | tesSUCCESS |
+| Guest TrustSet CRUMB | `C4F006F0DDFB91D453C18D4AF396F27D04FDF5298888938D1B49AF3083616766` | 20292089 | tesSUCCESS |
+| settleMatch CRUMB Payment | `C7EF6B98CB3C8981605EA980D8E9D85D5A7544B1173C040B2F8B18CF69120795` | 20292092 | tesSUCCESS |
+
