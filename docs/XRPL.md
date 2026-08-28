@@ -2,7 +2,7 @@
 
 Hungry Hungry Crypto is **hybrid**. The arena is not a smart contract. The ledger never simulates CHOMP.
 
-## Phase 0
+## Phase 1
 
 **Zero XRPL transactions.** No `xrpl.js` submits, no Payments, no TrustSet, no NFTokenMint, no escrow. `packages/xrpl` is a Testnet-config stub. `MatchResult.txHashes` is always empty.
 

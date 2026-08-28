@@ -52,6 +52,16 @@ export const NECK_BASE = 0.95
 
 export const NECK_EXTRA = 4.85
 
+export const DUMP_SECONDS = 1.15
+
+export const EAT_DUMP_THRESHOLD = 0.38
+
+export const NECK_EXTEND_SPEED = 16
+
+export const NECK_RETRACT_SPEED = 7
+
+export const CHOMP_PULSE_MS = 240
+
 export type Cardinal = 'north' | 'east' | 'south' | 'west'
 
 export interface BeastSpec {
@@ -79,6 +89,10 @@ export function emptyNecks(): Record<Seat, number> {
 
 export function emptyChomp(): Record<Seat, boolean> {
   return { 0: false, 1: false, 2: false, 3: false }
+}
+
+export function emptyPulse(): Record<Seat, number> {
+  return { 0: 0, 1: 0, 2: 0, 3: 0 }
 }
 
 export function pelletValue(pellet: Pellet): number {
@@ -145,5 +159,66 @@ export function pelletInChompZone(pellet: Pellet, seat: Seat, extend: number): b
       return Math.abs(pellet.x) <= w && pellet.z <= origin && pellet.z >= origin - reach
     case 3:
       return Math.abs(pellet.z) <= w && pellet.x >= -origin && pellet.x <= -origin + reach
+  }
+}
+
+export function stepNeckExtend(
+  current: Record<Seat, number>,
+  chompDown: Record<Seat, boolean>,
+  chompPulseUntil: Record<Seat, number>,
+  now: number,
+  dt: number,
+): Record<Seat, number> {
+  const neckExtend = { ...current }
+  for (const seat of SEATS) {
+    const biting = chompDown[seat] || now < chompPulseUntil[seat]
+    const target = biting ? 1 : 0
+    const speed = biting ? NECK_EXTEND_SPEED : NECK_RETRACT_SPEED
+    const cur = neckExtend[seat]
+    const next = cur + Math.sign(target - cur) * Math.min(Math.abs(target - cur), dt * speed)
+    neckExtend[seat] = Math.max(0, Math.min(1, next))
+  }
+  return neckExtend
+}
+
+export function collectEats(
+  pellets: Pellet[],
+  neckExtend: Record<Seat, number>,
+  dumpT: number,
+): { id: string; seat: Seat }[] {
+  if (dumpT <= EAT_DUMP_THRESHOLD) return []
+  const hits: { id: string; seat: Seat }[] = []
+  const claimed = new Set<string>()
+  for (const seat of SEATS) {
+    const extend = neckExtend[seat]
+    for (const pellet of pellets) {
+      if (pellet.eatenBy !== undefined || claimed.has(pellet.id)) continue
+      if (!pelletInChompZone(pellet, seat, extend)) continue
+      claimed.add(pellet.id)
+      hits.push({ id: pellet.id, seat })
+    }
+  }
+  return hits
+}
+
+export function applyChompInput(
+  chompDown: Record<Seat, boolean>,
+  chompPulseUntil: Record<Seat, number>,
+  input: ChompInput,
+  pulseNow: number,
+): { chompDown: Record<Seat, boolean>; chompPulseUntil: Record<Seat, number>; started: boolean } | null {
+  if (input.down) {
+    if (chompDown[input.seat]) return null
+    return {
+      chompDown: { ...chompDown, [input.seat]: true },
+      chompPulseUntil: { ...chompPulseUntil, [input.seat]: 0 },
+      started: true,
+    }
+  }
+  if (!chompDown[input.seat]) return null
+  return {
+    chompDown: { ...chompDown, [input.seat]: false },
+    chompPulseUntil: { ...chompPulseUntil, [input.seat]: pulseNow + CHOMP_PULSE_MS },
+    started: false,
   }
 }

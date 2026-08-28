@@ -1,16 +1,18 @@
 import { create } from 'zustand'
 import type { ChompInput, MatchResult, Pellet, Seat } from '@hhc/shared'
 import {
-  HUMAN_SEAT,
+  DUMP_SECONDS,
   ROUND_SECONDS,
-  SEATS,
   allPelletsEaten,
+  applyChompInput,
+  collectEats,
   emptyChomp,
   emptyNecks,
+  emptyPulse,
   emptyScores,
-  pelletInChompZone,
   pelletValue,
   pickWinner,
+  stepNeckExtend,
 } from '@hhc/shared'
 import { sfxChomp, sfxEat, sfxEnd } from '../game/sfx'
 import { spawnPellets } from '../game/spawn'
@@ -24,13 +26,13 @@ interface GameState {
   scores: Record<Seat, number>
   neckExtend: Record<Seat, number>
   chompDown: Record<Seat, boolean>
-  chompPulseUntil: number
+  chompPulseUntil: Record<Seat, number>
   dumpT: number
   timeLeft: number
   result: MatchResult | null
   setChomp: (input: ChompInput) => void
   startPractice: () => void
-  tick: (dt: number) => void
+  tick: (dt: number, now?: number) => void
   backToLobby: () => void
 }
 
@@ -58,26 +60,21 @@ export const useGameStore = create<GameState>((set, get) => ({
   scores: emptyScores(),
   neckExtend: emptyNecks(),
   chompDown: emptyChomp(),
-  chompPulseUntil: 0,
+  chompPulseUntil: emptyPulse(),
   dumpT: 0,
   timeLeft: ROUND_SECONDS,
   result: null,
 
   setChomp: (input) => {
     const { ui } = get()
-    if (ui !== 'playing' || input.seat !== HUMAN_SEAT) return
+    if (ui !== 'playing') return
     set((s) => {
-      if (input.down) {
-        if (s.chompDown[input.seat]) return s
-        sfxChomp()
-        return {
-          chompDown: { ...s.chompDown, [input.seat]: true },
-          chompPulseUntil: 0,
-        }
-      }
+      const applied = applyChompInput(s.chompDown, s.chompPulseUntil, input, input.clientTime)
+      if (!applied) return s
+      if (applied.started) sfxChomp()
       return {
-        chompDown: { ...s.chompDown, [input.seat]: false },
-        chompPulseUntil: performance.now() + 240,
+        chompDown: applied.chompDown,
+        chompPulseUntil: applied.chompPulseUntil,
       }
     })
   },
@@ -90,52 +87,33 @@ export const useGameStore = create<GameState>((set, get) => ({
       scores: emptyScores(),
       neckExtend: emptyNecks(),
       chompDown: emptyChomp(),
-      chompPulseUntil: 0,
+      chompPulseUntil: emptyPulse(),
       dumpT: 0,
       timeLeft: ROUND_SECONDS,
       result: null,
     })
   },
 
-  tick: (dt) => {
+  tick: (dt, now = performance.now()) => {
     const state = get()
     if (state.ui !== 'playing') return
 
-    const dumpT = Math.min(1, state.dumpT + dt / 1.15)
+    const dumpT = Math.min(1, state.dumpT + dt / DUMP_SECONDS)
     const timeLeft = Math.max(0, state.timeLeft - dt)
-    const pulsing = performance.now() < state.chompPulseUntil
-    const neckExtend = { ...state.neckExtend }
-    for (const seat of SEATS) {
-      const biting = state.chompDown[seat] || (seat === HUMAN_SEAT && pulsing)
-      const target = biting ? 1 : 0
-      const speed = biting ? 16 : 7
-      const cur = neckExtend[seat]
-      const next = cur + Math.sign(target - cur) * Math.min(Math.abs(target - cur), dt * speed)
-      neckExtend[seat] = Math.max(0, Math.min(1, next))
-    }
+    const neckExtend = stepNeckExtend(state.neckExtend, state.chompDown, state.chompPulseUntil, now, dt)
 
     let pellets = state.pellets
     let scores = state.scores
-    let ate = false
-
-    if (dumpT > 0.38) {
-      for (const seat of SEATS) {
-        const extend = neckExtend[seat]
-        if (extend < 0.18) continue
-        for (const pellet of pellets) {
-          if (pellet.eatenBy !== undefined) continue
-          if (!pelletInChompZone(pellet, seat, extend)) continue
-          if (!ate) {
-            pellets = pellets.map((p) => ({ ...p }))
-            scores = { ...scores }
-            ate = true
-          }
-          const live = pellets.find((p) => p.id === pellet.id)
-          if (!live || live.eatenBy !== undefined) continue
-          live.eatenBy = seat
-          scores[seat] += pelletValue(live)
-          sfxEat(live.golden)
-        }
+    const hits = collectEats(pellets, neckExtend, dumpT)
+    if (hits.length > 0) {
+      pellets = pellets.map((p) => ({ ...p }))
+      scores = { ...scores }
+      for (const hit of hits) {
+        const live = pellets.find((p) => p.id === hit.id)
+        if (!live || live.eatenBy !== undefined) continue
+        live.eatenBy = hit.seat
+        scores[hit.seat] += pelletValue(live)
+        sfxEat(live.golden)
       }
     }
 
@@ -152,7 +130,7 @@ export const useGameStore = create<GameState>((set, get) => ({
       pellets: [],
       result: null,
       chompDown: emptyChomp(),
-      chompPulseUntil: 0,
+      chompPulseUntil: emptyPulse(),
       neckExtend: emptyNecks(),
     })
   },

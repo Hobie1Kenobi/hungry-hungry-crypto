@@ -30,14 +30,24 @@ function place(placed: Pellet[], x0: number, x1: number, z0: number, z1: number,
 export function spawnPellets(): Pellet[] {
   const inner = POND_HALF * 0.82
   const pellets: Pellet[] = []
-  const laneCount = 8
+  const perLane = 4
+  const lanes: Array<[number, number, number, number]> = [
+    [-1.05, 1.05, -3.05, -0.45],
+    [0.45, 3.05, -1.05, 1.05],
+    [-1.05, 1.05, 0.45, 3.05],
+    [-3.05, -0.45, -1.05, 1.05],
+  ]
 
-  for (let i = 0; i < laneCount; i += 1) {
-    const { x, z } = place(pellets, -1.05, 1.05, -3.05, 0.55, 0.5)
-    pellets.push({ id: `crumb-${i}`, x, z, golden: false })
+  let i = 0
+  for (const [x0, x1, z0, z1] of lanes) {
+    for (let n = 0; n < perLane; n += 1) {
+      const { x, z } = place(pellets, x0, x1, z0, z1, 0.5)
+      pellets.push({ id: `crumb-${i}`, x, z, golden: false })
+      i += 1
+    }
   }
 
-  for (let i = laneCount; i < NORMAL_PELLET_COUNT; i += 1) {
+  for (; i < NORMAL_PELLET_COUNT; i += 1) {
     const { x, z } = place(pellets, -inner, inner, -inner, inner, 0.55)
     pellets.push({ id: `crumb-${i}`, x, z, golden: false })
   }
@@ -45,8 +55,8 @@ export function spawnPellets(): Pellet[] {
   for (let g = 0; g < GOLDEN_PELLET_COUNT; g += 1) {
     pellets.push({
       id: `crumb-golden-${g}`,
-      x: rand(-0.35, 0.35),
-      z: rand(-0.85, -0.15),
+      x: rand(-0.4, 0.4),
+      z: rand(-0.4, 0.4),
       golden: true,
     })
   }

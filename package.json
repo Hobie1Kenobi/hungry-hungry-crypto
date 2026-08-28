@@ -11,6 +11,7 @@
   "scripts": {
     "dev": "pnpm --filter web dev",
     "build": "pnpm --filter web build",
+    "test": "pnpm --filter @hhc/ai test",
     "typecheck": "pnpm --filter web typecheck"
   }
 }

@@ -17,7 +17,7 @@ They are not hippopotamuses and must not be modeled, named, or marketed as such.
 
 ## Tokens and Testnet
 
-CRUMB (future issued token on XRPL Testnet) **has no value**. Testnet XRP has no value. Nothing in this project is an offer of securities. Phase 0 creates no on-ledger balances.
+CRUMB (future issued token on XRPL Testnet) **has no value**. Testnet XRP has no value. Nothing in this project is an offer of securities. Phase 1 creates no on-ledger balances.
 
 ## License
 
