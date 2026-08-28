@@ -20,6 +20,7 @@ import {
   applyChompInput,
   clampClientTime,
   emptyChomp,
+  emptyLastEat,
   emptyNecks,
   emptyPulse,
   emptyScores,
@@ -235,6 +236,9 @@ export class HungryRoom extends Room<HungryState> {
       neckExtend: emptyNecks(),
       chompDown: emptyChomp(),
       chompPulseUntil: emptyPulse(),
+      lastEatAt: emptyLastEat(),
+      refillCount: 0,
+      lastRefillAt: 0,
       dumpT: 0,
       timeLeft: this.roundSeconds,
     }

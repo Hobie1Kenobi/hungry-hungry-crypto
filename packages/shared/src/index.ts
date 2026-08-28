@@ -66,6 +66,16 @@ export const NECK_RETRACT_SPEED = 3.4
 
 export const CHOMP_PULSE_MS = 180
 
+export const CHOMP_EAT_COOLDOWN_MS = 540
+
+export const POND_REFILL_LIVE = 6
+
+export const POND_REFILL_MAX = 2
+
+export const POND_REFILL_MIN_TIME_LEFT = 7
+
+export const POND_REFILL_GAP_MS = 7500
+
 export type Cardinal = 'north' | 'east' | 'south' | 'west'
 
 export interface BeastSpec {
@@ -96,6 +106,10 @@ export function emptyChomp(): Record<Seat, boolean> {
 }
 
 export function emptyPulse(): Record<Seat, number> {
+  return { 0: 0, 1: 0, 2: 0, 3: 0 }
+}
+
+export function emptyLastEat(): Record<Seat, number> {
   return { 0: 0, 1: 0, 2: 0, 3: 0 }
 }
 
@@ -208,17 +222,21 @@ export function collectEats(
   pellets: Pellet[],
   neckExtend: Record<Seat, number>,
   dumpT: number,
+  lastEatAt?: Record<Seat, number>,
+  now = 0,
 ): { id: string; seat: Seat }[] {
   if (dumpT <= EAT_DUMP_THRESHOLD) return []
   const hits: { id: string; seat: Seat }[] = []
   const claimed = new Set<string>()
   for (const seat of SEATS) {
+    if (lastEatAt && now - lastEatAt[seat] < CHOMP_EAT_COOLDOWN_MS) continue
     const extend = neckExtend[seat]
     for (const pellet of pellets) {
       if (pellet.eatenBy !== undefined || claimed.has(pellet.id)) continue
       if (!pelletInChompZone(pellet, seat, extend)) continue
       claimed.add(pellet.id)
       hits.push({ id: pellet.id, seat })
+      break
     }
   }
   return hits
@@ -282,6 +300,9 @@ export interface ArenaSnapshot {
   chompPulseUntil: Record<Seat, number>
   dumpT: number
   timeLeft: number
+  lastEatAt: Record<Seat, number>
+  refillCount: number
+  lastRefillAt: number
 }
 
 export interface StepResult {
@@ -360,7 +381,23 @@ function spawnRand(rng: () => number, min: number, max: number): number {
   return min + rng() * (max - min)
 }
 
-export function spawnPellets(rng: () => number = Math.random): Pellet[] {
+export function livePelletCount(pellets: readonly Pellet[]): number {
+  let n = 0
+  for (const pellet of pellets) {
+    if (pellet.eatenBy === undefined) n += 1
+  }
+  return n
+}
+
+function waveRng(seed: number): () => number {
+  let s = (seed >>> 0) || 1
+  return () => {
+    s = (Math.imul(s, 1664525) + 1013904223) >>> 0
+    return s / 4294967296
+  }
+}
+
+export function spawnPellets(rng: () => number = Math.random, idPrefix = ''): Pellet[] {
   const pellets: Pellet[] = []
   const jitter = (n: number) => (rng() - 0.5) * n
   const laneSpots: Array<Array<[number, number]>> = [
@@ -394,7 +431,7 @@ export function spawnPellets(rng: () => number = Math.random): Pellet[] {
   for (const spots of laneSpots) {
     for (const [cx, cz] of spots) {
       pellets.push({
-        id: `crumb-${i}`,
+        id: `${idPrefix}crumb-${i}`,
         x: cx + jitter(0.16),
         z: cz + jitter(0.16),
         golden: false,
@@ -412,7 +449,7 @@ export function spawnPellets(rng: () => number = Math.random): Pellet[] {
   for (const [cx, cz] of scatter) {
     if (i >= NORMAL_PELLET_COUNT) break
     pellets.push({
-      id: `crumb-${i}`,
+      id: `${idPrefix}crumb-${i}`,
       x: cx + jitter(0.1),
       z: cz + jitter(0.1),
       golden: false,
@@ -422,7 +459,7 @@ export function spawnPellets(rng: () => number = Math.random): Pellet[] {
 
   for (let g = 0; g < GOLDEN_PELLET_COUNT; g += 1) {
     pellets.push({
-      id: `crumb-golden-${g}`,
+      id: `${idPrefix}crumb-golden-${g}`,
       x: spawnRand(rng, -0.18, 0.18),
       z: spawnRand(rng, -0.18, 0.18),
       golden: true,
@@ -446,7 +483,8 @@ export function stepArena(state: ArenaSnapshot, dt: number, now: number): StepRe
 
   let pellets = state.pellets
   let scores = state.scores
-  const hits = collectEats(pellets, neckExtend, dumpT)
+  const lastEatAt = { ...(state.lastEatAt ?? emptyLastEat()) }
+  const hits = collectEats(pellets, neckExtend, dumpT, lastEatAt, now)
   if (hits.length > 0) {
     pellets = pellets.map((p) => ({ ...p }))
     scores = { ...scores }
@@ -455,7 +493,24 @@ export function stepArena(state: ArenaSnapshot, dt: number, now: number): StepRe
       if (!live || live.eatenBy !== undefined) continue
       live.eatenBy = hit.seat
       scores[hit.seat] += pelletValue(live)
+      lastEatAt[hit.seat] = now
     }
+  }
+
+  let refillCount = state.refillCount ?? 0
+  let lastRefillAt = state.lastRefillAt ?? 0
+  const live = livePelletCount(pellets)
+  const canRefill =
+    dumpT >= 1 &&
+    live <= POND_REFILL_LIVE &&
+    refillCount < POND_REFILL_MAX &&
+    timeLeft > POND_REFILL_MIN_TIME_LEFT &&
+    now - lastRefillAt >= POND_REFILL_GAP_MS
+  if (canRefill) {
+    refillCount += 1
+    lastRefillAt = now
+    const wave = spawnPellets(waveRng(refillCount * 997 + Math.floor(now) + 13), `w${refillCount}-`)
+    pellets = pellets.concat(wave)
   }
 
   const snapshot: ArenaSnapshot = {
@@ -466,10 +521,13 @@ export function stepArena(state: ArenaSnapshot, dt: number, now: number): StepRe
     chompPulseUntil: state.chompPulseUntil,
     dumpT,
     timeLeft,
+    lastEatAt,
+    refillCount,
+    lastRefillAt,
   }
   return {
     snapshot,
     hits,
-    ended: timeLeft <= 0 || allPelletsEaten(pellets),
+    ended: timeLeft <= 0 || (allPelletsEaten(pellets) && refillCount >= POND_REFILL_MAX),
   }
 }

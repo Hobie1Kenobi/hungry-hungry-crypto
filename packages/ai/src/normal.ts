@@ -2,8 +2,8 @@ import type { Seat } from '@hhc/shared'
 import { nearestPelletToMouth } from './mouth'
 import type { AiPolicy, ArenaView, PolicyOptions } from './types'
 
-const HOLD_MS = 170
-const COOLDOWN_MS = 320
+const HOLD_MS = 210
+const COOLDOWN_MS = 860
 const WINDUP_DUMP = 0.7
 
 export function createNormalPolicy(seat: Seat, _options: PolicyOptions = {}): AiPolicy {
@@ -17,14 +17,13 @@ export function createNormalPolicy(seat: Seat, _options: PolicyOptions = {}): Ai
     tick(world: ArenaView) {
       const target = nearestPelletToMouth(world.pellets, seat)
       const canWindup = world.dumpT >= WINDUP_DUMP
-      let want = false
+      let want = down
 
-      if (world.now < coolUntil && !down) {
-        want = false
-      } else if (down && world.now < holdUntil) {
-        const stillThere = target !== undefined
-        want = stillThere
-      } else if (target && canWindup) {
+      if (down) {
+        const gone = target === undefined
+        const timedOut = world.now >= holdUntil
+        want = !gone && !timedOut
+      } else if (world.now >= coolUntil && target && canWindup) {
         want = true
       }
 

@@ -10,7 +10,7 @@ Phase 1 replaces idle dummies with live Easy / Normal / Hungry opponents. Phase 
 | ----------- | ------------- |
 | **Easy** | Reaction delay + random mash |
 | **Normal** | Pellet nearest its own mouth + cooldown |
-| **Hungry** | Waits for chips to land, then nibbles the nearest lane chip through the same `ChompInput` path |
+| **Hungry** | Waits for chips to land, then nibbles toward GOLDEN with cooldown — same `ChompInput` path, cannot vacuum a lane |
 
 Idle remains available for tests and empty-seat fallbacks.
 

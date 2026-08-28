@@ -4,6 +4,7 @@ import {
   ROUND_SECONDS,
   applyChompInput,
   emptyChomp,
+  emptyLastEat,
   emptyNecks,
   emptyPulse,
   emptyScores,
@@ -48,6 +49,9 @@ interface GameState {
   chompPulseUntil: Record<Seat, number>
   dumpT: number
   timeLeft: number
+  lastEatAt: Record<Seat, number>
+  refillCount: number
+  lastRefillAt: number
   result: MatchResult | null
   netSend: ((input: ChompInput) => void) | null
   netLeave: (() => void) | null
@@ -97,6 +101,9 @@ export const useGameStore = create<GameState>((set, get) => ({
   chompPulseUntil: emptyPulse(),
   dumpT: 0,
   timeLeft: ROUND_SECONDS,
+  lastEatAt: emptyLastEat(),
+  refillCount: 0,
+  lastRefillAt: 0,
   result: null,
   netSend: null,
   netLeave: null,
@@ -137,6 +144,9 @@ export const useGameStore = create<GameState>((set, get) => ({
       chompPulseUntil: emptyPulse(),
       dumpT: 0,
       timeLeft: ROUND_SECONDS,
+      lastEatAt: emptyLastEat(),
+      refillCount: 0,
+      lastRefillAt: 0,
       result: null,
       netSend: null,
       netLeave: null,
@@ -161,6 +171,9 @@ export const useGameStore = create<GameState>((set, get) => ({
         chompPulseUntil: state.chompPulseUntil,
         dumpT: state.dumpT,
         timeLeft: state.timeLeft,
+        lastEatAt: state.lastEatAt,
+        refillCount: state.refillCount,
+        lastRefillAt: state.lastRefillAt,
       },
       dt,
       now,
@@ -245,6 +258,9 @@ export const useGameStore = create<GameState>((set, get) => ({
       chompPulseUntil: emptyPulse(),
       dumpT: 0,
       timeLeft: ROUND_SECONDS,
+      lastEatAt: emptyLastEat(),
+      refillCount: 0,
+      lastRefillAt: 0,
       result: null,
     })
   },

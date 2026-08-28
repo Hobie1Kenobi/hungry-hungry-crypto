@@ -3,10 +3,10 @@ import type { Seat } from '@hhc/shared'
 import { BEASTS, beastPosition, beastYaw, chompReach } from '@hhc/shared'
 import { useGameStore } from '../store/gameStore'
 
-function Jaws({ open, color, accent }: { open: number; color: string; accent: string }) {
+function Jaws({ open, color, accent, scale = 1 }: { open: number; color: string; accent: string; scale?: number }) {
   const angle = open * 0.55
   return (
-    <group>
+    <group scale={scale}>
       <group rotation={[angle, 0, 0]} position={[0, 0.12, 0.02]}>
         <mesh castShadow>
           <boxGeometry args={[1.22, 0.16, 0.78]} />
@@ -47,6 +47,12 @@ export function Beast({ seat }: { seat: Seat }) {
   const yaw = beastYaw(seat)
   const neckLen = chompReach(extend)
   const squat = 1 - extend * 0.08
+  const fromBehind = seat === 0
+  const pitch = fromBehind ? 0.22 : 0.05
+  const lift = fromBehind ? 1.16 : 0.62
+  const side = fromBehind ? 0.34 : 0
+  const neckW = fromBehind ? 0.64 : 0.42
+  const neckH = fromBehind ? 0.46 : 0.3
 
   return (
     <group position={[x, y, z]} rotation={[0, yaw, 0]}>
@@ -92,13 +98,19 @@ export function Beast({ seat }: { seat: Seat }) {
           <meshStandardMaterial color={spec.accent} />
         </mesh>
       </group>
-      <group position={[0, 0.62, 0.42]}>
+      <group position={[side, lift, 0.28]} rotation={[pitch, 0, 0]}>
         <mesh position={[0, 0, neckLen / 2]} castShadow>
-          <boxGeometry args={[0.42, 0.3, neckLen]} />
-          <meshStandardMaterial color={spec.color} metalness={0.4} roughness={0.32} />
+          <boxGeometry args={[neckW, neckH, neckLen]} />
+          <meshStandardMaterial
+            color={spec.color}
+            metalness={0.4}
+            roughness={0.32}
+            emissive={spec.color}
+            emissiveIntensity={fromBehind ? 0.55 + extend * 0.7 : 0.12}
+          />
         </mesh>
         <group position={[0, 0, neckLen]}>
-          <Jaws open={extend} color={spec.color} accent={spec.accent} />
+          <Jaws open={extend} color={spec.color} accent={spec.accent} scale={fromBehind ? 1.18 : 1} />
         </group>
       </group>
       <Billboard position={[0, 1.72, 0]}>
