@@ -6,7 +6,7 @@ import { startServer } from './app'
 import { getSettlement, resetSettlementsForTests } from './settle/settleMatch'
 import { resetCodesForTests } from './rooms/codes'
 
-function onceMessage<T>(room: { onMessage: (type: string, cb: (payload: T) => void) => void }, type: string, ms = 8000): Promise<T> {
+function onceMessage<T>(room: { onMessage: (type: string, cb: (payload: T) => void) => void }, type: string, ms = 20_000): Promise<T> {
   return new Promise((resolve, reject) => {
     const t = setTimeout(() => reject(new Error(`timed out waiting for ${type}`)), ms)
     room.onMessage(type, (payload) => {
@@ -25,8 +25,8 @@ async function main(): Promise<void> {
 
   try {
     const health = await fetch(`http://127.0.0.1:${started.port}/health`)
-    const healthBody = (await health.json()) as { ok: boolean; room: string; xrplWrites: boolean }
-    if (!healthBody.ok || healthBody.room !== ROOM_NAME || healthBody.xrplWrites !== false) {
+    const healthBody = (await health.json()) as { ok: boolean; room: string; phase: number; xrplWrites: boolean }
+    if (!healthBody.ok || healthBody.room !== ROOM_NAME || healthBody.phase !== 4 || healthBody.xrplWrites !== true) {
       throw new Error(`health check failed: ${JSON.stringify(healthBody)}`)
     }
     const cfg = await fetch(`http://127.0.0.1:${started.port}/xrpl/config`)
@@ -60,11 +60,11 @@ async function main(): Promise<void> {
     }>(room, 'matchEnd')
     if (result.matchId !== start.matchId) throw new Error('matchId mismatch')
     if (!Array.isArray(result.txHashes) || result.txHashes.length !== 0) {
-      throw new Error(`txHashes must be [], got ${JSON.stringify(result.txHashes)}`)
+      throw new Error(`unbound match must not submit Payments, txHashes=${JSON.stringify(result.txHashes)}`)
     }
     const recorded = getSettlement(result.matchId)
     if (!recorded || recorded.xrplSubmitted !== false || recorded.txHashes.length !== 0) {
-      throw new Error(`settleMatch stub failed: ${JSON.stringify(recorded)}`)
+      throw new Error(`settleMatch unbound match should not submit: ${JSON.stringify(recorded)}`)
     }
     if (recorded.addresses[0] !== null || recorded.seatMap.length !== 4) {
       throw new Error('settleMatch must record 4 address slots and seat map')
@@ -106,7 +106,7 @@ async function main(): Promise<void> {
     }
     identified.leave()
 
-    console.info('[smoke] ok — 1 human + 3 AI round, private room code, r-address seat bind, no settlement writes')
+    console.info('[smoke] ok — 1 human + 3 AI round, private room code, r-address seat bind, unbound match has no Payments')
   } finally {
     await started.shutdown()
   }

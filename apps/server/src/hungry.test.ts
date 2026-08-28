@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { clampClientTime, planSeats } from '@hhc/shared'
 import { generateCode, lookupRoomId, normalizeCode, registerRoomCode, resetCodesForTests, unregisterRoom } from './rooms/codes'
-import { resetSettlementsForTests, settleMatch } from './settle/settleMatch'
+import { crumbAmountForScore, planPayouts, resetSettlementsForTests, settleMatch } from './settle/settleMatch'
 
 describe('4-seat fill', () => {
   it('fills empty seats with AI after humans take seats first', () => {
@@ -30,10 +30,10 @@ describe('desync tolerance', () => {
   })
 })
 
-describe('settleMatch stub', () => {
-  it('records matchId, four address slots, and seat map without XRPL submits', () => {
+describe('settleMatch', () => {
+  it('records matchId, four address slots, and seat map without XRPL submits', async () => {
     resetSettlementsForTests()
-    const record = settleMatch(
+    const record = await settleMatch(
       {
         matchId: 'hhc-test',
         scores: { 0: 3, 1: 1, 2: 2, 3: 8 },
@@ -50,9 +50,9 @@ describe('settleMatch stub', () => {
     expect(record.txHashes).toEqual([])
   })
 
-  it('records a bound classic address without submitting XRPL settlement', () => {
+  it('records a bound classic address without submitting XRPL when live settlement is off', async () => {
     resetSettlementsForTests()
-    const record = settleMatch(
+    const record = await settleMatch(
       {
         matchId: 'hhc-bound',
         scores: { 0: 1, 1: 0, 2: 0, 3: 0 },
@@ -66,6 +66,19 @@ describe('settleMatch stub', () => {
     expect(record.addresses[1]).toBeNull()
     expect(record.xrplSubmitted).toBe(false)
     expect(record.txHashes).toEqual([])
+  })
+
+  it('plans CRUMB payouts for bound r-addresses and skips AI seats with no address', () => {
+    const planned = planPayouts({
+      matchId: 'hhc-plan',
+      scores: { 0: 4, 1: 0, 2: 2, 3: 9 },
+      addresses: { 0: 'rPT1Sjq2YGrBMTttX4GZHjKu9dyfzbpAWe' },
+      winner: 3,
+      txHashes: [],
+    })
+    expect(planned).toEqual([{ seat: 0, dest: 'rPT1Sjq2YGrBMTttX4GZHjKu9dyfzbpAWe', amount: '5' }])
+    expect(crumbAmountForScore(0)).toBe('1')
+    expect(crumbAmountForScore(8)).toBe('9')
   })
 })
 

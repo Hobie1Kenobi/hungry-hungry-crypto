@@ -11,6 +11,7 @@ describe('XRPL Testnet config', () => {
     expect(cfg.explorerUrl).toBe('https://testnet.xrpl.org')
     expect(cfg.wsUrl.toLowerCase()).not.toContain('mainnet')
     expect(cfg.crumbName).toBe('CRUMB')
+    expect(cfg.treasury).toBeNull()
   })
 
   it('hex-encodes CRUMB because it is not a 3-character ISO code', () => {

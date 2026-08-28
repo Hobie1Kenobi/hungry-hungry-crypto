@@ -17,7 +17,7 @@ They are not hippopotamuses and must not be modeled, named, or marketed as such.
 
 ## Tokens and Testnet
 
-CRUMB (issued token on XRPL Testnet) **has no value**. Testnet XRP has no value. Nothing in this project is an offer of securities. Phase 3 TrustLines are identity plumbing only.
+CRUMB (issued token on XRPL Testnet) **has no value**. This is not money. Testnet XRP has no value. Nothing in this project is an offer of securities.
 
 ## License
 

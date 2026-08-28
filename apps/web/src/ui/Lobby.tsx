@@ -18,12 +18,12 @@ export function Lobby() {
   return (
     <div className="lobby">
       <div className="lobby-card">
-        <p className="kicker">HHC · Phase 3 · XRPL Testnet</p>
+        <p className="kicker">HHC · Phase 4 · XRPL Testnet</p>
         <h1>Hungry Hungry Crypto</h1>
         <p className="tag">
           Original 3D arcade. Four crypto mascots chomp liquidity chips on a square pond. Physics stays
           off-chain. The Colyseus room is authoritative for eats. Connect a Testnet wallet, set a CRUMB
-          TrustLine, and bind your r-address to a seat. Settlement Payments ship in Phase 4.
+          TrustLine, bind your r-address to a seat. After the round the server pays CRUMB from the treasury.
         </p>
         <div className="beast-row">
           {SEATS.map((seat) => {
@@ -82,7 +82,7 @@ export function Lobby() {
           </div>
         ) : null}
         <WalletPanel />
-        <p className="disclaimer">CRUMB on Testnet has no value. Guest seeds stay on the server. Phase 4 owns settlement.</p>
+        <p className="disclaimer">CRUMB on Testnet has no value. This is not money. Guest seeds stay on the server.</p>
       </div>
     </div>
   )
