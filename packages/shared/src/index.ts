@@ -48,7 +48,7 @@ export const BEAST_OFFSET = 5.2
 
 export const CHOMP_HALF_WIDTH = 1.55
 
-export const CHOMP_MOUTH_DEPTH = 1.28
+export const CHOMP_MOUTH_DEPTH = 1.9
 
 export const CHOMP_MOUTH_PAD = 0.28
 
@@ -66,7 +66,7 @@ export const NECK_RETRACT_SPEED = 3.4
 
 export const CHOMP_PULSE_MS = 280
 
-export const CHOMP_EAT_COOLDOWN_MS = 400
+export const CHOMP_EAT_COOLDOWN_MS = 640
 
 export const POND_REFILL_LIVE = 16
 
@@ -185,7 +185,7 @@ export function pelletInChompZone(pellet: Pellet, seat: Seat, extend: number): b
   const reach = chompReach(extend)
   const w = CHOMP_HALF_WIDTH
   const origin = BEAST_OFFSET - 0.35
-  const along0 = 0.32
+  const along0 = Math.max(0.4, reach - CHOMP_MOUTH_DEPTH)
   const along1 = reach + CHOMP_MOUTH_PAD
   switch (seat) {
     case 0:
