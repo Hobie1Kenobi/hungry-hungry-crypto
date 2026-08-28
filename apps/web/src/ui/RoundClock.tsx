@@ -33,12 +33,22 @@ export function RoundClock() {
       last = now
       const s = useGameStore.getState()
       if (s.playMode === 'practice') {
+        const origin = s.matchClockOrigin || now
         setChompRef.current({ seat: s.localSeat, down: s.chompHeld, clientTime: now })
-      }
-      const world = arenaView(now)
-      for (const policy of policiesRef.current) {
-        const input = policy.tick(world)
-        if (input) setChompRef.current(input)
+        const world = arenaView(now)
+        world.now = Math.max(0, now - origin)
+        for (const policy of policiesRef.current) {
+          const input = policy.tick(world)
+          if (input) {
+            setChompRef.current({ ...input, clientTime: now })
+          }
+        }
+      } else {
+        const world = arenaView(now)
+        for (const policy of policiesRef.current) {
+          const input = policy.tick(world)
+          if (input) setChompRef.current(input)
+        }
       }
       tickRef.current(dt, now)
       raf = requestAnimationFrame(loop)

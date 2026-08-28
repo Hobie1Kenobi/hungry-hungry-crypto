@@ -9,7 +9,7 @@ import {
 import { dist2, mouthPoint } from './mouth'
 import type { AiPolicy, ArenaView, PolicyOptions } from './types'
 
-const WINDUP_DUMP = 0.7
+const WINDUP_DUMP = 0.88
 const MIN_HOLD_MS = 220
 const MAX_HOLD_MS = 780
 const SEARCH_HOLD_MS = 400

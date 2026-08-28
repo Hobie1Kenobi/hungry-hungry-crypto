@@ -5,7 +5,7 @@ import type { AiPolicy, ArenaView, PolicyOptions } from './types'
 const HOLD_MS = 460
 const SEARCH_HOLD_MS = 340
 const COOLDOWN_MS = 480
-const WINDUP_DUMP = 0.7
+const WINDUP_DUMP = 0.88
 
 export function createNormalPolicy(seat: Seat, _options: PolicyOptions = {}): AiPolicy {
   let down = false

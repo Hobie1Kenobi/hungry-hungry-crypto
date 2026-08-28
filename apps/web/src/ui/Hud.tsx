@@ -89,7 +89,10 @@ export function Hud() {
   const dumpT = useGameStore((s) => s.dumpT)
   const localSeat = useGameStore((s) => s.localSeat)
   const playMode = useGameStore((s) => s.playMode)
+  const pellets = useGameStore((s) => s.pellets)
+  const refillCount = useGameStore((s) => s.refillCount)
   const you = BEASTS[localSeat]
+  const live = pellets.filter((p) => p.eatenBy === undefined).length
 
   return (
     <div className="overlay">
@@ -118,7 +121,7 @@ export function Hud() {
                 ? 'Hopper dumping chips — hold CHOMP, neck reaches in.'
                 : playMode === 'online'
                   ? `Server-authoritative. You are ${you.name} (seat ${localSeat}). Client predictions are cosmetic.`
-                  : `Board live. You are ${you.name}. Hold CHOMP to reach. RIPSAW Easy · GOLDGRUB Normal · BLOCKMAW Hungry.`}
+                  : `Board live · ${live} chips${refillCount ? ` · hopper x${refillCount}` : ''}. You are ${you.name}. Hold CHOMP to reach. RIPSAW Easy · GOLDGRUB Normal · BLOCKMAW Hungry.`}
             </div>
           </div>
           <button

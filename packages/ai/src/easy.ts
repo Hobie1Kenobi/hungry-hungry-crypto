@@ -8,7 +8,7 @@ export function createEasyPolicy(seat: Seat, options: PolicyOptions = {}): AiPol
   let armed = false
   let nextFlip = 0
   const reaction = mix(rng, 240, 520)
-  const landDump = 0.7
+  const landDump = 0.88
 
   return {
     seat,

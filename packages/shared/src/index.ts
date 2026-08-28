@@ -110,7 +110,7 @@ export function emptyPulse(): Record<Seat, number> {
 }
 
 export function emptyLastEat(): Record<Seat, number> {
-  return { 0: 0, 1: 0, 2: 0, 3: 0 }
+  return { 0: Number.NEGATIVE_INFINITY, 1: Number.NEGATIVE_INFINITY, 2: Number.NEGATIVE_INFINITY, 3: Number.NEGATIVE_INFINITY }
 }
 
 export function pelletValue(pellet: Pellet): number {
@@ -229,7 +229,10 @@ export function collectEats(
   const hits: { id: string; seat: Seat }[] = []
   const claimed = new Set<string>()
   for (const seat of SEATS) {
-    if (lastEatAt && now - lastEatAt[seat] < CHOMP_EAT_COOLDOWN_MS) continue
+    if (lastEatAt) {
+      const last = lastEatAt[seat]
+      if (Number.isFinite(last) && now - last < CHOMP_EAT_COOLDOWN_MS) continue
+    }
     const extend = neckExtend[seat]
     for (const pellet of pellets) {
       if (pellet.eatenBy !== undefined || claimed.has(pellet.id)) continue

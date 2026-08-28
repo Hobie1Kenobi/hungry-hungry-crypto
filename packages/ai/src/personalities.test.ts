@@ -74,7 +74,7 @@ describe('ChompInput schema', () => {
     const bot = createEasyPolicy(1, { rng: seededRng(7) })
     const seen: ChompInput[] = []
     for (let i = 0; i < 240; i += 1) {
-      const input = bot.tick(emptyView({ now: i * 16, dumpT: 0.75 }))
+      const input = bot.tick(emptyView({ now: i * 16, dumpT: 0.9 }))
       if (input) seen.push(input)
     }
     expect(seen.length).toBeGreaterThan(2)
@@ -165,7 +165,7 @@ describe('round outcomes', () => {
     const input = bot.tick(
       emptyView({
         now: 200,
-        dumpT: 0.75,
+        dumpT: 0.9,
         pellets: [far, near],
       }),
     )

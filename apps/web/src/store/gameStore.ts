@@ -53,6 +53,7 @@ interface GameState {
   refillCount: number
   lastRefillAt: number
   chompHeld: boolean
+  matchClockOrigin: number
   result: MatchResult | null
   netSend: ((input: ChompInput) => void) | null
   netLeave: (() => void) | null
@@ -107,6 +108,7 @@ export const useGameStore = create<GameState>((set, get) => ({
   refillCount: 0,
   lastRefillAt: 0,
   chompHeld: false,
+  matchClockOrigin: 0,
   result: null,
   netSend: null,
   netLeave: null,
@@ -115,10 +117,12 @@ export const useGameStore = create<GameState>((set, get) => ({
     const state = get()
     if (state.ui !== 'playing') return
     const seat = state.playMode === 'online' ? state.localSeat : input.seat
-    const next: ChompInput = { seat, down: input.down, clientTime: input.clientTime }
+    const origin = state.matchClockOrigin
+    const clientTime = origin > 0 ? Math.max(0, input.clientTime - origin) : input.clientTime
+    const next: ChompInput = { seat, down: input.down, clientTime }
     if (state.playMode === 'online') state.netSend?.(next)
     set((s) => {
-      const applied = applyChompInput(s.chompDown, s.chompPulseUntil, next, next.clientTime)
+      const applied = applyChompInput(s.chompDown, s.chompPulseUntil, next, clientTime)
       if (!applied) return s
       if (applied.started) sfxChomp()
       return {
@@ -158,6 +162,7 @@ export const useGameStore = create<GameState>((set, get) => ({
       refillCount: 0,
       lastRefillAt: 0,
       chompHeld: false,
+      matchClockOrigin: performance.now(),
       result: null,
       netSend: null,
       netLeave: null,
@@ -167,8 +172,10 @@ export const useGameStore = create<GameState>((set, get) => ({
   tick: (dt, now = performance.now()) => {
     const state = get()
     if (state.ui !== 'playing') return
+    const origin = state.matchClockOrigin
+    const clock = origin > 0 ? Math.max(0, now - origin) : now
     if (state.playMode === 'online') {
-      const neckExtend = stepNeckExtend(state.neckExtend, state.chompDown, state.chompPulseUntil, now, dt)
+      const neckExtend = stepNeckExtend(state.neckExtend, state.chompDown, state.chompPulseUntil, clock, dt)
       set({ neckExtend })
       return
     }
@@ -178,8 +185,8 @@ export const useGameStore = create<GameState>((set, get) => ({
     const held = applyChompInput(
       chompDown,
       chompPulseUntil,
-      { seat: state.localSeat, down: state.chompHeld, clientTime: now },
-      now,
+      { seat: state.localSeat, down: state.chompHeld, clientTime: clock },
+      clock,
     )
     if (held) {
       chompDown = held.chompDown
@@ -201,7 +208,7 @@ export const useGameStore = create<GameState>((set, get) => ({
         lastRefillAt: state.lastRefillAt,
       },
       dt,
-      now,
+      clock,
     )
     for (const hit of stepped.hits) {
       const pellet = stepped.snapshot.pellets.find((p) => p.id === hit.id)
@@ -288,6 +295,7 @@ export const useGameStore = create<GameState>((set, get) => ({
       refillCount: 0,
       lastRefillAt: 0,
       chompHeld: false,
+      matchClockOrigin: performance.now(),
       result: null,
     })
   },
