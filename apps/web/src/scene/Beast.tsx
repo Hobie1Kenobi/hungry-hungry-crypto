@@ -170,14 +170,15 @@ export function Beast({ seat }: { seat: Seat }) {
           </group>
         </group>
       </group>
-      <group ref={label} position={labelLocal(seat, you)}>
-        <Html center sprite occlude={false} zIndexRange={[8, 0]} style={{ pointerEvents: 'none' }}>
-          <div className={`beast-tag${you ? ' you' : ''}`} style={{ color: spec.color }}>
-            <strong>{spec.name}</strong>
-            {you ? <em>YOU</em> : null}
-          </div>
-        </Html>
-      </group>
+      {you ? null : (
+        <group ref={label} position={labelLocal(seat, you)}>
+          <Html center sprite occlude={false} zIndexRange={[8, 0]} style={{ pointerEvents: 'none' }}>
+            <div className="beast-tag" style={{ color: spec.color }}>
+              <strong>{spec.name}</strong>
+            </div>
+          </Html>
+        </group>
+      )}
     </group>
   )
 }
