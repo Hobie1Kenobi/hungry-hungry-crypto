@@ -1,11 +1,11 @@
 import { useFrame } from '@react-three/fiber'
 import { useRef } from 'react'
-import type { Group, Mesh, MeshStandardMaterial, PointLight } from 'three'
+import type { Group, Mesh, MeshBasicMaterial, PointLight } from 'three'
 import type { Seat } from '@hhc/shared'
 import { BEASTS, NECK_VISUAL_ORIGIN, beastYaw } from '@hhc/shared'
 import { useJuiceStore } from '../game/juice'
 import { useGameStore } from '../store/gameStore'
-import { Chassis, HeadDressing, MachineMouth, MachineNeck } from './beasts/kits'
+import { Chassis, HeadDressing, MachineMouth, MachineNeck, useVisorMaterial } from './beasts/kits'
 import { beastNeckLift, beastVisualRoot, visualLaneHeadAlong } from './beasts/vinyl'
 
 const RING_COUNT = 5
@@ -27,7 +27,8 @@ export function Beast({ seat }: { seat: Seat }) {
   const jaws = useRef<Group>(null)
   const antL = useRef<Group>(null)
   const antR = useRef<Group>(null)
-  const visorMat = useRef<MeshStandardMaterial>(null)
+  const visorMat = useRef<MeshBasicMaterial>(null)
+  const visor = useVisorMaterial(visorMat, seat === 3 ? spec.accent : spec.color)
   const mouthLight = useRef<PointLight>(null)
   const lastDown = useRef(false)
   const lastEat = useRef(0)
@@ -100,8 +101,9 @@ export function Beast({ seat }: { seat: Seat }) {
       head.current.rotation.x = 0.26 + visExt.current * 0.06 + squash.current * 0.1 + chewNod
     }
     if (visorMat.current) {
-      const blink = Math.sin(t * 7.5 + seat * 2.1) > 0.93 ? 0.18 : 1
-      visorMat.current.emissiveIntensity = (winner ? 4.4 : down ? 3.6 : 2.5) * blink
+      const blink = Math.sin(t * 7.5 + seat * 2.1) > 0.93 ? 0.45 : 1
+      const k = (winner ? 2.35 : down ? 2.05 : 1.85) * blink
+      visorMat.current.color.set(seat === 3 ? spec.accent : spec.color).multiplyScalar(k)
     }
     const headZ = visualLaneHeadAlong(visExt.current)
     const barrel = 0.4
@@ -142,12 +144,12 @@ export function Beast({ seat }: { seat: Seat }) {
       </mesh>
       <group ref={rig}>
         <group ref={body} position={[0, 0.02, seat === 2 ? 0.08 : -0.18]}>
-          <Chassis seat={seat} />
+          <Chassis seat={seat} visor={visor} />
         </group>
         <group ref={neck} position={[0, beastNeckLift(seat), NECK_VISUAL_ORIGIN]}>
           <MachineNeck seat={seat} pistonRef={piston} ringsRef={ringsRef} color={spec.color} />
           <group ref={head} position={[0, 0.04, 1]} scale={you ? 1.22 : 1.12}>
-            <HeadDressing seat={seat} visorRef={visorMat} antL={antL} antR={antR} />
+            <HeadDressing seat={seat} visor={visor} antL={antL} antR={antR} />
             <MachineMouth jawsRef={jaws} seat={seat} />
             <pointLight ref={mouthLight} position={[0, 0.04, 0.62]} color="#ff6a88" intensity={3.2} distance={2.8} />
           </group>

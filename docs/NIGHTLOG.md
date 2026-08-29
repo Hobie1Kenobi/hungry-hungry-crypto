@@ -748,5 +748,56 @@ Play path stays locked: Practice CHOMP is a latch (tap on, tap off). Space is ho
 
 ### Next action
 
-Cycle 21 BYTEBITE hero GLB. Practice local. No Mainnet.
+Cycle 21: visor bloom readable from the locked toy camera. Practice local. No Mainnet.
+
+## Cycle 21 — 2026-08-29 America/Chicago
+
+Hats used: **HAT DIRECTOR** (Cycle 20 live LOOK FAIL), **ATLAS** (Path B lock).
+
+Path B remains locked: `apps/web` stays Vite + React 18 + R3F 8 + drei + `@react-three/postprocessing` 2.19. No Godot, Unreal, Unity, Babylon, Rapier rewrite. No new modes, shops, quests, tokenomics, engine rewrite. No Mainnet. No Hooks. No EVM. Applications stay locked. Practice local.
+
+Hobie lock this cycle: camera stays locked. This cycle is visor bloom readable from the behind-BYTEBITE toy camera. Do not slide `TOY_POS` / `TOY_LOOK` / `TOY_FOV`. Do not rewrite results camera.
+
+Cycle 20 live Practice on a 1280x800 box desktop, one Chrome tab (`fe6a2af`, PR #30 squash-merged) is the incoming ground truth. Do not invent new scores.
+
+- LIVE Cycle 20 scores (do not invent): GOLDGRUB 13 / BLOCKMAW 12 / RIPSAW 11 / BYTEBITE 7.
+- LOOK FAILED. Visor strips have no postprocess halo. Golden chip bloom PASS. Overbloom CLEAN (CROSS / splash / table / liquid / rams / gums / cyan chips / HUD do not bloom). First frame 45.0s PASS (warm 3D). Dish / camera held. Hopper sparks NOT OBSERVED (dump too brief / too small).
+- Image 1 / c20_2_firstframe.webp 45.0s: golden marble has a real halo. Four beast heads are flat paint. BYTEBITE (cyan, near) skull is a solid cyan block with no visor halo.
+- Image 2 / c20_3_latched.webp 36.9s LATCHED: gold blooms, visors do not.
+- Image 3 / crop_bytebite.png: BYTEBITE from the toy camera (behind the player). Head is flat cyan. Beige teeth/segments on the camera-facing face. No bloom bleed. Gold marble in the same crop DOES bloom. SelectiveBloom is live; visors are not contributing a readable halo.
+- Image 4 / crop_lanes.png: RIPSAW west, gold halo, magenta head flat. No visor halo on RIPSAW either.
+- Cycle 20 WINS to keep: GO contract (clock frozen at 45.0s until presented warm 3D; GoOnFirstFrame drops first playing useFrame, then practiceGoReady with drawing buffer / calls 6 / triangles 800 / presents 2; composerPresented). Golden chip BloomSelect + pointLight. Overbloom CLEAN. Recessed dish. CROSS proud. Chips on liquid. Splash bus. Visual rams 0.62/0.94. Opaque steel rams. HUD you-plate + CHOMP pin. Latch CHOMP. No Html tags. No HOLD/EXT on default HUD. Playing camera fixed behind BYTEBITE. Sticky left-docked results. pickWinner first highest seat. No setViewOffset pad. Camera constants locked.
+
+### Why this cycle is visor bloom, not BYTEBITE GLB and not another TOY_POS
+
+Cycle 20 put BloomSelect on a thin pond-facing face strip (BYTEBITE visor box 0.96 x 0.1 x 0.07 at local z=0.28). The playing camera sits BEHIND BYTEBITE, so that strip is occluded by the vinyl skull. GOLDGRUB's strip faces the camera and still showed no halo, so the strip was also too small / too dim in the SelectiveBloom buffer (MeshStandardMaterial + tiny area vs the golden marble + pointLight). Hopper sparks scaled to 0 when dumping===false, and GO already has dumpT landed, so sparks vanished before a human frame could score them.
+
+Cycles 14-17 slid the camera. Cycle 18 locked FOV 39. Hobie killed the camera spiral. Locked playing camera stays:
+
+- `TOY_POS` { x: -4.05, y: 9.48, z: -12.28 }
+- `TOY_LOOK` { x: 0.0, y: 0.42, z: -0.95 }
+- `TOY_FOV` 39
+
+Results `RESULTS_*` not touched. Results is a later cycle. If a foot clips, stop and report; do not TOY_POS. BYTEBITE hero GLB is Cycle 22, only after visors actually bloom.
+
+### What changed
+
+- Visor family is a crown / brow light-bar, not a hidden face thread. Cycle 20's pond-facing strip sits under the open upper jaw from the toy camera, so the hero read is a chassis-top + camera-facing rear lip on BYTEBITE (the cyan CRT block the camera actually sees) plus a raised head crown. GOLDGRUB gets a body-top + wide front visor so the far facing-camera head blooms. RIPSAW / BLOCKMAW get the same visor family when their heads are in frame. One shared unlit `MeshBasicMaterial` per beast (toneMapped off) so the SelectiveBloom buffer gets visor luminance even when backlit; still hooked through `visorRef` so Beast.tsx blink / chomp / winner intensity drives every visor mesh. BLOOM_LAYER 10 + BloomSelect only on those visor meshes. Vinyl skull / gums / rams stay off the bloom layer.
+- Hopper sparks stay in BloomSelect. GO dump juice already fires `notifyDump`; sparks now linger ~0.6s after dump starts (and after GO, where dumpT is already landed). Still tiny, still hopper-only, still not a second fluid sim.
+- Golden chip BloomSelect + pointLight untouched. Composer untouched: no SMAA / SSAO / N8AO, no whole-framebuffer bloom.
+- Play path untouched: latch CHOMP, same `chompReach` / AABB / `BEAST_OFFSET` / `NECK_EXTEND_SPEED` on all four seats. AI not nerfed. Hitch clamp stays. `PRACTICE_GO_DUMP_T` still lands on GO. Canvas wrap / WebGL clear stay warm #eddcc6. drei `Preload all` stays. Camera constants unchanged. No GLB. No chip squash/trail. No results-camera rewrite. No HungryRoom sync. No XRPL.
+
+Play path stays locked: Practice CHOMP is a latch (tap on, tap off). Space is hold-while-down. No cooldown, fatigue, auto-unlatch, or eat-cost. Do not nerf the player. Do not nerf AI. GO on first presented frame, `PRACTICE_MAX_STEP_DT` hitch clamp, `practiceWallClock` after GO, `PRACTICE_GO_DUMP_T` landed, seat-0 hold-scores + mid-pond reach tests, 28+1 pond, hopper refill + `dumpT` reset, AI nibble after t=22s, Practice `txHashes: []`. Locked types unchanged. Eat AABBs still use sim pellet `x`/`z`. Same reach / AABB on all four seats. Sticky left-docked results stay inert until leftover captured pointer is up. Default Practice HUD does not ship HOLD/EXT or CAM TOY. Playing camera is a fixed behind-BYTEBITE toy-ad. pickWinner is still first highest seat.
+
+### Five leftover notes
+
+1. Kits are in-engine primitives. They are four machines now; they are not hero sculpts.
+2. BYTEBITE is still the shared in-engine CRT kit, not a GLB.
+3. Chip squash / eat trail still parked.
+4. Results is still a CSS card. Cycle 17 LOOK failed on results crash-zoom. This cycle did not touch results camera.
+5. Online HungryRoom still uses the server tick. Only Practice waits for GO and clamps a hitch step.
+
+### Next action
+
+Cycle 22 BYTEBITE hero GLB only after visors actually bloom. Practice local. No Mainnet.
 
