@@ -9,16 +9,18 @@ import { beastVisualRoot } from './beasts/vinyl'
 const look = new Vector3()
 const pos = new Vector3()
 
-export const TOY_POS = { x: -4.15, y: 8.72, z: -11.18 }
-export const TOY_LOOK = { x: 0.22, y: 0.58, z: -1.96 }
+export const TOY_POS = { x: -4.05, y: 9.48, z: -12.28 }
+export const TOY_LOOK = { x: 0.0, y: 0.42, z: -0.95 }
 export const TOY_FOV = 35
-const RESULTS_RADIUS = 9.4
-const RESULTS_ELEV = 4.35
-const RESULTS_LOOK_Y = 1.22
-const RESULTS_POND_BLEND = 0.52
-const RESULTS_ORBIT_TURN = 0.22
-const RESULTS_FOV = 35
-const RESULTS_SOUTH_CLEAR = -7.35
+const RESULTS_WEST = -4.55
+const RESULTS_ELEV = 8.2
+const RESULTS_NORTH = -10.55
+const RESULTS_LOOK_Y = 0.42
+const RESULTS_BLEND = 0.46
+const RESULTS_SLIDE = 0.13
+const RESULTS_LOOK_X = 0.18
+const RESULTS_FOV = 36
+const RESULTS_PULL = [1.05, 0.95, 0.78, 0.93] as const
 const SHAKE_MS = 120
 
 export function toyCameraPosition(): [number, number, number] {
@@ -90,15 +92,13 @@ export function ArenaCamera() {
       const winner = useGameStore.getState().result?.winner ?? 0
       const [hx, , hz] = beastVisualRoot(winner)
       const swing = Math.sin(clock.elapsedTime * 0.22) * 0.08
-      const span = Math.hypot(hx, hz) || 1
-      const wx = hx / span
-      const wz = hz / span
-      const turn = RESULTS_ORBIT_TURN
-      const bx = -wz * Math.cos(turn) + wx * Math.sin(turn)
-      const bz = wx * Math.cos(turn) + wz * Math.sin(turn)
-      const pz = Math.max(bz * RESULTS_RADIUS, RESULTS_SOUTH_CLEAR)
-      pos.set(bx * RESULTS_RADIUS + sx + swing, RESULTS_ELEV + sy, pz)
-      look.set(hx * RESULTS_POND_BLEND, RESULTS_LOOK_Y, hz * RESULTS_POND_BLEND)
+      const pull = RESULTS_PULL[winner]
+      pos.set(
+        RESULTS_WEST * pull + hx * RESULTS_SLIDE + sx + swing,
+        RESULTS_ELEV + sy,
+        RESULTS_NORTH * pull + hz * RESULTS_SLIDE,
+      )
+      look.set(hx * RESULTS_BLEND + RESULTS_LOOK_X, RESULTS_LOOK_Y, hz * RESULTS_BLEND)
     } else {
       cam.clearViewOffset()
       pos.set(TOY_POS.x + sx, TOY_POS.y * Math.min(k, 1.08) + sy, TOY_POS.z)
