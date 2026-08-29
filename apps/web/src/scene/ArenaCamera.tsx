@@ -4,18 +4,16 @@ import { MathUtils, type PerspectiveCamera, Vector3 } from 'three'
 import { useJuiceStore } from '../game/juice'
 import { useGameStore } from '../store/gameStore'
 import { useViewStore } from '../store/viewStore'
-import { RESULT_HERO } from './beasts/vinyl'
+import { beastYaw } from '@hhc/shared'
+import { beastVisualRoot } from './beasts/vinyl'
 
 const look = new Vector3()
 const pos = new Vector3()
 
-export const TOY_POS = { x: 4.72, y: 9.28, z: -10.15 }
-export const TOY_LOOK = { x: 0.06, y: 0.92, z: -2.28 }
+export const TOY_POS = { x: 4.35, y: 8.85, z: -11.85 }
+export const TOY_LOOK = { x: 0.05, y: 0.68, z: -2.42 }
 export const TOY_FOV = 36
 const SHAKE_MS = 120
-
-/** Winner parks on this pad so the body sits in the open pond right of the left card. */
-export const RESULT_POS = { x: 6.15, y: 5.85, z: -4.55 }
 
 export function toyCameraPosition(): [number, number, number] {
   return [TOY_POS.x, TOY_POS.y, TOY_POS.z]
@@ -63,7 +61,6 @@ export function ArenaCamera() {
       return
     }
 
-    cam.clearViewOffset()
     const goAge = playBorn.current ? Math.min(1, (now - playBorn.current) / 900) : 1
     const dolly = MathUtils.lerp(1.04, 1, goAge * Math.min(1, dumpT + 0.25))
     const goldenLive = pellets.some((p) => p.golden && p.eatenBy === undefined && dumpT > 0.55)
@@ -83,10 +80,20 @@ export function ArenaCamera() {
 
     const snap = ui === 'results' || (playBorn.current && now - playBorn.current < 32) || now < shakeUntil.current
     if (ui === 'results') {
+      const pad = Math.round(width * 0.36)
+      cam.setViewOffset(width + pad, height, pad, 0, width, height)
+      const winner = useGameStore.getState().result?.winner ?? 0
+      const [hx, , hz] = beastVisualRoot(winner)
+      const yaw = beastYaw(winner)
       const swing = Math.sin(clock.elapsedTime * 0.22) * 0.08
-      pos.set(RESULT_POS.x + sx + swing, RESULT_POS.y + sy, RESULT_POS.z)
-      look.set(RESULT_HERO.x, RESULT_HERO.y, RESULT_HERO.z)
+      pos.set(
+        hx - Math.sin(yaw) * 7.8 + Math.cos(yaw) * 4.2 + sx + swing,
+        6.9 + sy,
+        hz - Math.cos(yaw) * 7.8 - Math.sin(yaw) * 4.2,
+      )
+      look.set(hx, 1.08, hz)
     } else {
+      cam.clearViewOffset()
       pos.set(TOY_POS.x + sx, TOY_POS.y * Math.min(k, 1.08) + sy, TOY_POS.z)
       look.set(TOY_LOOK.x, TOY_LOOK.y, TOY_LOOK.z)
     }

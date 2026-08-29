@@ -3,30 +3,29 @@ import { NECK_VISUAL_ORIGIN, beastPosition, beastYaw } from '@hhc/shared'
 
 export const BEAST_NECK_LIFT = 0.68
 
-/** Results winner parks here so the body sits in the open pond right of the left card. */
-export const RESULT_HERO = { x: 2.05, y: 1.22, z: 0.15 }
-
-/** RIPSAW kit sits south of the NE corner so the saw stays off the hopper. */
+/** RIPSAW stays on the east cardinal. BYTEBITE sits a hair toward the pond so the barrel is not on the clip. */
 export function beastVisualRoot(seat: Seat): [number, number, number] {
   const [x, y, z] = beastPosition(seat)
-  if (seat === 1) return [x - 0.72, y, z + 1.55]
+  if (seat === 0) return [x, y, z + 0.22]
+  if (seat === 1) return [x - 0.12, y, z + 0.18]
   return [x, y, z]
 }
 
-/** Visual-only pond-level lifts. Cycle 11 Y-stack is gone - it read as one pile from the toy-ad camera. */
 export function beastNeckLift(seat: Seat): number {
-  if (seat === 0) return 0.82
+  if (seat === 0) return 0.78
   if (seat === 1) return 0.7
-  if (seat === 2) return 0.8
-  return 0.66
+  if (seat === 2) return 0.76
+  return 0.68
 }
 
 /**
- * Visual-only local-Z of the head. Caps the ram so the maw sits over that seat's
- * cardinal-ray chips, not stacked on world 0,0. Sim `visualHeadAlong` / `chompReach` stay.
+ * Visual-only local-Z of the head. Cycle 12's 2.28 cap plus NECK_VISUAL_ORIGIN
+ * still parked four maws ~2.5 from world origin - a knot from the toy-ad camera.
+ * Latch 0.94 sits over the outer cardinal rays (3.82 / 3.05), short of center.
+ * Sim `visualHeadAlong` / `chompReach` stay long enough to eat mid-pond.
  */
-export const VISUAL_LANE_HEAD_REST = 0.72
-export const VISUAL_LANE_HEAD_LATCH = 2.28
+export const VISUAL_LANE_HEAD_REST = 0.62
+export const VISUAL_LANE_HEAD_LATCH = 0.94
 
 export function visualLaneHeadAlong(extend: number): number {
   const t = Math.max(0, Math.min(1, extend))
