@@ -443,4 +443,46 @@ Play path stays locked: Practice CHOMP is a latch (tap on, tap off). Space is ho
 
 ### Next action
 
-Cycle 14: volume pond or a real bloom pass - the raised CROSS, short in-lane rams, and results hero should read at this camera now.
+Cycle 14: first presented GO, results hero in open pond, winner name inside the card, playing camera fills the pond.
+
+## Cycle 14 — 2026-08-29 America/Chicago
+
+Hats used: **HAT DIRECTOR** (Cycle 13 live LOOK leftovers), **ATLAS** (Path B lock).
+
+Path B remains locked: `apps/web` stays Vite + React 18 + R3F + drei. No Godot, Unreal, Unity, Babylon, Rapier rewrite. No new modes, shops, quests, tokenomics, engine rewrite. No Mainnet. No Hooks. No EVM. Applications stay locked. Practice local.
+
+Cycle 13 live Practice on a 1280x800 box desktop, one Chrome tab (`f76e5be`) is the incoming ground truth. Do not invent new scores.
+
+- LIVE Cycle 13 scores (do not invent): BLOCKMAW 13 / BYTEBITE 11 / GOLDGRUB 9 / RIPSAW 8.
+- Image 1 / first playing frame: HUD + CHOMP up, timer already 43.0s. 3D viewport fully BLACK. Clock ran on a black canvas. FAIL. Cycle 5 GO contract broken: `GoOnFirstFrame` marked GO on the first playing `useFrame`, which is not a presented warm 3D frame.
+- Image 2 / first rendered 3D ~40s: raised beast-colored CROSS, chips on all four rays, BYTEBITE base not clipped, all four jaws on screen, HUD BYTEBITE/YOU left of CHOMP, CHOMP TAP ONCE bottom-right, no 3D name tags, RIPSAW off hopper, debug chrome gone. KEEP THIS.
+- Image 3 / mid-round 7.2s: four separate toys on four lanes, opaque metal rams, no center knot. KEEP THE FOUR-LANE READ. FAIL: camera wastes the bottom-right third on empty table/floor; pond sits upper-left ~60%.
+- Image 4 / results: CRASH-ZOOM. Winner BLOCKMAW jammed against/behind the left overlay card. Pond and other beasts gone. `h2` "BLOCKMAW wins" overflows the card right edge. Overlay stayed put (WIN). Not an open-pond win lean.
+- Cycle 13 WINS to keep: raised CROSS (`LaneGutter` + `RaisedCross`), visual rams 0.62/0.94, opaque steel rams, HUD plate + CHOMP pin, latch CHOMP, no Html tags, no HOLD/EXT on default HUD, playing camera fixed behind BYTEBITE, sticky left-docked results, pickWinner first highest seat.
+
+### Why Cycle 13 GO / results failed
+
+ArenaCanvas stays mounted under the lobby overlay. Clicking Practice uncovers the canvas. The first playing `useFrame` called `markMatchGo` during the WebGL compile/resize hitch, so `practiceWallClock` burned ~2s (43.0s on the LiveTimer) while pixels were still black. CSS behind the canvas was `--bg` #161018, which reads as black.
+
+Results used `setViewOffset(width+pad, height, pad, 0, width, height)` with pad=0.36 width plus an orbit at ~7.8/4.2 looking at `beastVisualRoot`. Positive x on setViewOffset crops the right of a wider frustum and shifts the hero LEFT, under the card. Combined with a close orbit, BLOCKMAW filled the frame.
+
+### What changed
+
+- Practice clock stays frozen at 45.0s (`matchClockOrigin` 0, `timeLeft` ROUND_SECONDS) until a presented warm 3D frame. The first playing `useFrame` still carries lobby render stats, so that frame is dropped. GO needs a real drawing buffer, `gl.info.render.calls` >= 6, triangles >= 800, and two such playing presents (pond/beasts actually drew, not a warm clear-color hitch). `startPractice` does not call `markMatchGo`. `applyMatchStart` still starts the online clock. `PRACTICE_GO_DUMP_T` still lands on that GO. Hitch clamp stays. Canvas wrap / WebGL clear are warm #eddcc6. drei `Preload all` compiles while lobby is up.
+- Results camera is a high pond overview with the winner on camera-right so the body sits in open pond to the RIGHT of the left card. Radius 13.6 stays inside the studio. Cycle 13 `setViewOffset` pad=0.36 with x=pad parked the hero under the card; a lane-axis orbit then crash-zoomed or left the room. This cycle drops `setViewOffset`. Playing path still `clearViewOffset()`. No per-frame neck-track on the playing camera. Visual necks still park short (0.94 latch).
+- Results title stacks name over "wins" so BLOCKMAW / TIE copy stays inside the card. 3D hero is not shrunk to hide overflow.
+- Playing camera is still a fixed behind-BYTEBITE toy-ad. Look/pos retuned so the pond/CROSS/four beasts fill the useful frame instead of parking empty floor in the bottom-right third. No follow-cam. No Cycle 9 cyan slab. No Cycle 2 void. No Cycle 7 speck.
+
+Play path stays locked: Practice CHOMP is a latch (tap on, tap off). Space is hold-while-down. No cooldown, fatigue, auto-unlatch, or eat-cost. Do not nerf the player. Do not nerf AI. GO on first presented frame, `PRACTICE_MAX_STEP_DT` hitch clamp, `practiceWallClock` after GO, `PRACTICE_GO_DUMP_T` landed, seat-0 hold-scores + mid-pond reach tests, 28+1 pond, hopper refill + `dumpT` reset, AI nibble after t=22s, Practice `txHashes: []`. Locked types unchanged. Eat AABBs still use sim pellet `x`/`z`. Same reach / AABB on all four seats. Sticky left-docked results stay inert until leftover captured pointer is up. Default Practice HUD does not ship HOLD/EXT or CAM TOY. Playing camera is a fixed behind-BYTEBITE toy-ad. pickWinner is still first highest seat.
+
+### Five leftover notes
+
+1. Pond liquid is still a cheap hex/caustic plane, not a volume.
+2. Glow is still additive materials. No real bloom pass on visor / golden / hopper sparks.
+3. Kits are in-engine primitives. They are four machines now; they are not hero sculpts.
+4. Results is still a CSS card. The 3D lean/slump is the readable winner; the overlay no longer owns a bottom-right CHOMP collision.
+5. Online HungryRoom still uses the server tick. Only Practice waits for GO and clamps a hitch step.
+
+### Next action
+
+Cycle 15: volume pond or a real bloom pass - LOOK (black GO, results hero, framing) has to pass first.

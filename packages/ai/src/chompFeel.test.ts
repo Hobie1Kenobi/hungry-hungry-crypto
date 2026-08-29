@@ -19,7 +19,11 @@ import {
   pelletInLane,
   pickWinner,
   PRACTICE_GO_DUMP_T,
+  PRACTICE_GO_MIN_CALLS,
+  PRACTICE_GO_MIN_TRIANGLES,
+  PRACTICE_GO_PRESENT_FRAMES,
   PRACTICE_MAX_STEP_DT,
+  practiceGoReady,
   practiceWallClock,
   mouthWorldOnPond,
   spawnPellets,
@@ -354,6 +358,53 @@ describe('practice wall clock', () => {
     const stepped = stepArena(snapshot, hitch.dt, hitch.elapsed * 1000)
     expect(stepped.snapshot.dumpT).toBeLessThan(0.2)
     expect(stepped.snapshot.refillCount).toBe(0)
+  })
+
+  it('Practice clock does not start until presented GO', () => {
+    expect(PRACTICE_GO_PRESENT_FRAMES).toBe(2)
+    expect(PRACTICE_GO_MIN_TRIANGLES).toBe(800)
+    expect(PRACTICE_GO_MIN_CALLS).toBe(6)
+    const warm = {
+      sizeW: 1280,
+      sizeH: 800,
+      drawingBufferW: 1280,
+      drawingBufferH: 800,
+      renderCalls: 40,
+      triangles: 8000,
+    }
+    expect(
+      practiceGoReady({ ui: 'lobby', matchClockOrigin: 0, playingPresents: 99, ...warm }),
+    ).toBe(false)
+    expect(
+      practiceGoReady({ ui: 'playing', matchClockOrigin: 0, playingPresents: 1, ...warm }),
+    ).toBe(false)
+    expect(
+      practiceGoReady({
+        ui: 'playing',
+        matchClockOrigin: 0,
+        playingPresents: 2,
+        ...warm,
+        sizeW: 0,
+        sizeH: 0,
+        drawingBufferW: 0,
+        drawingBufferH: 0,
+      }),
+    ).toBe(false)
+    expect(
+      practiceGoReady({ ui: 'playing', matchClockOrigin: 0, playingPresents: 2, ...warm, renderCalls: 0 }),
+    ).toBe(false)
+    expect(
+      practiceGoReady({ ui: 'playing', matchClockOrigin: 0, playingPresents: 2, ...warm, triangles: 0 }),
+    ).toBe(false)
+    expect(
+      practiceGoReady({ ui: 'playing', matchClockOrigin: 100, playingPresents: 2, ...warm }),
+    ).toBe(false)
+    expect(
+      practiceGoReady({ ui: 'playing', matchClockOrigin: 0, playingPresents: 2, ...warm }),
+    ).toBe(true)
+    const origin = 0
+    expect(practiceWallClock(0, origin).timeLeft).toBe(ROUND_SECONDS)
+    expect(practiceWallClock(0, origin).elapsed).toBe(0)
   })
 })
 

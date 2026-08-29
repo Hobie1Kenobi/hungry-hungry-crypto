@@ -78,6 +78,39 @@ export const EAT_DUMP_THRESHOLD = 0.72
 /** Practice GO starts with the opening wave already on the lanes. Hopper refill still resets dumpT. */
 export const PRACTICE_GO_DUMP_T = 1
 
+/**
+ * Practice clock stays frozen until this many playing useFrames have seen a
+ * full 3D present. useFrame runs before render and the first playing useFrame
+ * still carries lobby stats, so GoOnFirstFrame drops that frame, then counts
+ * only presents with a real drawing buffer and enough triangles/calls that the
+ * pond actually drew (not a warm clear-color hitch).
+ */
+export const PRACTICE_GO_PRESENT_FRAMES = 2
+
+export const PRACTICE_GO_MIN_TRIANGLES = 800
+
+export const PRACTICE_GO_MIN_CALLS = 6
+
+/** True only when Practice may call markMatchGo. startPractice must not. */
+export function practiceGoReady(opts: {
+  ui: string
+  matchClockOrigin: number
+  playingPresents: number
+  sizeW: number
+  sizeH: number
+  drawingBufferW: number
+  drawingBufferH: number
+  renderCalls: number
+  triangles: number
+}): boolean {
+  if (opts.ui !== 'playing' || opts.matchClockOrigin > 0) return false
+  if (opts.sizeW < 8 || opts.sizeH < 8) return false
+  if (opts.drawingBufferW < 8 || opts.drawingBufferH < 8) return false
+  if (opts.renderCalls < PRACTICE_GO_MIN_CALLS) return false
+  if (opts.triangles < PRACTICE_GO_MIN_TRIANGLES) return false
+  return opts.playingPresents >= PRACTICE_GO_PRESENT_FRAMES
+}
+
 export const NECK_EXTEND_SPEED = 8
 
 export const NECK_RETRACT_SPEED = 3.4

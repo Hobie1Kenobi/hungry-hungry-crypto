@@ -4,15 +4,19 @@ import { MathUtils, type PerspectiveCamera, Vector3 } from 'three'
 import { useJuiceStore } from '../game/juice'
 import { useGameStore } from '../store/gameStore'
 import { useViewStore } from '../store/viewStore'
-import { beastYaw } from '@hhc/shared'
 import { beastVisualRoot } from './beasts/vinyl'
 
 const look = new Vector3()
 const pos = new Vector3()
 
-export const TOY_POS = { x: 4.35, y: 8.85, z: -11.85 }
-export const TOY_LOOK = { x: 0.05, y: 0.68, z: -2.42 }
-export const TOY_FOV = 36
+export const TOY_POS = { x: 1.85, y: 6.95, z: -9.35 }
+export const TOY_LOOK = { x: 0.95, y: 0.08, z: 1.72 }
+export const TOY_FOV = 33
+const RESULTS_RADIUS = 13.6
+const RESULTS_ELEV = 9.4
+const RESULTS_LOOK_Y = 0.4
+const RESULTS_POND_BLEND = 0.12
+const RESULTS_FOV = 42
 const SHAKE_MS = 120
 
 export function toyCameraPosition(): [number, number, number] {
@@ -80,18 +84,14 @@ export function ArenaCamera() {
 
     const snap = ui === 'results' || (playBorn.current && now - playBorn.current < 32) || now < shakeUntil.current
     if (ui === 'results') {
-      const pad = Math.round(width * 0.36)
-      cam.setViewOffset(width + pad, height, pad, 0, width, height)
+      cam.clearViewOffset()
       const winner = useGameStore.getState().result?.winner ?? 0
       const [hx, , hz] = beastVisualRoot(winner)
-      const yaw = beastYaw(winner)
       const swing = Math.sin(clock.elapsedTime * 0.22) * 0.08
-      pos.set(
-        hx - Math.sin(yaw) * 7.8 + Math.cos(yaw) * 4.2 + sx + swing,
-        6.9 + sy,
-        hz - Math.cos(yaw) * 7.8 - Math.sin(yaw) * 4.2,
-      )
-      look.set(hx, 1.08, hz)
+      const span = Math.hypot(hx, hz) || 1
+      const orbit = RESULTS_RADIUS / span
+      pos.set(-hz * orbit + sx + swing, RESULTS_ELEV + sy, hx * orbit)
+      look.set(hx * RESULTS_POND_BLEND, RESULTS_LOOK_Y, hz * RESULTS_POND_BLEND)
     } else {
       cam.clearViewOffset()
       pos.set(TOY_POS.x + sx, TOY_POS.y * Math.min(k, 1.08) + sy, TOY_POS.z)
@@ -103,7 +103,7 @@ export function ArenaCamera() {
       cam.position.lerp(pos, 1 - Math.pow(0.0004, dt))
     }
     cam.lookAt(look)
-    cam.fov = aspect < 1.1 ? 46 : TOY_FOV
+    cam.fov = aspect < 1.1 ? 46 : ui === 'results' ? RESULTS_FOV : TOY_FOV
     cam.near = 0.45
     cam.far = 90
     cam.updateProjectionMatrix()
