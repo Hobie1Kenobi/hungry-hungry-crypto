@@ -9,7 +9,7 @@ function isTypingTarget(target: EventTarget | null): boolean {
 }
 
 export function useChompInput(): void {
-  const setChomp = useGameStore((s) => s.setChomp)
+  const setChompHeld = useGameStore((s) => s.setChompHeld)
   const ui = useGameStore((s) => s.ui)
   const localSeat = useGameStore((s) => s.localSeat)
 
@@ -17,13 +17,12 @@ export function useChompInput(): void {
     if (ui !== 'playing') return
 
     const send = (down: boolean) => {
-      setChomp({ seat: localSeat, down, clientTime: performance.now() })
+      setChompHeld(down)
     }
 
     const onKeyDown = (e: KeyboardEvent) => {
       if (!isChompKey(e.code, e.key) || isTypingTarget(e.target)) return
       e.preventDefault()
-      if (e.repeat) return
       send(true)
     }
     const onKeyUp = (e: KeyboardEvent) => {
@@ -32,6 +31,9 @@ export function useChompInput(): void {
       send(false)
     }
     const onBlur = () => send(false)
+    const onVis = () => {
+      if (document.hidden) send(false)
+    }
 
     const opts: AddEventListenerOptions = { capture: true }
     document.addEventListener('keydown', onKeyDown, opts)
@@ -39,24 +41,19 @@ export function useChompInput(): void {
     window.addEventListener('keydown', onKeyDown, opts)
     window.addEventListener('keyup', onKeyUp, opts)
     window.addEventListener('blur', onBlur)
-    document.addEventListener('visibilitychange', onBlur)
+    document.addEventListener('visibilitychange', onVis)
     return () => {
       document.removeEventListener('keydown', onKeyDown, opts)
       document.removeEventListener('keyup', onKeyUp, opts)
       window.removeEventListener('keydown', onKeyDown, opts)
       window.removeEventListener('keyup', onKeyUp, opts)
       window.removeEventListener('blur', onBlur)
-      document.removeEventListener('visibilitychange', onBlur)
+      document.removeEventListener('visibilitychange', onVis)
       send(false)
     }
-  }, [setChomp, ui, localSeat])
+  }, [setChompHeld, ui, localSeat])
 }
 
 export function pointerChomp(down: boolean): void {
-  const { localSeat, setChomp } = useGameStore.getState()
-  setChomp({
-    seat: localSeat,
-    down,
-    clientTime: performance.now(),
-  })
+  useGameStore.getState().setChompHeld(down)
 }

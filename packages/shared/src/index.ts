@@ -30,7 +30,7 @@ export const HUMAN_SEAT: Seat = 0
 
 export const ROUND_SECONDS = 45
 
-export const NORMAL_PELLET_COUNT = 20
+export const NORMAL_PELLET_COUNT = 28
 
 export const GOLDEN_PELLET_COUNT = 1
 
@@ -46,11 +46,11 @@ export const POND_HALF = POND_SIZE / 2
 
 export const BEAST_OFFSET = 5.2
 
-export const CHOMP_HALF_WIDTH = 0.78
+export const CHOMP_HALF_WIDTH = 1.55
 
-export const CHOMP_MOUTH_DEPTH = 0.66
+export const CHOMP_MOUTH_DEPTH = 1.9
 
-export const CHOMP_MOUTH_PAD = 0.14
+export const CHOMP_MOUTH_PAD = 0.28
 
 export const NECK_BASE = 0.95
 
@@ -60,21 +60,21 @@ export const DUMP_SECONDS = 1.15
 
 export const EAT_DUMP_THRESHOLD = 0.72
 
-export const NECK_EXTEND_SPEED = 2.15
+export const NECK_EXTEND_SPEED = 2.8
 
 export const NECK_RETRACT_SPEED = 3.4
 
-export const CHOMP_PULSE_MS = 180
+export const CHOMP_PULSE_MS = 280
 
-export const CHOMP_EAT_COOLDOWN_MS = 540
+export const CHOMP_EAT_COOLDOWN_MS = 640
 
-export const POND_REFILL_LIVE = 6
+export const POND_REFILL_LIVE = 16
 
-export const POND_REFILL_MAX = 2
+export const POND_REFILL_MAX = 4
 
-export const POND_REFILL_MIN_TIME_LEFT = 7
+export const POND_REFILL_MIN_TIME_LEFT = 6
 
-export const POND_REFILL_GAP_MS = 7500
+export const POND_REFILL_GAP_MS = 4200
 
 export type Cardinal = 'north' | 'east' | 'south' | 'west'
 
@@ -110,7 +110,7 @@ export function emptyPulse(): Record<Seat, number> {
 }
 
 export function emptyLastEat(): Record<Seat, number> {
-  return { 0: 0, 1: 0, 2: 0, 3: 0 }
+  return { 0: Number.NEGATIVE_INFINITY, 1: Number.NEGATIVE_INFINITY, 2: Number.NEGATIVE_INFINITY, 3: Number.NEGATIVE_INFINITY }
 }
 
 export function pelletValue(pellet: Pellet): number {
@@ -185,7 +185,7 @@ export function pelletInChompZone(pellet: Pellet, seat: Seat, extend: number): b
   const reach = chompReach(extend)
   const w = CHOMP_HALF_WIDTH
   const origin = BEAST_OFFSET - 0.35
-  const along0 = reach - CHOMP_MOUTH_DEPTH
+  const along0 = Math.max(0.4, reach - CHOMP_MOUTH_DEPTH)
   const along1 = reach + CHOMP_MOUTH_PAD
   switch (seat) {
     case 0:
@@ -229,7 +229,10 @@ export function collectEats(
   const hits: { id: string; seat: Seat }[] = []
   const claimed = new Set<string>()
   for (const seat of SEATS) {
-    if (lastEatAt && now - lastEatAt[seat] < CHOMP_EAT_COOLDOWN_MS) continue
+    if (lastEatAt) {
+      const last = lastEatAt[seat]
+      if (Number.isFinite(last) && now - last < CHOMP_EAT_COOLDOWN_MS) continue
+    }
     const extend = neckExtend[seat]
     for (const pellet of pellets) {
       if (pellet.eatenBy !== undefined || claimed.has(pellet.id)) continue
@@ -400,58 +403,27 @@ function waveRng(seed: number): () => number {
 export function spawnPellets(rng: () => number = Math.random, idPrefix = ''): Pellet[] {
   const pellets: Pellet[] = []
   const jitter = (n: number) => (rng() - 0.5) * n
-  const laneSpots: Array<Array<[number, number]>> = [
-    [
-      [-0.48, -2.62],
-      [0.5, -2.38],
-      [0.06, -1.68],
-      [0.4, -0.98],
-    ],
-    [
-      [2.62, -0.48],
-      [2.38, 0.5],
-      [1.68, 0.06],
-      [0.98, 0.4],
-    ],
-    [
-      [0.48, 2.62],
-      [-0.5, 2.38],
-      [-0.06, 1.68],
-      [-0.4, 0.98],
-    ],
-    [
-      [-2.62, 0.48],
-      [-2.38, -0.5],
-      [-1.68, -0.06],
-      [-0.98, -0.4],
-    ],
-  ]
+  const wave = idPrefix.startsWith('w') ? Number.parseInt(idPrefix.slice(1), 10) || 1 : 0
+  const phase = wave === 0 ? 0 : wave % 2 === 1 ? 0.68 : -0.68
+  const spots: Array<[number, number]> = []
+  const axis = [-2.35, -1.18, 0, 1.18, 2.35]
 
-  let i = 0
-  for (const spots of laneSpots) {
-    for (const [cx, cz] of spots) {
-      pellets.push({
-        id: `${idPrefix}crumb-${i}`,
-        x: cx + jitter(0.16),
-        z: cz + jitter(0.16),
-        golden: false,
-      })
-      i += 1
+  for (const x of axis) {
+    for (const z of axis) {
+      if (Math.abs(x) > 1.6 && Math.abs(z) > 1.6) continue
+      spots.push([x + phase, z + phase * 0.35])
     }
   }
+  spots.push([-1.75 + phase, -0.55], [1.75 + phase, 0.55], [-0.55, 1.75 + phase], [0.55, -1.75 + phase])
+  spots.push([-1.75 + phase, 0.55], [1.75 + phase, -0.55], [0.55, 1.75 + phase], [-0.55, -1.75 + phase])
 
-  const scatter: Array<[number, number]> = [
-    [0.02, -0.52],
-    [0.52, 0.04],
-    [-0.04, 0.52],
-    [-0.52, -0.02],
-  ]
-  for (const [cx, cz] of scatter) {
+  let i = 0
+  for (const [cx, cz] of spots) {
     if (i >= NORMAL_PELLET_COUNT) break
     pellets.push({
       id: `${idPrefix}crumb-${i}`,
-      x: cx + jitter(0.1),
-      z: cz + jitter(0.1),
+        x: cx + jitter(0.2),
+        z: cz + jitter(0.2),
       golden: false,
     })
     i += 1
@@ -460,8 +432,8 @@ export function spawnPellets(rng: () => number = Math.random, idPrefix = ''): Pe
   for (let g = 0; g < GOLDEN_PELLET_COUNT; g += 1) {
     pellets.push({
       id: `${idPrefix}crumb-golden-${g}`,
-      x: spawnRand(rng, -0.18, 0.18),
-      z: spawnRand(rng, -0.18, 0.18),
+      x: spawnRand(rng, -0.28, 0.28),
+      z: spawnRand(rng, -0.28, 0.28),
       golden: true,
     })
   }
@@ -472,14 +444,7 @@ export function spawnPellets(rng: () => number = Math.random, idPrefix = ''): Pe
 export function stepArena(state: ArenaSnapshot, dt: number, now: number): StepResult {
   const dumpT = Math.min(1, state.dumpT + dt / DUMP_SECONDS)
   const timeLeft = Math.max(0, state.timeLeft - dt)
-  const landed = dumpT > EAT_DUMP_THRESHOLD
-  const neckExtend = stepNeckExtend(
-    state.neckExtend,
-    landed ? state.chompDown : emptyChomp(),
-    landed ? state.chompPulseUntil : emptyPulse(),
-    now,
-    dt,
-  )
+  const neckExtend = stepNeckExtend(state.neckExtend, state.chompDown, state.chompPulseUntil, now, dt)
 
   let pellets = state.pellets
   let scores = state.scores
@@ -500,12 +465,14 @@ export function stepArena(state: ArenaSnapshot, dt: number, now: number): StepRe
   let refillCount = state.refillCount ?? 0
   let lastRefillAt = state.lastRefillAt ?? 0
   const live = livePelletCount(pellets)
+  const opened = dumpT >= 1 && timeLeft <= ROUND_SECONDS - 4
+  const gapOk = refillCount === 0 || now - lastRefillAt >= POND_REFILL_GAP_MS
   const canRefill =
-    dumpT >= 1 &&
+    opened &&
     live <= POND_REFILL_LIVE &&
     refillCount < POND_REFILL_MAX &&
     timeLeft > POND_REFILL_MIN_TIME_LEFT &&
-    now - lastRefillAt >= POND_REFILL_GAP_MS
+    gapOk
   if (canRefill) {
     refillCount += 1
     lastRefillAt = now
