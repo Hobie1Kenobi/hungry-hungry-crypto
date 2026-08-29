@@ -8,11 +8,11 @@ import { useViewStore } from '../store/viewStore'
 const look = new Vector3()
 const pos = new Vector3()
 
-export const TOY_DIST = 19.6
-export const TOY_ELEV = 0.64
-export const TOY_AZ = 0.46
-export const TOY_FOV = 40
-export const TOY_LOOK = { x: 0.22, y: 0.92, z: -1.7 }
+export const TOY_DIST = 16.6
+export const TOY_ELEV = 0.5
+export const TOY_AZ = 0.36
+export const TOY_FOV = 38
+export const TOY_LOOK = { x: 0.06, y: 0.52, z: -0.42 }
 const SHAKE_MS = 120
 
 export function toyCameraPosition(dist = TOY_DIST, elev = TOY_ELEV, az = TOY_AZ): [number, number, number] {

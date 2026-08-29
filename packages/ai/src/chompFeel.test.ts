@@ -14,8 +14,10 @@ import {
   pelletInLane,
   PRACTICE_MAX_STEP_DT,
   practiceWallClock,
+  mouthWorldOnPond,
   spawnPellets,
   stepArena,
+  visualHeadAlong,
   type ArenaSnapshot,
   type Pellet,
 } from '@hhc/shared'
@@ -263,6 +265,24 @@ describe('seat 0 human ChompInput', () => {
     expect(midPond.some((p) => pelletInChompZone(p, 0, 1))).toBe(true)
   })
 
+  it('visual head at extend=1 sits in the mid-pond pile on every seat, not at the rail', () => {
+    expect(visualHeadAlong(1)).toBeGreaterThan(5)
+    const north = mouthWorldOnPond(0, 1)
+    const east = mouthWorldOnPond(1, 1)
+    const south = mouthWorldOnPond(2, 1)
+    const west = mouthWorldOnPond(3, 1)
+    expect(Math.abs(north.x)).toBeLessThan(0.4)
+    expect(north.z).toBeGreaterThan(-1.6)
+    expect(north.z).toBeLessThan(1.8)
+    expect(Math.abs(south.x)).toBeLessThan(0.4)
+    expect(south.z).toBeLessThan(1.6)
+    expect(south.z).toBeGreaterThan(-1.8)
+    expect(east.x).toBeGreaterThan(-1.8)
+    expect(east.x).toBeLessThan(1.6)
+    expect(west.x).toBeLessThan(1.8)
+    expect(west.x).toBeGreaterThan(-1.6)
+  })
+
   it('a continuous seat 0 CHOMP hold eats a mid-pond pellet, not only the north rim', () => {
     const pellets = [crumb('mid-pond', 0.08, 0.06), crumb('mid-b', -0.22, -0.12)]
     const result = simulateRound({
@@ -374,6 +394,20 @@ describe('hopper refill', () => {
     expect(Math.max(...zs) - Math.min(...zs)).toBeGreaterThan(4)
     expect(pellets.filter((p) => Math.abs(p.x) > 1.4).length).toBeGreaterThan(6)
     expect(pellets.filter((p) => Math.abs(p.z) > 1.4).length).toBeGreaterThan(6)
+  })
+
+  it('initial dump seeds a lane in front of each mouth, not one center blob', () => {
+    const pellets = spawnPellets(seededRng(99))
+    const north = pellets.filter((p) => pelletInLane(p, 0) && p.z < -1.4)
+    const east = pellets.filter((p) => pelletInLane(p, 1) && p.x > 1.4)
+    const south = pellets.filter((p) => pelletInLane(p, 2) && p.z > 1.4)
+    const west = pellets.filter((p) => pelletInLane(p, 3) && p.x < -1.4)
+    expect(north.length).toBeGreaterThan(3)
+    expect(east.length).toBeGreaterThan(3)
+    expect(south.length).toBeGreaterThan(3)
+    expect(west.length).toBeGreaterThan(3)
+    const centerOnly = pellets.filter((p) => Math.abs(p.x) < 0.9 && Math.abs(p.z) < 0.9)
+    expect(centerOnly.length).toBeLessThan(10)
   })
 })
 

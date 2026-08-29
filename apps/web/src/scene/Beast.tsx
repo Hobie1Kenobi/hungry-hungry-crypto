@@ -3,7 +3,7 @@ import { useFrame } from '@react-three/fiber'
 import { useRef } from 'react'
 import type { Group, Mesh, MeshStandardMaterial, PointLight } from 'three'
 import type { Seat } from '@hhc/shared'
-import { BEASTS, beastPosition, beastYaw, chompReach } from '@hhc/shared'
+import { BEASTS, beastPosition, beastYaw, NECK_VISUAL_ORIGIN, visualHeadAlong } from '@hhc/shared'
 import { useJuiceStore } from '../game/juice'
 import { useGameStore } from '../store/gameStore'
 import { Chassis, HeadDressing, MachineMouth, MachineNeck } from './beasts/kits'
@@ -13,8 +13,6 @@ const RING_COUNT = 5
 
 export function Beast({ seat }: { seat: Seat }) {
   const spec = BEASTS[seat]
-  const extend = useGameStore((s) => s.neckExtend[seat])
-  const down = useGameStore((s) => s.chompDown[seat])
   const lastEatAt = useGameStore((s) => s.lastEatAt[seat])
   const ui = useGameStore((s) => s.ui)
   const result = useGameStore((s) => s.result)
@@ -26,6 +24,7 @@ export function Beast({ seat }: { seat: Seat }) {
   const piston = useRef<Mesh>(null)
   const ringsRef = useRef<Group>(null)
   const head = useRef<Group>(null)
+  const label = useRef<Group>(null)
   const jaws = useRef<Group>(null)
   const antL = useRef<Group>(null)
   const antR = useRef<Group>(null)
@@ -45,6 +44,9 @@ export function Beast({ seat }: { seat: Seat }) {
   const yaw = beastYaw(seat)
 
   useFrame((_, dt) => {
+    const snap = useGameStore.getState()
+    const extend = snap.neckExtend[seat]
+    const down = snap.chompDown[seat]
     const t = performance.now() / 1000
     if (down && !lastDown.current) {
       anticip.current = 1
@@ -72,9 +74,10 @@ export function Beast({ seat }: { seat: Seat }) {
     const targetJaw = winner ? 1 : loser ? 0.2 : down ? 1 : restJaw
     jaw.current += (targetJaw - jaw.current) * Math.min(1, dt * (down ? 14 : 16))
 
-    const punch = down ? extend + slam.current * 0.34 - anticip.current * 0.16 : extend
-    const want = Math.max(0, Math.min(1.1, punch))
-    visExt.current += (want - visExt.current) * Math.min(1, dt * (down ? 38 : 22))
+    const punch = down ? extend + slam.current * 0.28 - anticip.current * 0.1 : extend
+    const want = Math.max(0, Math.min(1.08, punch))
+    visExt.current += (want - visExt.current) * Math.min(1, dt * (down ? 52 : 28))
+    if (Math.abs(want - visExt.current) < 0.004) visExt.current = want
 
     const breathe = 1 + Math.sin(t * 2.05 + seat) * (down ? 0.01 : 0.03)
     const sq = 1 - squash.current * 0.48
@@ -92,18 +95,18 @@ export function Beast({ seat }: { seat: Seat }) {
     if (antL.current) antL.current.rotation.z = Math.sin(t * 3.4 + seat) * 0.22
     if (antR.current) antR.current.rotation.z = Math.sin(t * 3.4 + seat + 1.2) * -0.22
     if (head.current) {
-      const camYaw = seat === 2 ? -0.72 : seat === 3 ? 0.42 : seat === 1 ? -0.22 : 0.22
+      const camYaw = seat === 2 ? -0.62 : seat === 3 ? 0.38 : seat === 1 ? -0.2 : 0.18
       head.current.rotation.y = camYaw + Math.sin(t * 9) * shake.current * 0.28
       head.current.rotation.z = Math.cos(t * 11) * shake.current * 0.12
-      head.current.rotation.x = -0.12 - (1 - visExt.current) * 0.18 + squash.current * 0.14
+      head.current.rotation.x = -0.08 - (1 - visExt.current) * 0.14 + squash.current * 0.12
     }
     if (visorMat.current) {
       const blink = Math.sin(t * 7.5 + seat * 2.1) > 0.93 ? 0.18 : 1
       visorMat.current.emissiveIntensity = (winner ? 4.4 : down ? 3.6 : 2.5) * blink
     }
-    const len = chompReach(visExt.current)
-    const barrel = 0.72
-    const rod = Math.max(0.28, len - barrel)
+    const headZ = visualHeadAlong(visExt.current)
+    const barrel = 0.55
+    const rod = Math.max(0.34, headZ - barrel)
     if (piston.current) {
       piston.current.scale.set(1, rod, 1)
       piston.current.position.set(0, 0, barrel + rod / 2)
@@ -111,10 +114,11 @@ export function Beast({ seat }: { seat: Seat }) {
     if (ringsRef.current) {
       for (let i = 0; i < RING_COUNT; i += 1) {
         const ring = ringsRef.current.children[i]
-        if (ring) ring.position.set(0, 0, barrel + ((i + 0.4) / RING_COUNT) * rod)
+        if (ring) ring.position.set(0, 0, barrel + ((i + 0.35) / RING_COUNT) * rod)
       }
     }
-    if (head.current) head.current.position.set(0, 0.02, Math.max(0.62, len - 0.18))
+    if (head.current) head.current.position.set(0, 0.04, headZ)
+    if (label.current) label.current.position.set(0, 1.22, headZ)
     if (jaws.current) {
       const open = jaw.current
       const up = jaws.current.children[1]
@@ -134,31 +138,32 @@ export function Beast({ seat }: { seat: Seat }) {
         <meshStandardMaterial color={spec.color} transparent opacity={0.2} />
       </mesh>
       <group ref={rig}>
-        <group ref={body} position={[0, 0.02, seat === 2 ? 0.08 : -0.04]}>
+        <group ref={body} position={[0, 0.02, seat === 2 ? 0.08 : -0.18]}>
           <Chassis seat={seat} />
         </group>
-        <group position={[0, BEAST_NECK_LIFT, 0.36]}>
+        <group position={[0, BEAST_NECK_LIFT, NECK_VISUAL_ORIGIN]}>
           <MachineNeck seat={seat} pistonRef={piston} ringsRef={ringsRef} color={spec.color} />
-          <group ref={head} position={[0, 0.02, 1]} scale={1.32}>
+          <group ref={head} position={[0, 0.04, 1]} scale={1.28}>
             <HeadDressing seat={seat} visorRef={visorMat} antL={antL} antR={antR} />
             <MachineMouth jawsRef={jaws} seat={seat} />
             <pointLight ref={mouthLight} position={[0, 0.04, 0.62]} color="#ff6a88" intensity={3.2} distance={2.8} />
           </group>
+          <Billboard ref={label} position={[0, 1.22, 1]}>
+            <Text
+              fontSize={0.22}
+              color={spec.color}
+              anchorX="center"
+              anchorY="bottom"
+              outlineWidth={0.022}
+              outlineColor="#041018"
+              maxWidth={3.4}
+              lineHeight={1.15}
+            >
+              {you ? `${spec.name}\nYOU` : spec.name}
+            </Text>
+          </Billboard>
         </group>
       </group>
-      <Billboard position={[0, seat === 0 ? 2.2 : 2.15, seat === 0 ? -0.28 : -0.75]}>
-        <Text
-          fontSize={0.2}
-          color={spec.color}
-          anchorX="center"
-          anchorY="middle"
-          outlineWidth={0.018}
-          outlineColor="#041018"
-          maxWidth={5}
-        >
-          {you ? `${spec.name}  YOU` : spec.name}
-        </Text>
-      </Billboard>
     </group>
   )
 }
