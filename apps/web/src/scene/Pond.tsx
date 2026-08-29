@@ -50,15 +50,22 @@ export function Pond() {
           depthWrite={false}
         />
       </mesh>
-      {[
-        [0, 0, 0],
-        [0, Math.PI / 2, 0],
-      ].map((rot, i) => (
-        <mesh key={`lane-${i}`} rotation={[-Math.PI / 2, rot[1], 0]} position={[0, -0.078, 0]}>
-          <planeGeometry args={[1.15, inner * 0.92]} />
-          <meshBasicMaterial color="#13586a" transparent opacity={0.42} depthWrite={false} />
+      {[0, Math.PI / 2].map((yaw, i) => (
+        <mesh key={`lane-paint-${i}`} rotation={[-Math.PI / 2, yaw, 0]} position={[0, -0.05, 0]}>
+          <planeGeometry args={[2.05, inner * 0.95]} />
+          <meshBasicMaterial color="#2ee9ff" transparent opacity={0.88} depthWrite={false} />
         </mesh>
       ))}
+      {[0, Math.PI / 2].map((yaw, i) => (
+        <mesh key={`lane-core-${i}`} rotation={[-Math.PI / 2, yaw, 0]} position={[0, -0.045, 0]}>
+          <planeGeometry args={[0.72, inner * 0.95]} />
+          <meshBasicMaterial color="#d7fffb" transparent opacity={0.95} depthWrite={false} />
+        </mesh>
+      ))}
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.04, 0]}>
+        <circleGeometry args={[0.78, 28]} />
+        <meshBasicMaterial color="#fff6c8" transparent opacity={0.9} depthWrite={false} />
+      </mesh>
       <mesh position={[0, -0.02, -wall]} castShadow receiveShadow>
         <boxGeometry args={[POND_SIZE + rim, 0.16, rim]} />
         <meshStandardMaterial color="#0a161c" metalness={0.45} roughness={0.4} />

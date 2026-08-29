@@ -2,14 +2,14 @@ import { Billboard, Text } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
 import { useRef } from 'react'
 import { AdditiveBlending, type Group, type Mesh } from 'three'
-import { BEASTS, mouthWorldOnPond } from '@hhc/shared'
+import { BEASTS } from '@hhc/shared'
 import { useJuiceStore } from '../game/juice'
 import { useGameStore } from '../store/gameStore'
-import { beastNeckLift } from './beasts/vinyl'
+import { visualMouthWorld } from './beasts/vinyl'
 
 function mouthWorld(seat: 0 | 1 | 2 | 3, extend: number): [number, number, number] {
-  const { x, z } = mouthWorldOnPond(seat, extend)
-  return [x, beastNeckLift(seat) + 0.12, z]
+  const { x, y, z } = visualMouthWorld(seat, extend)
+  return [x, y, z]
 }
 
 function EatTrails() {

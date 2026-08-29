@@ -1,20 +1,12 @@
-import { Html } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
 import { useRef } from 'react'
 import type { Group, Mesh, MeshStandardMaterial, PointLight } from 'three'
 import type { Seat } from '@hhc/shared'
-import { BEASTS, beastPosition, beastYaw, NECK_VISUAL_ORIGIN, visualHeadAlong } from '@hhc/shared'
+import { BEASTS, NECK_VISUAL_ORIGIN, beastYaw } from '@hhc/shared'
 import { useJuiceStore } from '../game/juice'
 import { useGameStore } from '../store/gameStore'
 import { Chassis, HeadDressing, MachineMouth, MachineNeck } from './beasts/kits'
-import { beastNeckLift, beastNeckWeave } from './beasts/vinyl'
-
-function labelLocal(seat: Seat, you: boolean): [number, number, number] {
-  if (you) return [-1.2, 2.35, 1.55]
-  if (seat === 1) return [0.2, 2.42, 0.22]
-  if (seat === 2) return [0.12, 2.08, 0.48]
-  return [0.16, 2.34, 0.28]
-}
+import { RESULT_HERO, beastNeckLift, beastVisualRoot, visualLaneHeadAlong } from './beasts/vinyl'
 
 const RING_COUNT = 5
 
@@ -32,7 +24,6 @@ export function Beast({ seat }: { seat: Seat }) {
   const ringsRef = useRef<Group>(null)
   const neck = useRef<Group>(null)
   const head = useRef<Group>(null)
-  const label = useRef<Group>(null)
   const jaws = useRef<Group>(null)
   const antL = useRef<Group>(null)
   const antR = useRef<Group>(null)
@@ -48,10 +39,10 @@ export function Beast({ seat }: { seat: Seat }) {
   const visExt = useRef(0)
   const slam = useRef(0)
 
-  const [x, y, z] = beastPosition(seat)
-  const yaw = beastYaw(seat)
-  const visX = seat === 1 ? x - 0.72 : x
-  const visZ = seat === 1 ? z + 1.55 : z
+  const [rootX, y, rootZ] = beastVisualRoot(seat)
+  const winnerPark = ui === 'results' && result?.winner === seat
+  const visX = winnerPark ? RESULT_HERO.x : rootX
+  const visZ = winnerPark ? RESULT_HERO.z : rootZ
 
   useFrame((_, dt) => {
     const snap = useGameStore.getState()
@@ -106,17 +97,16 @@ export function Beast({ seat }: { seat: Seat }) {
     if (antL.current) antL.current.rotation.z = Math.sin(t * 3.4 + seat) * 0.22
     if (antR.current) antR.current.rotation.z = Math.sin(t * 3.4 + seat + 1.2) * -0.22
     if (head.current) {
-      const camYaw = seat === 2 ? -0.62 : seat === 3 ? 0.38 : seat === 1 ? -0.2 : 0.18
       const chewNod = down ? Math.sin(t * 13.5 + seat * 1.7) * 0.05 : 0
-      head.current.rotation.y = camYaw + Math.sin(t * 9) * shake.current * 0.28
+      head.current.rotation.y = Math.sin(t * 9) * shake.current * 0.28
       head.current.rotation.z = Math.cos(t * 11) * shake.current * 0.12
-      head.current.rotation.x = -0.34 - (1 - visExt.current) * 0.06 + squash.current * 0.12 + chewNod
+      head.current.rotation.x = 0.26 + visExt.current * 0.06 + squash.current * 0.1 + chewNod
     }
     if (visorMat.current) {
       const blink = Math.sin(t * 7.5 + seat * 2.1) > 0.93 ? 0.18 : 1
       visorMat.current.emissiveIntensity = (winner ? 4.4 : down ? 3.6 : 2.5) * blink
     }
-    const headZ = visualHeadAlong(visExt.current)
+    const headZ = visualLaneHeadAlong(visExt.current)
     const barrel = 0.55
     const rod = Math.max(0.34, headZ - barrel)
     if (piston.current) {
@@ -131,14 +121,10 @@ export function Beast({ seat }: { seat: Seat }) {
     }
     if (neck.current) {
       const bob = down ? Math.sin(t * 9.2 + seat) * 0.04 : Math.sin(t * 2.05 + seat) * 0.012
-      neck.current.position.x = beastNeckWeave(seat)
+      neck.current.position.x = 0
       neck.current.position.y = beastNeckLift(seat) + bob
     }
     if (head.current) head.current.position.set(0, 0.1, headZ)
-    if (label.current) {
-      const [lx, ly, lz] = labelLocal(seat, you)
-      label.current.position.set(lx, ly, lz)
-    }
     if (jaws.current) {
       const open = jaw.current
       const up = jaws.current.children[1]
@@ -152,7 +138,7 @@ export function Beast({ seat }: { seat: Seat }) {
   })
 
   return (
-    <group position={[visX, y, visZ]} rotation={[0, yaw, 0]}>
+    <group position={[visX, y, visZ]} rotation={[0, beastYaw(seat), 0]}>
       <mesh position={[0, 0.02, -0.12]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
         <circleGeometry args={[0.82, 24]} />
         <meshStandardMaterial color={spec.color} transparent opacity={0.2} />
@@ -161,7 +147,7 @@ export function Beast({ seat }: { seat: Seat }) {
         <group ref={body} position={[0, 0.02, seat === 2 ? 0.08 : -0.18]}>
           <Chassis seat={seat} />
         </group>
-        <group ref={neck} position={[beastNeckWeave(seat), beastNeckLift(seat), NECK_VISUAL_ORIGIN]}>
+        <group ref={neck} position={[0, beastNeckLift(seat), NECK_VISUAL_ORIGIN]}>
           <MachineNeck seat={seat} pistonRef={piston} ringsRef={ringsRef} color={spec.color} />
           <group ref={head} position={[0, 0.04, 1]} scale={you ? 1.22 : 1.12}>
             <HeadDressing seat={seat} visorRef={visorMat} antL={antL} antR={antR} />
@@ -170,15 +156,6 @@ export function Beast({ seat }: { seat: Seat }) {
           </group>
         </group>
       </group>
-      {you ? null : (
-        <group ref={label} position={labelLocal(seat, you)}>
-          <Html center sprite occlude={false} zIndexRange={[8, 0]} style={{ pointerEvents: 'none' }}>
-            <div className="beast-tag" style={{ color: spec.color }}>
-              <strong>{spec.name}</strong>
-            </div>
-          </Html>
-        </group>
-      )}
     </group>
   )
 }
