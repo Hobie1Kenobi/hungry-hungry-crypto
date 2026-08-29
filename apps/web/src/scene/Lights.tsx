@@ -1,5 +1,6 @@
 import { useMemo } from 'react'
 import { Color } from 'three'
+import { registerBloomLight } from './bloom'
 
 export function Lights() {
   const cyan = useMemo(() => new Color('#00e5ff'), [])
@@ -9,9 +10,10 @@ export function Lights() {
 
   return (
     <>
-      <ambientLight intensity={0.78} color="#f6ead8" />
-      <hemisphereLight args={['#fff7ea', '#b08968', 0.85]} />
+      <ambientLight ref={registerBloomLight} intensity={0.78} color="#f6ead8" />
+      <hemisphereLight ref={registerBloomLight} args={['#fff7ea', '#b08968', 0.85]} />
       <directionalLight
+        ref={registerBloomLight}
         castShadow
         position={[-3.2, 14, 8.5]}
         intensity={2.15}
@@ -25,12 +27,12 @@ export function Lights() {
         shadow-camera-top={10}
         shadow-camera-bottom={-10}
       />
-      <directionalLight position={[8, 6, -4]} intensity={0.7} color="#9ad0ff" />
-      <spotLight position={[0, 11, 2]} intensity={1.35} angle={0.72} penumbra={0.55} color="#fff7ea" />
-      <pointLight position={[0, 2.1, -6.4]} intensity={3.4} distance={9} color={cyan} />
-      <pointLight position={[6.4, 2.1, 0]} intensity={3.4} distance={9} color={magenta} />
-      <pointLight position={[0, 2.1, 6.4]} intensity={3.6} distance={9} color={chartreuse} />
-      <pointLight position={[-6.4, 2.1, 0]} intensity={3.4} distance={9} color={gold} />
+      <directionalLight ref={registerBloomLight} position={[8, 6, -4]} intensity={0.7} color="#9ad0ff" />
+      <spotLight ref={registerBloomLight} position={[0, 11, 2]} intensity={1.35} angle={0.72} penumbra={0.55} color="#fff7ea" />
+      <pointLight ref={registerBloomLight} position={[0, 2.1, -6.4]} intensity={3.4} distance={9} color={cyan} />
+      <pointLight ref={registerBloomLight} position={[6.4, 2.1, 0]} intensity={3.4} distance={9} color={magenta} />
+      <pointLight ref={registerBloomLight} position={[0, 2.1, 6.4]} intensity={3.6} distance={9} color={chartreuse} />
+      <pointLight ref={registerBloomLight} position={[-6.4, 2.1, 0]} intensity={3.4} distance={9} color={gold} />
     </>
   )
 }

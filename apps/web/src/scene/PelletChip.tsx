@@ -4,6 +4,7 @@ import type { Group } from 'three'
 import type { Pellet } from '@hhc/shared'
 import { useJuiceStore } from '../game/juice'
 import { useGameStore } from '../store/gameStore'
+import { BloomSelect } from './bloom'
 import { HOPPER_MOUTH } from './Hopper'
 import { makeXrpMarkTexture } from './xrpMarkTexture'
 
@@ -91,21 +92,26 @@ export function PelletChip({ pellet }: { pellet: Pellet }) {
 
   if (pellet.eatenBy !== undefined) return null
 
+  const chip = (
+    <mesh castShadow>
+      <sphereGeometry args={[r, 28, 22]} />
+      <meshPhysicalMaterial
+        color={pellet.golden ? '#f0c14b' : '#3ec4e6'}
+        roughness={0.18}
+        metalness={0.12}
+        clearcoat={0.9}
+        clearcoatRoughness={0.16}
+        envMapIntensity={0.75}
+        emissive={pellet.golden ? '#c49214' : '#127a92'}
+        emissiveIntensity={pellet.golden ? 1.15 : 0.28}
+        toneMapped={!pellet.golden}
+      />
+    </mesh>
+  )
+
   return (
     <group ref={group} position={[pellet.x, restY, pellet.z]}>
-      <mesh castShadow>
-        <sphereGeometry args={[r, 28, 22]} />
-        <meshPhysicalMaterial
-          color={pellet.golden ? '#f0c14b' : '#3ec4e6'}
-          roughness={0.18}
-          metalness={0.12}
-          clearcoat={0.9}
-          clearcoatRoughness={0.16}
-          envMapIntensity={0.75}
-          emissive={pellet.golden ? '#c49214' : '#127a92'}
-          emissiveIntensity={pellet.golden ? 1.15 : 0.28}
-        />
-      </mesh>
+      {pellet.golden ? <BloomSelect>{chip}</BloomSelect> : chip}
       <XrpFace r={r} face={face} ink={ink} map={mark} />
       {pellet.golden ? <pointLight intensity={2.2} distance={3.8} color="#ffcc55" /> : null}
     </group>

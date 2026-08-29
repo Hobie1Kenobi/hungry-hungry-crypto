@@ -2,6 +2,7 @@ import { useMemo, useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import { AdditiveBlending, type Group, type Mesh } from 'three'
 import { useJuiceStore } from '../game/juice'
+import { BloomSelect } from './bloom'
 import { useGameStore } from '../store/gameStore'
 
 function Sparks({ dumping }: { dumping: boolean }) {
@@ -30,7 +31,7 @@ function Sparks({ dumping }: { dumping: boolean }) {
   })
 
   return (
-    <group>
+    <BloomSelect>
       {seeds.map((s, i) => (
         <mesh
           key={i}
@@ -40,10 +41,16 @@ function Sparks({ dumping }: { dumping: boolean }) {
           position={[s.x, -0.16, s.z]}
         >
           <sphereGeometry args={[0.04, 8, 8]} />
-          <meshBasicMaterial color="#ffe27a" blending={AdditiveBlending} transparent opacity={0.95} />
+          <meshBasicMaterial
+            color="#ffe27a"
+            blending={AdditiveBlending}
+            transparent
+            opacity={0.95}
+            toneMapped={false}
+          />
         </mesh>
       ))}
-    </group>
+    </BloomSelect>
   )
 }
 

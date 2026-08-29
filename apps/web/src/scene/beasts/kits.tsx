@@ -2,6 +2,7 @@ import type { Ref } from 'react'
 import type { Seat } from '@hhc/shared'
 import { BEASTS } from '@hhc/shared'
 import type { Group, Mesh, MeshStandardMaterial } from 'three'
+import { BloomSelect } from '../bloom'
 import { vinyl } from './vinyl'
 
 const RING_COUNT = 5
@@ -529,17 +530,20 @@ export function HeadDressing({
           <boxGeometry args={[1.12, 0.14, 0.38]} />
           <meshStandardMaterial color="#061018" metalness={0.4} roughness={0.3} />
         </mesh>
-        <mesh position={[0, 0.34, 0.28]} castShadow>
-          <boxGeometry args={[0.96, 0.1, 0.07]} />
-          <meshStandardMaterial
-            ref={visorRef}
-            color={color}
-            emissive={color}
-            emissiveIntensity={2.6}
-            metalness={0.12}
-            roughness={0.12}
-          />
-        </mesh>
+        <BloomSelect>
+          <mesh position={[0, 0.34, 0.28]} castShadow>
+            <boxGeometry args={[0.96, 0.1, 0.07]} />
+            <meshStandardMaterial
+              ref={visorRef}
+              color={color}
+              emissive={color}
+              emissiveIntensity={2.6}
+              metalness={0.12}
+              roughness={0.12}
+              toneMapped={false}
+            />
+          </mesh>
+        </BloomSelect>
         <group ref={antL} position={[-0.28, 0.48, -0.06]}>
           <mesh castShadow>
             <cylinderGeometry args={[0.03, 0.03, 0.32, 8]} />
@@ -558,17 +562,20 @@ export function HeadDressing({
   if (seat === 1) {
     return (
       <group>
-        <mesh position={[0, 0.32, 0.14]} rotation={[0.25, 0, 0]} castShadow>
-          <cylinderGeometry args={[0.36, 0.36, 0.08, 24]} />
-          <meshStandardMaterial
-            ref={visorRef}
-            color={color}
-            emissive={color}
-            emissiveIntensity={2.5}
-            metalness={0.45}
-            roughness={0.18}
-          />
-        </mesh>
+        <BloomSelect>
+          <mesh position={[0, 0.32, 0.14]} rotation={[0.25, 0, 0]} castShadow>
+            <cylinderGeometry args={[0.36, 0.36, 0.08, 24]} />
+            <meshStandardMaterial
+              ref={visorRef}
+              color={color}
+              emissive={color}
+              emissiveIntensity={2.5}
+              metalness={0.45}
+              roughness={0.18}
+              toneMapped={false}
+            />
+          </mesh>
+        </BloomSelect>
         <group ref={antL} position={[-0.26, 0.42, -0.04]} />
         <group ref={antR} position={[0.26, 0.42, -0.04]} />
       </group>
@@ -585,17 +592,20 @@ export function HeadDressing({
           <cylinderGeometry args={[0.2, 0.16, 0.28, 12]} />
           <meshPhysicalMaterial {...vinyl(color)} />
         </mesh>
-        <mesh position={[0, 0.28, 0.22]} castShadow>
-          <boxGeometry args={[0.78, 0.1, 0.08]} />
-          <meshStandardMaterial
-            ref={visorRef}
-            color={color}
-            emissive={color}
-            emissiveIntensity={2.2}
-            metalness={0.15}
-            roughness={0.16}
-          />
-        </mesh>
+        <BloomSelect>
+          <mesh position={[0, 0.28, 0.22]} castShadow>
+            <boxGeometry args={[0.78, 0.1, 0.08]} />
+            <meshStandardMaterial
+              ref={visorRef}
+              color={color}
+              emissive={color}
+              emissiveIntensity={2.2}
+              metalness={0.15}
+              roughness={0.16}
+              toneMapped={false}
+            />
+          </mesh>
+        </BloomSelect>
         <group ref={antL} position={[-0.46, 0.32, -0.06]} />
         <group ref={antR} position={[0.46, 0.32, -0.06]} />
       </group>
@@ -607,17 +617,20 @@ export function HeadDressing({
         <boxGeometry args={[1.18, 0.08, 0.52]} />
         <meshStandardMaterial color={accent} metalness={0.9} roughness={0.12} />
       </mesh>
-      <mesh position={[0, 0.28, 0.28]} castShadow>
-        <boxGeometry args={[0.86, 0.09, 0.06]} />
-        <meshStandardMaterial
-          ref={visorRef}
-          color={accent}
-          emissive={accent}
-          emissiveIntensity={2.4}
-          metalness={0.7}
-          roughness={0.16}
-        />
-      </mesh>
+      <BloomSelect>
+        <mesh position={[0, 0.28, 0.28]} castShadow>
+          <boxGeometry args={[0.86, 0.09, 0.06]} />
+          <meshStandardMaterial
+            ref={visorRef}
+            color={accent}
+            emissive={accent}
+            emissiveIntensity={2.4}
+            metalness={0.7}
+            roughness={0.16}
+            toneMapped={false}
+          />
+        </mesh>
+      </BloomSelect>
       <group ref={antL} position={[-0.36, 0.44, -0.08]}>
         <mesh castShadow>
           <boxGeometry args={[0.07, 0.18, 0.07]} />
