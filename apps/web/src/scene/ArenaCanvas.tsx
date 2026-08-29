@@ -6,6 +6,7 @@ import { useGameStore } from '../store/gameStore'
 import { makeSoftEnv } from './arenaEnv'
 import { ArenaCamera, TOY_FOV, toyCameraPosition } from './ArenaCamera'
 import { Beast } from './Beast'
+import { ArenaBloom, composerPresented } from './bloom'
 import { Fx } from './Fx'
 import { Hopper } from './Hopper'
 import { Lights } from './Lights'
@@ -48,6 +49,7 @@ function GoOnFirstFrame() {
       dropLobbyStats.current = false
       return
     }
+    if (!composerPresented()) return
     const drawingW = gl.domElement.width
     const drawingH = gl.domElement.height
     const calls = gl.info.render.calls
@@ -90,24 +92,26 @@ export function ArenaCanvas() {
           gl.setClearColor(BG, 1)
         }}
       >
-        <GoOnFirstFrame />
-        <ArenaCamera />
-        <SoftEnvironment />
-        <color attach="background" args={[BG]} />
-        <Lights />
-        <Studio />
-        <Table />
-        <Pond />
-        <Hopper />
-        {SEATS.map((seat) => (
-          <Beast key={seat} seat={seat} />
-        ))}
-        {pellets.map((pellet) => (
-          <PelletChip key={pellet.id} pellet={pellet} />
-        ))}
-        <Fx />
-        <ContactShadows position={[0, -0.52, 0]} opacity={0.32} scale={16} blur={2.1} far={6} />
-        <Preload all />
+        <ArenaBloom>
+          <GoOnFirstFrame />
+          <ArenaCamera />
+          <SoftEnvironment />
+          <color attach="background" args={[BG]} />
+          <Lights />
+          <Studio />
+          <Table />
+          <Pond />
+          <Hopper />
+          {SEATS.map((seat) => (
+            <Beast key={seat} seat={seat} />
+          ))}
+          {pellets.map((pellet) => (
+            <PelletChip key={pellet.id} pellet={pellet} />
+          ))}
+          <Fx />
+          <ContactShadows position={[0, -0.52, 0]} opacity={0.32} scale={16} blur={2.1} far={6} />
+          <Preload all />
+        </ArenaBloom>
       </Canvas>
     </div>
   )
