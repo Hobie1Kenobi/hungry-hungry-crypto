@@ -14,6 +14,11 @@ export function beastNeckLift(seat: Seat): number {
   return BEAST_NECK_STACK[seat]
 }
 
+/** Visual-only local-X weave so four rams do not share one mid-pond volume. */
+export function beastNeckWeave(seat: Seat): number {
+  return seat === 0 || seat === 2 ? 0.48 : -0.48
+}
+
 export function vinyl(
   color: string,
   extra?: { metalness?: number; roughness?: number; emissive?: string; emissiveIntensity?: number },

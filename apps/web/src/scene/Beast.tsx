@@ -1,4 +1,4 @@
-import { Billboard, Text } from '@react-three/drei'
+import { Html } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
 import { useRef } from 'react'
 import type { Group, Mesh, MeshStandardMaterial, PointLight } from 'three'
@@ -7,13 +7,13 @@ import { BEASTS, beastPosition, beastYaw, NECK_VISUAL_ORIGIN, visualHeadAlong } 
 import { useJuiceStore } from '../game/juice'
 import { useGameStore } from '../store/gameStore'
 import { Chassis, HeadDressing, MachineMouth, MachineNeck } from './beasts/kits'
-import { beastNeckLift } from './beasts/vinyl'
+import { beastNeckLift, beastNeckWeave } from './beasts/vinyl'
 
 function labelLocal(seat: Seat, you: boolean): [number, number, number] {
-  if (you) return [-0.08, 2.72, 0.62]
-  if (seat === 1) return [0.12, 2.36, 0.18]
-  if (seat === 2) return [0, 2.02, 0.42]
-  return [0.06, 2.28, 0.22]
+  if (you) return [-0.82, 2.95, 0.12]
+  if (seat === 1) return [0.2, 2.42, 0.22]
+  if (seat === 2) return [0.12, 2.08, 0.48]
+  return [0.16, 2.34, 0.28]
 }
 
 const RING_COUNT = 5
@@ -96,9 +96,9 @@ export function Beast({ seat }: { seat: Seat }) {
     const fat = seat === 2 ? 1.02 : 1
 
     if (rig.current) {
-      rig.current.rotation.x = winner ? -0.38 : loser ? 0.42 : squash.current * -0.28
-      rig.current.rotation.z = winner ? Math.sin(t * 2.4) * 0.1 : loser ? 0.18 : slam.current * 0.08
-      rig.current.position.y = winner ? 0.22 : loser ? -0.22 : slam.current * 0.14
+      rig.current.rotation.x = winner ? -0.48 : loser ? 0.42 : squash.current * -0.28
+      rig.current.rotation.z = winner ? Math.sin(t * 2.4) * 0.12 : loser ? 0.18 : slam.current * 0.08
+      rig.current.position.y = winner ? 0.3 : loser ? -0.22 : slam.current * 0.14
     }
     if (body.current) {
       body.current.scale.set(fat * gulpS * (1 + squash.current * 0.26), breathe * sq * (loser ? 0.74 : 1), fat * gulpS)
@@ -131,6 +131,7 @@ export function Beast({ seat }: { seat: Seat }) {
     }
     if (neck.current) {
       const bob = down ? Math.sin(t * 9.2 + seat) * 0.04 : Math.sin(t * 2.05 + seat) * 0.012
+      neck.current.position.x = beastNeckWeave(seat)
       neck.current.position.y = beastNeckLift(seat) + bob
     }
     if (head.current) head.current.position.set(0, 0.1, headZ)
@@ -160,7 +161,7 @@ export function Beast({ seat }: { seat: Seat }) {
         <group ref={body} position={[0, 0.02, seat === 2 ? 0.08 : -0.18]}>
           <Chassis seat={seat} />
         </group>
-        <group ref={neck} position={[0, beastNeckLift(seat), NECK_VISUAL_ORIGIN]}>
+        <group ref={neck} position={[beastNeckWeave(seat), beastNeckLift(seat), NECK_VISUAL_ORIGIN]}>
           <MachineNeck seat={seat} pistonRef={piston} ringsRef={ringsRef} color={spec.color} />
           <group ref={head} position={[0, 0.04, 1]} scale={you ? 1.22 : 1.12}>
             <HeadDressing seat={seat} visorRef={visorMat} antL={antL} antR={antR} />
@@ -169,28 +170,14 @@ export function Beast({ seat }: { seat: Seat }) {
           </group>
         </group>
       </group>
-      <Billboard ref={label} position={labelLocal(seat, you)} follow>
-        <mesh position={[0, you ? 0.28 : 0.14, -0.03]} renderOrder={39}>
-          <planeGeometry args={[you ? 2.05 : 1.55, you ? 0.62 : 0.34]} />
-          <meshBasicMaterial color="#041018" transparent opacity={0.62} depthTest={false} depthWrite={false} />
-        </mesh>
-        <Text
-          fontSize={you ? 0.26 : 0.2}
-          color={spec.color}
-          anchorX="center"
-          anchorY="bottom"
-          outlineWidth={0.034}
-          outlineColor="#041018"
-          maxWidth={3.2}
-          lineHeight={1.2}
-          renderOrder={40}
-          depthOffset={-8}
-          material-depthTest={false}
-          material-depthWrite={false}
-        >
-          {you ? `${spec.name}\nYOU` : spec.name}
-        </Text>
-      </Billboard>
+      <group ref={label} position={labelLocal(seat, you)}>
+        <Html center sprite occlude={false} zIndexRange={[8, 0]} style={{ pointerEvents: 'none' }}>
+          <div className={`beast-tag${you ? ' you' : ''}`} style={{ color: spec.color }}>
+            <strong>{spec.name}</strong>
+            {you ? <em>YOU</em> : null}
+          </div>
+        </Html>
+      </group>
     </group>
   )
 }
