@@ -92,8 +92,8 @@ function RimMount() {
   )
 }
 
-/** North-west rim. Far enough west that RIPSAW's east kit does not sit in the chute. */
-export const HOPPER_SHIFT_X = -1.78
+/** North-west rim, toward BLOCKMAW, so RIPSAW's east kit is clear of the chute. */
+export const HOPPER_SHIFT_X = -3.15
 export const HOPPER_MOUTH = { x: HOPPER_SHIFT_X, y: 2.18, z: -6.42 }
 
 export function Hopper() {

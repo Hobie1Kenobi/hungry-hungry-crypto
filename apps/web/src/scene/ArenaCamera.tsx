@@ -9,9 +9,9 @@ import { useViewStore } from '../store/viewStore'
 const look = new Vector3()
 const pos = new Vector3()
 
-export const TOY_POS = { x: 5.28, y: 5.72, z: -6.88 }
-export const TOY_LOOK = { x: -0.18, y: 0.34, z: 0.82 }
-export const TOY_FOV = 40
+export const TOY_POS = { x: 6.35, y: 6.48, z: -8.12 }
+export const TOY_LOOK = { x: -0.22, y: 0.22, z: 0.18 }
+export const TOY_FOV = 38
 const SHAKE_MS = 120
 
 export function toyCameraPosition(): [number, number, number] {
@@ -67,7 +67,7 @@ export function ArenaCamera() {
     const zoom = goldenLive ? 0.985 : 1
     const short = height > 0 && height < 600 ? 1.06 : 1
     const tall = height > 0 && aspect < 1.05 ? 1.06 : 1
-    const resultPull = ui === 'results' ? 1.16 : 1
+    const resultPull = ui === 'results' ? 1.2 : 1
     const k = short * tall * dolly * zoom * resultPull
 
     let sx = 0
@@ -79,18 +79,18 @@ export function ArenaCamera() {
       sy = Math.cos(age * 47) * 0.05 * t
     }
 
-    const swing = ui === 'results' ? Math.sin(clock.elapsedTime * 0.28) * 0.12 : 0
+    const swing = ui === 'results' ? Math.sin(clock.elapsedTime * 0.22) * 0.1 : 0
     const [bx, , bz] = beastPosition(result?.winner ?? 0)
-    const x = TOY_POS.x * k + (ui === 'results' ? 0.18 : 0) + sx + swing
-    const y = TOY_POS.y * Math.min(k, 1.14) + sy + (ui === 'results' ? 0.28 : 0)
-    pos.set(x, y, ui === 'results' ? TOY_POS.z * 1.05 : TOY_POS.z)
+    const x = TOY_POS.x * k + sx + swing
+    const y = TOY_POS.y * Math.min(k, 1.16) + sy + (ui === 'results' ? 0.36 : 0)
+    pos.set(x, y, ui === 'results' ? TOY_POS.z * 1.08 : TOY_POS.z)
     if (now < shakeUntil.current || (playBorn.current && now - playBorn.current < 32)) {
       cam.position.copy(pos)
     } else {
       cam.position.lerp(pos, 1 - Math.pow(0.0004, dt))
     }
     if (ui === 'results') {
-      look.set(bx * 0.28, 0.82, bz * 0.42)
+      look.set(bx * 0.18, 0.58, bz * 0.22)
     } else {
       look.set(TOY_LOOK.x, TOY_LOOK.y, TOY_LOOK.z)
     }

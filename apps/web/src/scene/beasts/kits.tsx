@@ -211,13 +211,13 @@ export function MachineNeck({
           <meshStandardMaterial color="#8fd8e6" metalness={0.45} roughness={0.28} />
         </mesh>
         <mesh ref={pistonRef} rotation={[Math.PI / 2, 0, 0]} position={[0, 0, 0.85]} castShadow>
-          <boxGeometry args={[0.5, 1, 0.5]} />
+          <boxGeometry args={[0.36, 1, 0.36]} />
           <meshStandardMaterial color={color} metalness={0.4} roughness={0.3} />
         </mesh>
         <group ref={ringsRef}>
           {rings.map((i) => (
             <mesh key={i} castShadow>
-              <boxGeometry args={[0.66, 0.66, 0.12]} />
+              <boxGeometry args={[0.48, 0.48, 0.1]} />
               <meshStandardMaterial color="#d7eef4" metalness={0.55} roughness={0.22} />
             </mesh>
           ))}

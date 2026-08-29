@@ -42,8 +42,8 @@ export function Beast({ seat }: { seat: Seat }) {
 
   const [x, y, z] = beastPosition(seat)
   const yaw = beastYaw(seat)
-  const visX = seat === 1 ? x + 0.06 : x
-  const visZ = seat === 1 ? z + 0.78 : z
+  const visX = seat === 1 ? x - 0.22 : x
+  const visZ = seat === 1 ? z + 1.18 : z
 
   useFrame((_, dt) => {
     const snap = useGameStore.getState()
@@ -87,9 +87,9 @@ export function Beast({ seat }: { seat: Seat }) {
     const fat = seat === 2 ? 1.02 : 1
 
     if (rig.current) {
-      rig.current.rotation.x = winner ? -0.86 : loser ? 0.72 : squash.current * -0.28
-      rig.current.rotation.z = winner ? Math.sin(t * 2.8) * 0.16 : loser ? 0.28 : slam.current * 0.08
-      rig.current.position.y = winner ? 0.34 : loser ? -0.34 : slam.current * 0.14
+      rig.current.rotation.x = winner ? -0.38 : loser ? 0.42 : squash.current * -0.28
+      rig.current.rotation.z = winner ? Math.sin(t * 2.4) * 0.1 : loser ? 0.18 : slam.current * 0.08
+      rig.current.position.y = winner ? 0.22 : loser ? -0.22 : slam.current * 0.14
     }
     if (body.current) {
       body.current.scale.set(fat * gulpS * (1 + squash.current * 0.26), breathe * sq * (loser ? 0.74 : 1), fat * gulpS)
@@ -120,7 +120,7 @@ export function Beast({ seat }: { seat: Seat }) {
       }
     }
     if (head.current) head.current.position.set(0, 0.04, headZ)
-    if (label.current) label.current.position.set(you ? -0.92 : 0, 2.02, seat === 1 ? 0.12 : -0.62)
+    if (label.current) label.current.position.set(you ? -0.15 : 0, you ? 1.72 : 2.02, you ? 1.15 : seat === 1 ? 0.2 : -0.55)
     if (jaws.current) {
       const open = jaw.current
       const up = jaws.current.children[1]
@@ -145,22 +145,22 @@ export function Beast({ seat }: { seat: Seat }) {
         </group>
         <group position={[0, BEAST_NECK_LIFT, NECK_VISUAL_ORIGIN]}>
           <MachineNeck seat={seat} pistonRef={piston} ringsRef={ringsRef} color={spec.color} />
-          <group ref={head} position={[0, 0.04, 1]} scale={you ? 1.4 : 1.22}>
+          <group ref={head} position={[0, 0.04, 1]} scale={you ? 1.32 : 1.18}>
             <HeadDressing seat={seat} visorRef={visorMat} antL={antL} antR={antR} />
             <MachineMouth jawsRef={jaws} seat={seat} />
             <pointLight ref={mouthLight} position={[0, 0.04, 0.62]} color="#ff6a88" intensity={3.2} distance={2.8} />
           </group>
         </group>
       </group>
-      <Billboard ref={label} position={[you ? -0.92 : 0, 2.02, seat === 1 ? 0.12 : -0.62]}>
+      <Billboard ref={label} position={[you ? -0.15 : 0, you ? 1.72 : 2.02, you ? 1.15 : seat === 1 ? 0.2 : -0.55]}>
         <Text
-          fontSize={you ? 0.26 : 0.2}
+          fontSize={you ? 0.24 : 0.2}
           color={spec.color}
-          anchorX={you ? 'right' : 'center'}
+          anchorX="center"
           anchorY="bottom"
           outlineWidth={0.028}
           outlineColor="#041018"
-          maxWidth={3.2}
+          maxWidth={2.8}
           lineHeight={1.15}
           renderOrder={12}
         >

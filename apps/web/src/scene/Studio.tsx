@@ -32,12 +32,12 @@ function Cabinet() {
           <meshStandardMaterial color="#ffe27a" emissive="#ffe27a" emissiveIntensity={2.2} />
         </mesh>
       ))}
-      <mesh position={[-7.55, 1.05, -6.4]} receiveShadow castShadow>
-        <boxGeometry args={[0.42, 3.4, 4.2]} />
+      <mesh position={[-7.85, 1.05, -7.55]} receiveShadow castShadow>
+        <boxGeometry args={[0.42, 3.4, 2.2]} />
         <meshStandardMaterial {...enamel} />
       </mesh>
-      <mesh position={[7.55, 1.05, -6.4]} receiveShadow castShadow>
-        <boxGeometry args={[0.42, 3.4, 4.2]} />
+      <mesh position={[7.85, 1.05, -7.55]} receiveShadow castShadow>
+        <boxGeometry args={[0.42, 3.4, 2.2]} />
         <meshStandardMaterial {...enamel} />
       </mesh>
       <mesh position={[0, -1.15, 0]} receiveShadow castShadow>
