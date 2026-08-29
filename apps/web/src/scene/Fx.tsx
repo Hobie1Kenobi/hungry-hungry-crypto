@@ -1,19 +1,15 @@
+import { Billboard, Text } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
 import { useRef } from 'react'
 import { AdditiveBlending, type Group, type Mesh } from 'three'
-import { beastPosition, beastYaw, chompReach } from '@hhc/shared'
+import { BEASTS, mouthWorldOnPond } from '@hhc/shared'
 import { useJuiceStore } from '../game/juice'
 import { useGameStore } from '../store/gameStore'
 import { BEAST_NECK_LIFT } from './beasts/vinyl'
 
 function mouthWorld(seat: 0 | 1 | 2 | 3, extend: number): [number, number, number] {
-  const [bx, , bz] = beastPosition(seat)
-  const reach = chompReach(extend) + 0.42
-  const lift = BEAST_NECK_LIFT
-  const yaw = beastYaw(seat)
-  const dx = Math.sin(yaw) * reach
-  const dz = Math.cos(yaw) * reach
-  return [bx + dx, lift, bz + dz]
+  const { x, z } = mouthWorldOnPond(seat, extend)
+  return [x, BEAST_NECK_LIFT + 0.12, z]
 }
 
 function EatTrails() {
@@ -111,11 +107,60 @@ function Splashes() {
   )
 }
 
+function ScorePops() {
+  const eats = useJuiceStore((s) => s.eats)
+  const necks = useGameStore((s) => s.neckExtend)
+  const group = useRef<Group>(null)
+
+  useFrame(() => {
+    if (!group.current) return
+    const now = performance.now()
+    for (let i = 0; i < group.current.children.length; i += 1) {
+      const child = group.current.children[i]
+      const ev = eats[i]
+      if (!ev) {
+        child.visible = false
+        continue
+      }
+      const t = (now - ev.at) / 820
+      if (t <= 0 || t >= 1) {
+        child.visible = false
+        continue
+      }
+      const [mx, my, mz] = mouthWorld(ev.seat, necks[ev.seat])
+      child.visible = true
+      child.position.set(mx, my + 0.62 + t * 1.05, mz)
+      child.scale.setScalar(1 + t * 0.22)
+    }
+  })
+
+  return (
+    <group ref={group}>
+      {eats.map((ev) => (
+        <Billboard key={ev.id} visible={false}>
+          <Text
+            fontSize={0.52}
+            color={ev.golden ? '#ffd45a' : BEASTS[ev.seat].color}
+            anchorX="center"
+            anchorY="middle"
+            outlineWidth={0.04}
+            outlineColor="#041018"
+            renderOrder={20}
+          >
+            {ev.golden ? '+5' : '+1'}
+          </Text>
+        </Billboard>
+      ))}
+    </group>
+  )
+}
+
 export function Fx() {
   return (
     <group>
       <EatTrails />
       <Splashes />
+      <ScorePops />
     </group>
   )
 }

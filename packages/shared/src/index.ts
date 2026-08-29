@@ -178,6 +178,24 @@ export function chompReach(extend: number): number {
   return NECK_BASE + extend * NECK_EXTRA
 }
 
+/** Local-Z of the neck group on the beast root. Same for every seat. */
+export const NECK_VISUAL_ORIGIN = 0.36
+
+/** Local-Z of the visual head so jaws land on `chompReach`, not a rail stub. */
+export function visualHeadAlong(extend: number): number {
+  return Math.max(0.62, chompReach(extend) - 0.18)
+}
+
+export function mouthWorldOnPond(seat: Seat, extend: number): { x: number; z: number } {
+  const [bx, , bz] = beastPosition(seat)
+  const yaw = beastYaw(seat)
+  const along = NECK_VISUAL_ORIGIN + visualHeadAlong(extend)
+  return {
+    x: bx + Math.sin(yaw) * along,
+    z: bz + Math.cos(yaw) * along,
+  }
+}
+
 export function pelletInLane(pellet: Pellet, seat: Seat): boolean {
   if (pellet.eatenBy !== undefined) return false
   const reach = chompReach(1)
@@ -433,26 +451,33 @@ export function spawnPellets(rng: () => number = Math.random, idPrefix = ''): Pe
   const pellets: Pellet[] = []
   const jitter = (n: number) => (rng() - 0.5) * n
   const wave = idPrefix.startsWith('w') ? Number.parseInt(idPrefix.slice(1), 10) || 1 : 0
-  const phase = wave === 0 ? 0 : wave % 2 === 1 ? 0.68 : -0.68
+  const phase = wave === 0 ? 0 : wave % 2 === 1 ? 0.22 : -0.22
   const spots: Array<[number, number]> = []
-  const axis = [-2.35, -1.18, 0, 1.18, 2.35]
+  const along = [3.12, 2.42, 1.72]
+  const across = [-0.68, 0.68]
 
-  for (const x of axis) {
-    for (const z of axis) {
-      if (Math.abs(x) > 1.6 && Math.abs(z) > 1.6) continue
-      spots.push([x + phase, z + phase * 0.35])
+  for (const a of along) {
+    for (const c of across) {
+      spots.push([c, -a + phase])
+      spots.push([c, a + phase])
+      spots.push([a + phase, c])
+      spots.push([-a + phase, c])
     }
   }
-  spots.push([-1.75 + phase, -0.55], [1.75 + phase, 0.55], [-0.55, 1.75 + phase], [0.55, -1.75 + phase])
-  spots.push([-1.75 + phase, 0.55], [1.75 + phase, -0.55], [0.55, 1.75 + phase], [-0.55, -1.75 + phase])
+  spots.push(
+    [0.52 + phase * 0.35, 0.2],
+    [-0.46 + phase * 0.35, -0.14],
+    [0.16, -0.6 + phase * 0.25],
+    [-0.2, 0.56 + phase * 0.25],
+  )
 
   let i = 0
   for (const [cx, cz] of spots) {
     if (i >= NORMAL_PELLET_COUNT) break
     pellets.push({
       id: `${idPrefix}crumb-${i}`,
-        x: cx + jitter(0.2),
-        z: cz + jitter(0.2),
+      x: cx + jitter(0.16),
+      z: cz + jitter(0.16),
       golden: false,
     })
     i += 1
