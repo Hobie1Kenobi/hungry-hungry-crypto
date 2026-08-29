@@ -42,8 +42,8 @@ export function Beast({ seat }: { seat: Seat }) {
 
   const [x, y, z] = beastPosition(seat)
   const yaw = beastYaw(seat)
-  const visX = seat === 1 ? x - 0.48 : x
-  const visZ = seat === 1 ? z + 1.42 : z
+  const visX = seat === 1 ? x - 0.72 : x
+  const visZ = seat === 1 ? z + 1.55 : z
 
   useFrame((_, dt) => {
     const snap = useGameStore.getState()
