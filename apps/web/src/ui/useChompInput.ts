@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import { isChompKey } from '@hhc/shared'
 import { useGameStore } from '../store/gameStore'
+import { useViewStore } from '../store/viewStore'
 
 function isTypingTarget(target: EventTarget | null): boolean {
   if (!(target instanceof HTMLElement)) return false
@@ -21,6 +22,10 @@ export function useChompInput(): void {
     }
 
     const onKeyDown = (e: KeyboardEvent) => {
+      if ((e.key === 't' || e.key === 'T') && !isTypingTarget(e.target) && !e.repeat) {
+        useViewStore.getState().toggleDebugTopDown()
+        return
+      }
       if (!isChompKey(e.code, e.key) || isTypingTarget(e.target)) return
       e.preventDefault()
       send(true)

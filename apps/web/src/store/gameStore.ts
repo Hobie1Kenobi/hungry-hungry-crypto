@@ -16,7 +16,8 @@ import {
   stepArena,
   stepNeckExtend,
 } from '@hhc/shared'
-import { sfxChomp, sfxEat, sfxEnd } from '../game/sfx'
+import { useJuiceStore } from '../game/juice'
+import { sfxChomp, sfxEat, sfxEnd, sfxHopperDump, sfxJawSnap, sfxSplashSmall, sfxTeethMiss } from '../game/sfx'
 import { useWalletStore } from '../wallet/walletStore'
 
 let practicePolicies: AiPolicy[] = []
@@ -129,6 +130,11 @@ export const useGameStore = create<GameState>((set, get) => ({
       const applied = applyChompInput(s.chompDown, s.chompPulseUntil, next, clientTime)
       if (!applied) return s
       if (applied.started) sfxChomp()
+      else {
+        sfxJawSnap()
+        if (performance.now() - s.lastEatAt[next.seat] > 280 && next.seat === s.localSeat) sfxTeethMiss()
+        useJuiceStore.getState().notifyMiss(next.seat)
+      }
       return {
         chompDown: applied.chompDown,
         chompPulseUntil: applied.chompPulseUntil,
@@ -172,6 +178,8 @@ export const useGameStore = create<GameState>((set, get) => ({
       netSend: null,
       netLeave: null,
     })
+    sfxHopperDump()
+    useJuiceStore.getState().notifyDump()
   },
 
   tick: (dt, now = performance.now()) => {
@@ -197,6 +205,11 @@ export const useGameStore = create<GameState>((set, get) => ({
       chompDown = held.chompDown
       chompPulseUntil = held.chompPulseUntil
       if (held.started) sfxChomp()
+      else {
+        sfxJawSnap()
+        if (clock - state.lastEatAt[state.localSeat] > 280) sfxTeethMiss()
+        useJuiceStore.getState().notifyMiss(state.localSeat)
+      }
     }
 
     const world = {
@@ -217,6 +230,7 @@ export const useGameStore = create<GameState>((set, get) => ({
       chompPulseUntil = applied.chompPulseUntil
       world.chompDown = chompDown
       if (applied.started) sfxChomp()
+      else useJuiceStore.getState().notifyMiss(input.seat)
     }
 
     const stepped = stepArena(
@@ -237,7 +251,15 @@ export const useGameStore = create<GameState>((set, get) => ({
     )
     for (const hit of stepped.hits) {
       const pellet = stepped.snapshot.pellets.find((p) => p.id === hit.id)
-      if (pellet) sfxEat(pellet.golden)
+      if (pellet) {
+        sfxEat(pellet.golden)
+        useJuiceStore.getState().notifyEat(hit.seat, pellet.x, pellet.z, pellet.golden)
+      }
+    }
+    if (stepped.snapshot.dumpT + 0.2 < state.dumpT) {
+      sfxHopperDump()
+      sfxSplashSmall()
+      useJuiceStore.getState().notifyDump()
     }
     const next: Partial<GameState> = { ...stepped.snapshot }
     if (stepped.ended) {
@@ -334,6 +356,7 @@ export const useGameStore = create<GameState>((set, get) => ({
     for (const pellet of frame.pellets) {
       if (pellet.eatenBy !== undefined && prev.get(pellet.id) !== pellet.eatenBy) {
         sfxEat(pellet.golden)
+        useJuiceStore.getState().notifyEat(pellet.eatenBy, pellet.x, pellet.z, pellet.golden)
       }
     }
     const local = state.localSeat

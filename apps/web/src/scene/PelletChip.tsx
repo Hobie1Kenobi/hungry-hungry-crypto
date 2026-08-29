@@ -2,6 +2,7 @@ import { useMemo, useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import type { Group } from 'three'
 import type { Pellet } from '@hhc/shared'
+import { useJuiceStore } from '../game/juice'
 import { useGameStore } from '../store/gameStore'
 import { makeXrpMarkTexture } from './xrpMarkTexture'
 
@@ -48,6 +49,7 @@ export function PelletChip({ pellet }: { pellet: Pellet }) {
   const dumpT = useGameStore((s) => s.dumpT)
   const delay = useMemo(() => hashDelay(pellet.id), [pellet.id])
   const grounded = useRef(false)
+  const splashed = useRef(false)
   const group = useRef<Group>(null)
   const r = pellet.golden ? 0.4 : 0.3
   const restY = 0.08 + r
@@ -57,15 +59,19 @@ export function PelletChip({ pellet }: { pellet: Pellet }) {
   const land = Math.max(0, Math.min(1, (dumpT - delay) / 0.32))
   if (land >= 1) grounded.current = true
   const drop = easeOut(grounded.current ? 1 : land)
-  const y = 4.1 + (restY - 4.1) * drop
+  const y = 3.55 + (restY - 3.55) * drop
 
   useFrame(() => {
     if (!group.current || pellet.eatenBy !== undefined) return
+    if (land >= 1 && !splashed.current) {
+      splashed.current = true
+      useJuiceStore.getState().notifySplash(pellet.x, pellet.z)
+    }
     group.current.position.set(pellet.x, y, pellet.z)
     if (!grounded.current) {
       group.current.rotation.set(0.14 * (1 - drop), dumpT * 4 + delay * 10, 0)
     } else {
-      group.current.rotation.set(0, 0, 0)
+      group.current.rotation.set(0.12, delay * 4 + dumpT * 0.4, 0.08)
     }
   })
 
@@ -83,10 +89,11 @@ export function PelletChip({ pellet }: { pellet: Pellet }) {
           clearcoatRoughness={0.16}
           envMapIntensity={0.75}
           emissive={pellet.golden ? '#c49214' : '#127a92'}
-          emissiveIntensity={pellet.golden ? 0.34 : 0.28}
+          emissiveIntensity={pellet.golden ? 1.15 : 0.28}
         />
       </mesh>
       <XrpFace r={r} face={face} ink={ink} map={mark} />
+      {pellet.golden ? <pointLight intensity={2.2} distance={3.8} color="#ffcc55" /> : null}
     </group>
   )
 }
