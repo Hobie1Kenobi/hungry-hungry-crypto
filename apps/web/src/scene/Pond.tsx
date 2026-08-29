@@ -10,13 +10,13 @@ export function Pond() {
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.05, 0]} receiveShadow>
         <planeGeometry args={[inner, inner]} />
         <meshStandardMaterial
-          color="#0a3d4c"
-          roughness={0.28}
-          metalness={0.12}
+          color="#12586a"
+          roughness={0.26}
+          metalness={0.14}
           transparent
           opacity={0.94}
-          emissive="#06303a"
-          emissiveIntensity={0.4}
+          emissive="#0a4a58"
+          emissiveIntensity={0.48}
         />
       </mesh>
       <mesh position={[0, 0.16, -wall]} castShadow receiveShadow>

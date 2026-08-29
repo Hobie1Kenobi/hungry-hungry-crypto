@@ -1,6 +1,12 @@
 import { useMemo, useRef } from 'react'
+import { useFrame } from '@react-three/fiber'
+import type { Group } from 'three'
 import type { Pellet } from '@hhc/shared'
 import { useGameStore } from '../store/gameStore'
+import { makeXrpMarkTexture } from './xrpMarkTexture'
+
+const cyanMark = makeXrpMarkTexture('#e7fbff', '#0a3340')
+const goldMark = makeXrpMarkTexture('#ffe7a0', '#4a3000')
 
 function hashDelay(id: string): number {
   let n = 0
@@ -12,45 +18,75 @@ function easeOut(t: number): number {
   return 1 - (1 - t) * (1 - t)
 }
 
+function XrpFace({ r, face, ink, map }: { r: number; face: string; ink: string; map: ReturnType<typeof makeXrpMarkTexture> }) {
+  return (
+    <group position={[0, r + 0.04, 0]} rotation={[-0.28, 0, 0]}>
+      <mesh>
+        <circleGeometry args={[r * 0.9, 28]} />
+        <meshStandardMaterial
+          map={map}
+          color={face}
+          roughness={0.3}
+          metalness={0.04}
+          polygonOffset
+          polygonOffsetFactor={-2}
+        />
+      </mesh>
+      <mesh rotation={[0, Math.PI / 4, 0]} position={[0, 0.035, 0]}>
+        <boxGeometry args={[r * 1.25, 0.055, r * 0.22]} />
+        <meshStandardMaterial color={ink} emissive={ink} emissiveIntensity={0.15} />
+      </mesh>
+      <mesh rotation={[0, -Math.PI / 4, 0]} position={[0, 0.035, 0]}>
+        <boxGeometry args={[r * 1.25, 0.055, r * 0.22]} />
+        <meshStandardMaterial color={ink} emissive={ink} emissiveIntensity={0.15} />
+      </mesh>
+    </group>
+  )
+}
+
 export function PelletChip({ pellet }: { pellet: Pellet }) {
   const dumpT = useGameStore((s) => s.dumpT)
   const delay = useMemo(() => hashDelay(pellet.id), [pellet.id])
   const grounded = useRef(false)
-  const scale = pellet.eatenBy !== undefined ? 0 : pellet.golden ? 1.4 : 1
-  const r = pellet.golden ? 0.44 : 0.36
-  const color = pellet.golden ? '#f0c14b' : '#7ad4ff'
-  const rim = pellet.golden ? '#fff3c4' : '#e9fbff'
-  const spin = dumpT * 8 + delay * 20
+  const group = useRef<Group>(null)
+  const r = pellet.golden ? 0.4 : 0.3
+  const restY = 0.08 + r
+  const face = pellet.golden ? '#ffe7a0' : '#e7fbff'
+  const ink = pellet.golden ? '#4a3000' : '#0a3340'
+  const mark = pellet.golden ? goldMark : cyanMark
   const land = Math.max(0, Math.min(1, (dumpT - delay) / 0.32))
   if (land >= 1) grounded.current = true
-  const y = 4.1 + (0.18 - 4.1) * easeOut(grounded.current ? 1 : land)
+  const drop = easeOut(grounded.current ? 1 : land)
+  const y = 4.1 + (restY - 4.1) * drop
+
+  useFrame(() => {
+    if (!group.current || pellet.eatenBy !== undefined) return
+    group.current.position.set(pellet.x, y, pellet.z)
+    if (!grounded.current) {
+      group.current.rotation.set(0.14 * (1 - drop), dumpT * 4 + delay * 10, 0)
+    } else {
+      group.current.rotation.set(0, 0, 0)
+    }
+  })
 
   if (pellet.eatenBy !== undefined) return null
 
   return (
-    <group position={[pellet.x, y, pellet.z]} rotation={[0, spin, 0]} scale={scale}>
-      <mesh castShadow receiveShadow>
-        <cylinderGeometry args={[r, r, 0.1, 6]} />
-        <meshStandardMaterial
-          color={color}
-          metalness={0.55}
-          roughness={0.22}
-          emissive={pellet.golden ? '#c49214' : '#147a99'}
-          emissiveIntensity={pellet.golden ? 1.2 : 1.05}
+    <group ref={group} position={[pellet.x, y, pellet.z]}>
+      <mesh castShadow>
+        <sphereGeometry args={[r, 28, 22]} />
+        <meshPhysicalMaterial
+          color={pellet.golden ? '#f0c14b' : '#3ec4e6'}
+          roughness={0.18}
+          metalness={0.12}
+          clearcoat={0.9}
+          clearcoatRoughness={0.16}
+          envMapIntensity={0.75}
+          emissive={pellet.golden ? '#c49214' : '#127a92'}
+          emissiveIntensity={pellet.golden ? 0.34 : 0.28}
         />
       </mesh>
-      <mesh position={[0, 0.06, 0]}>
-        <cylinderGeometry args={[r * 0.72, r * 0.72, 0.02, 6]} />
-        <meshStandardMaterial color={rim} emissive={rim} emissiveIntensity={0.75} metalness={0.4} roughness={0.35} />
-      </mesh>
-      <mesh position={[0, 0.07, 0]} rotation={[0, 0, Math.PI / 4]}>
-        <boxGeometry args={[r * 0.95, 0.02, r * 0.18]} />
-        <meshStandardMaterial color={pellet.golden ? '#6a4a00' : '#06222a'} />
-      </mesh>
-      <mesh position={[0, 0.07, 0]} rotation={[0, 0, -Math.PI / 4]}>
-        <boxGeometry args={[r * 0.95, 0.02, r * 0.18]} />
-        <meshStandardMaterial color={pellet.golden ? '#6a4a00' : '#06222a'} />
-      </mesh>
+      <XrpFace r={r} face={face} ink={ink} map={mark} />
     </group>
   )
 }

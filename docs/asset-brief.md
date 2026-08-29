@@ -1,6 +1,6 @@
 # Asset brief — original mascots
 
-Hungry Hungry Crypto needs original 3D and 2D art. Phase 1 **must keep placeholder primitives** (boxes, capsules, hex chips). Do not wait on Blender.
+Hungry Hungry Crypto needs original 3D and 2D art. Phase 1 **must keep placeholder primitives** (boxes, capsules, glass marble tokens). Do not wait on Blender.
 
 ## Beasts
 
@@ -19,7 +19,7 @@ Target mesh later: body, telescoping neck, upper/lower jaw, visor, two antenna n
 
 - **Pond:** square basin, dark liquidity, faint grid.
 - **Hopper:** overhead dump chute, center of pond.
-- **Pellets:** hex chips, ~21 per round. 20 dark/cyan-rim “normal”, 1 oversized GOLDEN. Geometric **X** stamp is an in-game chip mark, not a copied corporate SVG.
+- **Pellets:** glass/plastic marbles (sphere meshes), 28+1 per dump. Clear-ish cyan glass for normal, gold glass for the golden token. Geometric two-chevron / X mark is a generated canvas texture, not a downloaded brand file.
 
 ## Audio / UI
 
