@@ -20,18 +20,25 @@ function easeOut(t: number): number {
 
 function XrpFace({ r, face, ink, map }: { r: number; face: string; ink: string; map: ReturnType<typeof makeXrpMarkTexture> }) {
   return (
-    <group position={[0, r * 0.52, 0]} rotation={[-0.35, 0, 0]}>
+    <group position={[0, r + 0.04, 0]} rotation={[-0.28, 0, 0]}>
       <mesh>
-        <circleGeometry args={[r * 0.86, 28]} />
-        <meshStandardMaterial map={map} color={face} roughness={0.3} metalness={0.04} />
+        <circleGeometry args={[r * 0.9, 28]} />
+        <meshStandardMaterial
+          map={map}
+          color={face}
+          roughness={0.3}
+          metalness={0.04}
+          polygonOffset
+          polygonOffsetFactor={-2}
+        />
       </mesh>
-      <mesh rotation={[0, Math.PI / 4, 0]} position={[0, r * 0.06, 0]}>
-        <boxGeometry args={[r * 1.15, r * 0.14, r * 0.2]} />
-        <meshStandardMaterial color={ink} emissive={ink} emissiveIntensity={0.2} />
+      <mesh rotation={[0, Math.PI / 4, 0]} position={[0, 0.035, 0]}>
+        <boxGeometry args={[r * 1.25, 0.055, r * 0.22]} />
+        <meshStandardMaterial color={ink} emissive={ink} emissiveIntensity={0.15} />
       </mesh>
-      <mesh rotation={[0, -Math.PI / 4, 0]} position={[0, r * 0.06, 0]}>
-        <boxGeometry args={[r * 1.15, r * 0.14, r * 0.2]} />
-        <meshStandardMaterial color={ink} emissive={ink} emissiveIntensity={0.2} />
+      <mesh rotation={[0, -Math.PI / 4, 0]} position={[0, 0.035, 0]}>
+        <boxGeometry args={[r * 1.25, 0.055, r * 0.22]} />
+        <meshStandardMaterial color={ink} emissive={ink} emissiveIntensity={0.15} />
       </mesh>
     </group>
   )
@@ -70,13 +77,11 @@ export function PelletChip({ pellet }: { pellet: Pellet }) {
         <sphereGeometry args={[r, 28, 22]} />
         <meshPhysicalMaterial
           color={pellet.golden ? '#f0c14b' : '#3ec4e6'}
-          roughness={0.16}
-          metalness={0.1}
-          transparent
-          opacity={0.9}
-          clearcoat={1}
-          clearcoatRoughness={0.14}
-          envMapIntensity={0.8}
+          roughness={0.18}
+          metalness={0.12}
+          clearcoat={0.9}
+          clearcoatRoughness={0.16}
+          envMapIntensity={0.75}
           emissive={pellet.golden ? '#c49214' : '#127a92'}
           emissiveIntensity={pellet.golden ? 0.34 : 0.28}
         />
