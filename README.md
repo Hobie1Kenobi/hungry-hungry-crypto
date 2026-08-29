@@ -61,7 +61,7 @@ Explorer: [testnet.xrpl.org](https://testnet.xrpl.org). WebSocket: `wss://s.altn
 ### Practice vs AI (local)
 
 1. Click **Practice vs AI**. This starts a local ~45s round. Empty seats are live AI, not idle dummies.
-2. **Hold CHOMP** with Space, pointer, tap, or the CHOMP control. You are seat 0, **BYTEBITE** (north, cyan). The cyan neck should reach into the pond from the behind-camera view. Short taps nibble near chips; a hold reaches the center.
+2. **CHOMP LATCHED** — tap CHOMP or the pond once; the neck stays out until the next tap. Space is hold-while-down. You are seat 0, **BYTEBITE** (north, cyan). The cyan neck should reach into the pond from the behind-camera view. HUD shows `HOLD on/off  EXT 0.00`.
 3. Opponents use the **same** `ChompInput` as you: `{ seat, down, clientTime }`, piped through `setChomp`.
 4. Eat chips that overlap your jaws. Normal = 1, GOLDEN = 5. Hopper dumps extra waves when the pond thins (still local, no ledger writes).
 5. Round ends at ~45s or when the board is empty after the last refill. Results are local only (`txHashes: []`).

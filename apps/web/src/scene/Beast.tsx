@@ -118,7 +118,7 @@ export function Beast({ seat }: { seat: Seat }) {
       }
     }
     if (head.current) head.current.position.set(0, 0.04, headZ)
-    if (label.current) label.current.position.set(0, 1.22, headZ)
+    if (label.current) label.current.position.set(you ? 0.12 : 0, 1.58, -0.42)
     if (jaws.current) {
       const open = jaw.current
       const up = jaws.current.children[1]
@@ -143,21 +143,22 @@ export function Beast({ seat }: { seat: Seat }) {
         </group>
         <group position={[0, BEAST_NECK_LIFT, NECK_VISUAL_ORIGIN]}>
           <MachineNeck seat={seat} pistonRef={piston} ringsRef={ringsRef} color={spec.color} />
-          <group ref={head} position={[0, 0.04, 1]} scale={1.28}>
+          <group ref={head} position={[0, 0.04, 1]} scale={you ? 1.4 : 1.22}>
             <HeadDressing seat={seat} visorRef={visorMat} antL={antL} antR={antR} />
             <MachineMouth jawsRef={jaws} seat={seat} />
             <pointLight ref={mouthLight} position={[0, 0.04, 0.62]} color="#ff6a88" intensity={3.2} distance={2.8} />
           </group>
-          <Billboard ref={label} position={[0, 1.22, 1]}>
+          <Billboard ref={label} position={[you ? 0.12 : 0, 1.58, -0.42]}>
             <Text
-              fontSize={0.22}
+              fontSize={you ? 0.28 : 0.2}
               color={spec.color}
               anchorX="center"
               anchorY="bottom"
-              outlineWidth={0.022}
+              outlineWidth={0.028}
               outlineColor="#041018"
               maxWidth={3.4}
               lineHeight={1.15}
+              renderOrder={12}
             >
               {you ? `${spec.name}\nYOU` : spec.name}
             </Text>

@@ -409,6 +409,38 @@ describe('hopper refill', () => {
     const centerOnly = pellets.filter((p) => Math.abs(p.x) < 0.9 && Math.abs(p.z) < 0.9)
     expect(centerOnly.length).toBeLessThan(10)
   })
+
+  it('dump and refill leave chips in four lanes — x/z do not collapse to a center blob', () => {
+    const start = spawnPellets(seededRng(99)).map((p) => ({ ...p }))
+    let snapshot: ArenaSnapshot = {
+      pellets: start.map((p) => ({ ...p })),
+      scores: emptyScores(),
+      neckExtend: emptyNecks(),
+      chompDown: emptyChomp(),
+      chompPulseUntil: emptyPulse(),
+      lastEatAt: emptyLastEat(),
+      refillCount: 0,
+      lastRefillAt: 0,
+      dumpT: 0,
+      timeLeft: 30,
+    }
+    for (let i = 0; i < 90; i += 1) {
+      snapshot = stepArena(snapshot, 1 / 60, i * (1000 / 60)).snapshot
+    }
+    for (const pellet of snapshot.pellets) {
+      if (!pellet.id.startsWith('crumb-')) continue
+      const born = start.find((p) => p.id === pellet.id)
+      if (!born) continue
+      expect(pellet.x).toBe(born.x)
+      expect(pellet.z).toBe(born.z)
+    }
+    expect(snapshot.pellets.filter((p) => pelletInLane(p, 0) && p.z < -1.4).length).toBeGreaterThan(3)
+    expect(snapshot.pellets.filter((p) => pelletInLane(p, 1) && p.x > 1.4).length).toBeGreaterThan(3)
+    expect(snapshot.pellets.filter((p) => pelletInLane(p, 2) && p.z > 1.4).length).toBeGreaterThan(3)
+    expect(snapshot.pellets.filter((p) => pelletInLane(p, 3) && p.x < -1.4).length).toBeGreaterThan(3)
+    const live = snapshot.pellets.filter((p) => p.eatenBy === undefined)
+    expect(live.filter((p) => Math.abs(p.x) < 0.9 && Math.abs(p.z) < 0.9).length).toBeLessThan(10)
+  })
 })
 
 describe('AI nibble through the round', () => {
