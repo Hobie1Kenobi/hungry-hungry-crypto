@@ -1,6 +1,7 @@
 import { useFrame, useThree } from '@react-three/fiber'
 import { useRef } from 'react'
 import { MathUtils, type PerspectiveCamera, Vector3 } from 'three'
+import { mouthWorldOnPond } from '@hhc/shared'
 import { useJuiceStore } from '../game/juice'
 import { useGameStore } from '../store/gameStore'
 import { useViewStore } from '../store/viewStore'
@@ -30,7 +31,7 @@ export function ArenaCamera() {
     const cam = camera as PerspectiveCamera
     const aspect = width / Math.max(1, height)
     const debug = useViewStore.getState().debugTopDown
-    const { ui, dumpT, lastEatAt, pellets, result } = useGameStore.getState()
+    const { ui, dumpT, lastEatAt, pellets, result, neckExtend } = useGameStore.getState()
     const shakeAt = useJuiceStore.getState().shakeAt
     const now = performance.now()
 
@@ -79,15 +80,21 @@ export function ArenaCamera() {
     }
 
     const swing = ui === 'results' ? Math.sin(clock.elapsedTime * 0.28) * 0.16 : 0
-    const x = TOY_POS.x * k + (ui === 'results' ? 0.35 : 0) + sx + swing
-    const y = TOY_POS.y * Math.min(k, 1.12) + sy
-    pos.set(x, y, Math.max(-7.35, TOY_POS.z))
+    const track = ui === 'playing' || ui === 'results' ? neckExtend[0] : 0
+    const head = mouthWorldOnPond(0, track)
+    const x = TOY_POS.x * k + (ui === 'results' ? 0.35 : 0) + sx + swing - 0.42 * track
+    const y = TOY_POS.y * Math.min(k, 1.12) + sy + 0.06 * track
+    pos.set(x, y, Math.max(-7.2, TOY_POS.z + 0.16 * track))
     if (now < shakeUntil.current || (playBorn.current && now - playBorn.current < 32)) {
       cam.position.copy(pos)
     } else {
       cam.position.lerp(pos, 1 - Math.pow(0.0004, dt))
     }
-    look.set(TOY_LOOK.x, TOY_LOOK.y, result ? TOY_LOOK.z + 0.18 : TOY_LOOK.z)
+    look.set(
+      TOY_LOOK.x + (head.x - TOY_LOOK.x) * 0.06 * track,
+      TOY_LOOK.y + 0.1 * track,
+      (result ? TOY_LOOK.z + 0.18 : TOY_LOOK.z) + (head.z - TOY_LOOK.z) * 0.08 * track,
+    )
     cam.lookAt(look)
     cam.fov = aspect < 1.1 ? 46 : TOY_FOV
     cam.near = 0.45

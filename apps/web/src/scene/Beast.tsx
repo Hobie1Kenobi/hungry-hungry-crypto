@@ -54,8 +54,8 @@ export function Beast({ seat }: { seat: Seat }) {
       slam.current = 1
     }
     lastDown.current = down
-    anticip.current = Math.max(0, anticip.current - dt * 10)
-    slam.current = Math.max(0, slam.current - dt * 8)
+    anticip.current = Math.max(0, anticip.current - dt * 12)
+    slam.current = Math.max(0, slam.current - dt * 6)
 
     if (lastEatAt > lastEat.current) {
       lastEat.current = lastEatAt
@@ -72,11 +72,11 @@ export function Beast({ seat }: { seat: Seat }) {
     const loser = ui === 'results' && result && result.winner !== seat
     const restJaw = 0.88
     const targetJaw = winner ? 1 : loser ? 0.2 : down ? 1 : restJaw
-    jaw.current += (targetJaw - jaw.current) * Math.min(1, dt * (down ? 14 : 16))
+    jaw.current += (targetJaw - jaw.current) * Math.min(1, dt * (down ? 26 : 16))
 
-    const punch = down ? extend + slam.current * 0.28 - anticip.current * 0.1 : extend
-    const want = Math.max(0, Math.min(1.08, punch))
-    visExt.current += (want - visExt.current) * Math.min(1, dt * (down ? 52 : 28))
+    const punch = down ? extend + slam.current * 0.46 - anticip.current * 0.05 : extend
+    const want = Math.max(0, Math.min(1.12, punch))
+    visExt.current += (want - visExt.current) * Math.min(1, dt * (down ? 64 : 30))
     if (Math.abs(want - visExt.current) < 0.004) visExt.current = want
 
     const breathe = 1 + Math.sin(t * 2.05 + seat) * (down ? 0.01 : 0.03)
@@ -138,7 +138,7 @@ export function Beast({ seat }: { seat: Seat }) {
         <meshStandardMaterial color={spec.color} transparent opacity={0.2} />
       </mesh>
       <group ref={rig}>
-        <group ref={body} position={[0, 0.02, seat === 2 ? 0.08 : -0.18]}>
+        <group ref={body} position={[0, 0.02, seat === 2 ? 0.08 : seat === 1 ? -0.52 : -0.18]}>
           <Chassis seat={seat} />
         </group>
         <group position={[0, BEAST_NECK_LIFT, NECK_VISUAL_ORIGIN]}>

@@ -54,6 +54,7 @@ export function Lobby() {
             <span className="phase-tag">Code</span>
           </button>
         </div>
+        <p className="practice-local">Practice is local. No ledger writes.</p>
         {privateOpen ? (
           <div className="private-panel">
             <button className="btn primary" type="button" onClick={() => void createPrivateRoom()}>

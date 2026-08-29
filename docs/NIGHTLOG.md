@@ -260,4 +260,40 @@ Play path stays locked: GO on first presented frame, `PRACTICE_MAX_STEP_DT` hitc
 
 ### Next action
 
-Cycle 9: volume pond or a real bloom pass — the latch, the north neck, and the floor lanes should be honest now.
+Cycle 9: trailer polish. Latch stays. Hide debug chrome. Load the lanes at GO. Snap the neck. Dismiss the hint.
+
+## Cycle 9 — 2026-08-29 America/Chicago
+
+Hats used: **HAT DIRECTOR** (Cycle 8 live LOOK leftovers), **ATLAS** (Path B lock).
+
+Path B remains locked. Trailer polish only. No new modes, shops, quests, tokenomics, engine rewrite, Godot, Unreal, Unity, Babylon, Rapier, Mainnet, Hooks, EVM, or licensed-toy names. Applications stay locked. Practice local. No Mainnet.
+
+Cycle 8 live Practice on a 1280x800 box desktop, one tab (`15c891e`) is the incoming ground truth. Do not invent new scores.
+
+- Image 1 / first playing frame: 3D toy at 45.0s. Camera behind BYTEBITE. HOLD off EXT 0.00. Pond EMPTY of chips. Tutorial card bottom-left. Debug chrome top-right (HOLD off EXT 0.00, LOCAL NO LEDGER WRITES, CAM TOY T).
+- Image 2 / one CHOMP tap: HOLD on, EXT 0.28 still ramping, LATCHED on the button, cyan neck leaving the rail. Chips now on the four floor lanes.
+- Image 3 / mid-round ~20s: HOLD on EXT 1.00, head in the chips, four floor lanes, +1 pops, BYTEBITE competitive. Debug chrome and tutorial card still up.
+- Image 4 / results STUCK: BYTEBITE 21, GOLDGRUB 16, BLOCKMAW 12, RIPSAW 9. Left-docked card. WIN for latch, north neck, lanes, sticky results, LOOK-as-trailer. Do not regress those.
+- Latch stayed HOLD on / EXT 1.00 the whole round after one tap. That is a WIN. Latch contract unchanged.
+
+### What changed
+
+- Default Practice HUD no longer ships HOLD/EXT or CAM TOY as billboards. HOLD/EXT and the cam toggle sit behind `T` / debugTopDown or `?debug=1`. LOCAL NO LEDGER WRITES stays a Practice truth on the lobby and left-docked results, not a title card over the toy.
+- Practice GO starts with `dumpT` already landed. First presented frame is a loaded four-lane board. Hopper refill later in the round still resets `dumpT` and plays the chute.
+- Neck extend is snappier on all four seats (same speed). Retract stays snappy. Eat AABBs unchanged. Visible slam / jaw telegraph on the latch. No cooldown, fatigue, auto-unlatch, or eat-cost.
+- Tutorial / hint card dismisses after the first successful latch or ~2s into the round.
+- Small camera settle / BYTEBITE head-track. Hopper shifted west of the north rim. RIPSAW saw tucked and smaller so it does not sit in the chute. Necks sit a hair higher over the rails. All four bodies stay on 1280x800. No camera-inside-mesh. No Cycle 2 void. No Cycle 7 speck-land.
+
+Play path stays locked: Practice CHOMP is a latch (tap on, tap off). Space is hold-while-down. GO on first presented frame, `PRACTICE_MAX_STEP_DT` hitch clamp, `practiceWallClock` after GO, seat-0 hold-scores + mid-pond reach tests, 28+1 pond, hopper refill + `dumpT` reset, AI nibble after t=22s, Practice `txHashes: []`. Locked types unchanged. Eat AABBs still use sim pellet `x`/`z`. Same reach / AABB on all four seats. Sticky left-docked results stay inert until leftover captured pointer is up.
+
+### Five leftover notes
+
+1. Pond liquid is still a cheap hex/caustic plane, not a volume.
+2. Glow is still additive materials. No real bloom pass on visor / golden / hopper sparks.
+3. Kits are in-engine primitives. They are four machines now; they are not hero sculpts.
+4. Results is still a CSS card. The 3D lean/slump is visible beside it; the overlay no longer owns a bottom-right CHOMP collision.
+5. Online HungryRoom still uses the server tick. Only Practice waits for GO and clamps a hitch step.
+
+### Next action
+
+Cycle 10: volume pond or a real bloom pass - the film HUD, the loaded GO, and the snap CHOMP should be honest now.

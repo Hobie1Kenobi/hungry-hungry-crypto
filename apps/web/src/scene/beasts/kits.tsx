@@ -72,23 +72,23 @@ export function RipsawChassis({ color, accent }: { color: string; accent: string
         <cylinderGeometry args={[0.2, 0.26, 0.42, 12]} />
         <meshPhysicalMaterial {...vinyl(accent, { metalness: 0.42, roughness: 0.3 })} />
       </mesh>
-      <group position={[0, 0.58, -0.08]} rotation={[0, 0, Math.PI / 2]}>
+      <group position={[0, 0.48, -0.42]} rotation={[0, 0, Math.PI / 2]}>
         <mesh castShadow>
-          <cylinderGeometry args={[0.78, 0.78, 0.1, 36]} />
+          <cylinderGeometry args={[0.56, 0.56, 0.08, 36]} />
           <meshStandardMaterial color="#2a0a22" metalness={0.62} roughness={0.22} />
         </mesh>
         <mesh>
-          <cylinderGeometry args={[0.22, 0.22, 0.14, 16]} />
+          <cylinderGeometry args={[0.18, 0.18, 0.12, 16]} />
           <meshStandardMaterial color={accent} metalness={0.7} roughness={0.2} />
         </mesh>
-        {Array.from({ length: 16 }, (_, i) => (
+        {Array.from({ length: 14 }, (_, i) => (
           <mesh
             key={i}
-            position={[Math.sin((i / 16) * Math.PI * 2) * 0.76, 0, Math.cos((i / 16) * Math.PI * 2) * 0.76]}
-            rotation={[0, (i / 16) * Math.PI * 2, 0]}
+            position={[Math.sin((i / 14) * Math.PI * 2) * 0.54, 0, Math.cos((i / 14) * Math.PI * 2) * 0.54]}
+            rotation={[0, (i / 14) * Math.PI * 2, 0]}
             castShadow
           >
-            <coneGeometry args={[0.07, 0.2, 5]} />
+            <coneGeometry args={[0.055, 0.16, 5]} />
             <meshStandardMaterial color={color} metalness={0.62} roughness={0.18} />
           </mesh>
         ))}

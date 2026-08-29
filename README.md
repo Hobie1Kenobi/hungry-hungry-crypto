@@ -61,14 +61,16 @@ Explorer: [testnet.xrpl.org](https://testnet.xrpl.org). WebSocket: `wss://s.altn
 ### Practice vs AI (local)
 
 1. Click **Practice vs AI**. This starts a local ~45s round. Empty seats are live AI, not idle dummies.
-2. **CHOMP LATCHED** — tap CHOMP or the pond once; the neck stays out until the next tap. Space is hold-while-down. You are seat 0, **BYTEBITE** (north, cyan). The cyan neck should reach into the pond from the behind-camera view. HUD shows `HOLD on/off  EXT 0.00`.
+2. **CHOMP LATCHED** - tap CHOMP or the pond once; the neck stays out until the next tap. Space is hold-while-down. You are seat 0, **BYTEBITE** (north, cyan). The cyan neck should reach into the pond from the behind-camera view. HOLD/EXT is debug-only (`T` or `?debug=1`).
 3. Opponents use the **same** `ChompInput` as you: `{ seat, down, clientTime }`, piped through `setChomp`.
 4. Eat chips that overlap your jaws. Normal = 1, GOLDEN = 5. Hopper dumps extra waves when the pond thins (still local, no ledger writes).
 5. Round ends at ~45s or when the board is empty after the last refill. Results are local only (`txHashes: []`).
 
 ### 8-Minute Audit
 
-After PR #8, Practice vs AI fixed BYTEBITE’s hold (cyan neck + score 0→22) and the 28+1 pond, but RIPSAW / GOLDGRUB / BLOCKMAW vacuumed early then froze (~43/43/41 from ~22s to the bell) while leftover chips sat in BYTEBITE’s near-north lane and hopper waves stopped. This change:
+Cycle 8 latch is proven on a 1280x800 box desktop (BYTEBITE 21 win, one tap). Cycle 9 is trailer polish only.
+
+After PR #8, Practice vs AI fixed BYTEBITE's hold (cyan neck + score 0->22) and the 28+1 pond, but RIPSAW / GOLDGRUB / BLOCKMAW vacuumed early then froze (~43/43/41 from ~22s to the bell) while leftover chips sat in BYTEBITE's near-north lane and hopper waves stopped. This change:
 
 - Keeps seat 0 `chompHeld` + pointer capture. BYTEBITE still extends from behind-camera and can score.
 - Hopper refill resets `dumpT` so the new wave must land. Easy / Normal / Hungry release and re-arm after that dump instead of staying stuck past `WINDUP_DUMP`.

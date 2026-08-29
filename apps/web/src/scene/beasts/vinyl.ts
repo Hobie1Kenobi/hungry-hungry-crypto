@@ -1,4 +1,4 @@
-export const BEAST_NECK_LIFT = 0.82
+export const BEAST_NECK_LIFT = 0.92
 
 export function vinyl(
   color: string,
