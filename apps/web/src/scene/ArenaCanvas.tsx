@@ -22,18 +22,18 @@ function ArenaCamera() {
   useLayoutEffect(() => {
     const cam = camera as PerspectiveCamera
     const aspect = width / Math.max(1, height)
-    const halfW = 6.7
-    const halfD = 6.95
-    const hudFrac = 0.13
-    cam.fov = aspect < 1.1 ? 40 : 34
+    const halfW = 6.85
+    const halfD = 7.55
+    const hudFrac = 0.12
+    cam.fov = aspect < 1.1 ? 42 : 36
     const vFov = (cam.fov * Math.PI) / 180
     const distH = (2 * halfD * (1 + hudFrac)) / (2 * Math.tan(vFov / 2))
     const hFov = 2 * Math.atan(Math.tan(vFov / 2) * aspect)
     const distW = (2 * halfW) / (2 * Math.tan(hFov / 2))
-    const dist = Math.max(distH, distW) * 1.06
-    const elev = 0.94
+    const dist = Math.max(distH, distW) * 1.1
+    const elev = 0.9
     cam.position.set(0, dist * elev, -dist * Math.sqrt(Math.max(0.0001, 1 - elev * elev)))
-    cam.lookAt(0, 0.12, 0.22)
+    cam.lookAt(0, 0.25, 0)
     cam.near = 0.1
     cam.far = 70
     cam.updateProjectionMatrix()
