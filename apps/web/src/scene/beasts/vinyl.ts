@@ -3,12 +3,6 @@ import { NECK_VISUAL_ORIGIN, beastPosition, beastYaw } from '@hhc/shared'
 
 export const BEAST_NECK_LIFT = 0.68
 
-/** Winner parks in the open pond, right of the left results card. */
-export const RESULT_HERO = { x: 2.85, y: 0.7, z: 0.55 }
-
-/** Look left of the hero so the body sits in the open right pond, not under the card. */
-export const RESULT_LOOK = { x: 0.95, y: 0.62, z: 0.15 }
-
 /** RIPSAW stays on the east cardinal. BYTEBITE sits a hair toward the pond so the barrel is not on the clip. */
 export function beastVisualRoot(seat: Seat): [number, number, number] {
   const [x, y, z] = beastPosition(seat)

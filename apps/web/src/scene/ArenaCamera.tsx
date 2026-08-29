@@ -4,7 +4,8 @@ import { MathUtils, type PerspectiveCamera, Vector3 } from 'three'
 import { useJuiceStore } from '../game/juice'
 import { useGameStore } from '../store/gameStore'
 import { useViewStore } from '../store/viewStore'
-import { RESULT_LOOK } from './beasts/vinyl'
+import { beastYaw } from '@hhc/shared'
+import { beastVisualRoot } from './beasts/vinyl'
 
 const look = new Vector3()
 const pos = new Vector3()
@@ -13,9 +14,6 @@ export const TOY_POS = { x: 4.35, y: 8.85, z: -11.85 }
 export const TOY_LOOK = { x: 0.05, y: 0.68, z: -2.42 }
 export const TOY_FOV = 36
 const SHAKE_MS = 120
-
-/** Pulled back so the winner body reads in the open pond, not a crash-zoom blob. */
-export const RESULT_POS = { x: 10.55, y: 8.15, z: -12.65 }
 
 export function toyCameraPosition(): [number, number, number] {
   return [TOY_POS.x, TOY_POS.y, TOY_POS.z]
@@ -84,9 +82,16 @@ export function ArenaCamera() {
     if (ui === 'results') {
       const pad = Math.round(width * 0.36)
       cam.setViewOffset(width + pad, height, pad, 0, width, height)
+      const winner = useGameStore.getState().result?.winner ?? 0
+      const [hx, , hz] = beastVisualRoot(winner)
+      const yaw = beastYaw(winner)
       const swing = Math.sin(clock.elapsedTime * 0.22) * 0.08
-      pos.set(RESULT_POS.x + sx + swing, RESULT_POS.y + sy, RESULT_POS.z)
-      look.set(RESULT_LOOK.x, RESULT_LOOK.y, RESULT_LOOK.z)
+      pos.set(
+        hx - Math.sin(yaw) * 7.8 + Math.cos(yaw) * 4.2 + sx + swing,
+        6.9 + sy,
+        hz - Math.cos(yaw) * 7.8 - Math.sin(yaw) * 4.2,
+      )
+      look.set(hx, 1.08, hz)
     } else {
       cam.clearViewOffset()
       pos.set(TOY_POS.x + sx, TOY_POS.y * Math.min(k, 1.08) + sy, TOY_POS.z)
