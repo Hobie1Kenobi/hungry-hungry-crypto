@@ -8,11 +8,11 @@ import { useViewStore } from '../store/viewStore'
 const look = new Vector3()
 const pos = new Vector3()
 
-export const TOY_DIST = 22.8
-export const TOY_ELEV = 0.66
-export const TOY_AZ = 0.4
+export const TOY_DIST = 19.6
+export const TOY_ELEV = 0.64
+export const TOY_AZ = 0.46
 export const TOY_FOV = 40
-export const TOY_LOOK = { x: 0, y: 0.55, z: -0.28 }
+export const TOY_LOOK = { x: 0.22, y: 0.92, z: -1.7 }
 const SHAKE_MS = 120
 
 export function toyCameraPosition(dist = TOY_DIST, elev = TOY_ELEV, az = TOY_AZ): [number, number, number] {
@@ -75,7 +75,7 @@ export function ArenaCamera() {
     const az = TOY_AZ + swing
     const short = height > 0 && height < 860 ? 1.06 : 1
     const tall = height > 0 && aspect < 1.2 ? 1.1 : 1
-    const dist = (ui === 'results' ? TOY_DIST + 1.4 : TOY_DIST) * short * tall * dolly * zoom
+    const dist = (ui === 'results' ? TOY_DIST + 0.5 : TOY_DIST) * short * tall * dolly * zoom
     const [x, y, z] = toyCameraPosition(dist, elev, az)
 
     let sx = 0
@@ -93,7 +93,7 @@ export function ArenaCamera() {
     } else {
       cam.position.lerp(pos, 1 - Math.pow(0.0004, dt))
     }
-    look.set(TOY_LOOK.x, TOY_LOOK.y, result ? TOY_LOOK.z + 0.06 : TOY_LOOK.z)
+    look.set(TOY_LOOK.x, TOY_LOOK.y, result ? TOY_LOOK.z - 0.12 : TOY_LOOK.z)
     cam.lookAt(look)
     cam.fov = aspect < 1.1 ? 44 : TOY_FOV
     cam.near = 0.35

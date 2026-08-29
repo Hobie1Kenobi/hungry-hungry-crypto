@@ -50,20 +50,20 @@ export function Pond() {
           depthWrite={false}
         />
       </mesh>
-      <mesh position={[0, 0.08, -wall]} castShadow receiveShadow>
-        <boxGeometry args={[POND_SIZE + rim, 0.42, rim]} />
+      <mesh position={[0, -0.02, -wall]} castShadow receiveShadow>
+        <boxGeometry args={[POND_SIZE + rim, 0.16, rim]} />
         <meshStandardMaterial color="#0a161c" metalness={0.45} roughness={0.4} />
       </mesh>
-      <mesh position={[0, 0.08, wall]} castShadow receiveShadow>
-        <boxGeometry args={[POND_SIZE + rim, 0.42, rim]} />
+      <mesh position={[0, 0.02, wall]} castShadow receiveShadow>
+        <boxGeometry args={[POND_SIZE + rim, 0.26, rim]} />
         <meshStandardMaterial color="#0a161c" metalness={0.45} roughness={0.4} />
       </mesh>
-      <mesh position={[-wall, 0.08, 0]} castShadow receiveShadow>
-        <boxGeometry args={[rim, 0.42, POND_SIZE + rim]} />
+      <mesh position={[-wall, 0.02, 0]} castShadow receiveShadow>
+        <boxGeometry args={[rim, 0.26, POND_SIZE + rim]} />
         <meshStandardMaterial color="#0a161c" metalness={0.45} roughness={0.4} />
       </mesh>
-      <mesh position={[wall, 0.08, 0]} castShadow receiveShadow>
-        <boxGeometry args={[rim, 0.42, POND_SIZE + rim]} />
+      <mesh position={[wall, 0.02, 0]} castShadow receiveShadow>
+        <boxGeometry args={[rim, 0.26, POND_SIZE + rim]} />
         <meshStandardMaterial color="#0a161c" metalness={0.45} roughness={0.4} />
       </mesh>
     </group>

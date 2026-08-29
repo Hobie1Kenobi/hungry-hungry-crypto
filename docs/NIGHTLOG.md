@@ -153,3 +153,41 @@ Play path stays locked: `chompHeld` + `setPointerCapture` latch, seat-0 hold-sco
 ### Next action
 
 Cycle 6: volume pond or a real bloom pass — the first frame and the north neck should be honest now.
+
+## Cycle 6 — 2026-08-29 America/Chicago
+
+Hats used: **HAT DIRECTOR** (Cycle 5 playtest), **ATLAS** (Path B lock).
+
+Path B remains locked. Beauty and feel. No new modes, shops, quests, tokenomics, engine rewrite, Godot, Unreal, Unity, Babylon, Rapier, Mainnet, Hooks, EVM, or licensed-toy names. Applications stay locked.
+
+Cycle 5 live Practice on a 1280×800 box desktop, one tab (`c01c14a`) is the incoming ground truth. Do not invent new scores.
+
+- Image 1 / first playing frame: 3D toy, not black. ROUND 45.0s. Full cabinet/pond, four beasts, HUD. Pond empty of chips at t=0 (hopper not dumped yet). This is a WIN. Do not regress it.
+- Image 2 / mid ~23s: BYTEBITE 1, RIPSAW 5, GOLDGRUB 6, BLOCKMAW 6. Hopper x1, 39 chips. Scene readable. BYTEBITE (north) is small and far.
+- Image 3 / late 7.3s left: BYTEBITE 2, RIPSAW 15, GOLDGRUB 16, BLOCKMAW 24. Scores kept moving. Hopper dumped. BYTEBITE neck still short of the mid-board pile.
+- First frame 3D at 45.0s. Scores kept moving after t=22s. Hopper x2. BYTEBITE scored 2 on a full-round hold vs AI 15-24.
+- Results overlay did not persist. Round snapped back to lobby. True finals unverified.
+- LOOK is a marginal readable diorama, not a trailer. Juice unread. Mouths barely visible. CHOMP button clipped at the bottom edge. Lobby 3D behind the menu is a muddy blur.
+
+### What changed
+
+- Results stick until a labeled **Lobby** or **Replay** press. The card docks left so it does not sit on the CHOMP plunger. Buttons stay inert until the leftover captured pointer is up, so a CHOMP pointerup cannot dismiss the card or start another match.
+- Full-extend mouths on every seat reach the mid-pond cluster, not only the north rim. Same `chompReach` / AABB on all four seats. Seat-0 hold-scores stays. AI not nerfed. Eat AABBs still use sim pellet `x`/`z`.
+- Cycle 4/5 camera family, nudged closer and north so BYTEBITE is readable and not hidden behind the pond wall/marquee. All four bodies stay on 1280×800. No camera-inside-mesh. No Cycle 2 void.
+- Juice a stranger can see: CHOMP plunger stays fully on screen, harder neck slam + squash, brighter chip trails into the mouth, winner lean / loser slump behind a left-docked results card.
+- Four open maws with interior gums and teeth at this camera. RIPSAW keeps the saw cavity; BYTEBITE / GOLDGRUB / BLOCKMAW are CRT / grub / vault mouths, not a closed box.
+- Lobby 3D backdrop stays mounted. Overlay is a light vignette so the toy still reads; the card is dim, not a muddy smear.
+
+Play path stays locked: GO on first presented frame, `PRACTICE_MAX_STEP_DT` hitch clamp, `practiceWallClock` after GO, `chompHeld` + `setPointerCapture` latch, seat-0 hold-scores test, 28+1 pond, hopper refill + `dumpT` reset, AI nibble after t=22s, Practice `txHashes: []`. Locked types unchanged.
+
+### Five leftover notes
+
+1. Pond liquid is still a cheap hex/caustic plane, not a volume.
+2. Glow is still additive materials. No real bloom pass on visor / golden / hopper sparks.
+3. Kits are in-engine primitives. They are four machines now; they are not hero sculpts.
+4. Results is still a CSS card. The 3D lean/slump is visible beside it; the overlay no longer owns a bottom-right CHOMP collision.
+5. Online HungryRoom still uses the server tick. Only Practice waits for GO and clamps a hitch step.
+
+### Next action
+
+Cycle 7: volume pond or a real bloom pass — results and the north reach should be honest now.

@@ -63,13 +63,13 @@ export const BEAST_OFFSET = 5.2
 
 export const CHOMP_HALF_WIDTH = 1.55
 
-export const CHOMP_MOUTH_DEPTH = 3.65
+export const CHOMP_MOUTH_DEPTH = 4.35
 
 export const CHOMP_MOUTH_PAD = 0.28
 
 export const NECK_BASE = 0.95
 
-export const NECK_EXTRA = 4.85
+export const NECK_EXTRA = 5.55
 
 export const DUMP_SECONDS = 1.15
 

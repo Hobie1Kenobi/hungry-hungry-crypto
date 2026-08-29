@@ -26,13 +26,13 @@ function EatTrails() {
     const now = performance.now()
     for (let i = 0; i < group.current.children.length; i += 1) {
       const child = group.current.children[i] as Mesh
-      const ev = eats[Math.floor(i / 3)]
-      const lane = i % 3
+      const ev = eats[Math.floor(i / 5)]
+      const lane = i % 5
       if (!ev) {
         child.visible = false
         continue
       }
-      const t = (now - ev.at) / 820 - lane * 0.08
+      const t = (now - ev.at) / 980 - lane * 0.07
       if (t <= 0 || t >= 1) {
         child.visible = false
         continue
@@ -40,21 +40,21 @@ function EatTrails() {
       const [mx, my, mz] = mouthWorld(ev.seat, necks[ev.seat])
       const k = t * t
       child.visible = true
-      child.position.set(ev.x + (mx - ev.x) * k, 0.42 + (my - 0.42) * k, ev.z + (mz - ev.z) * k)
-      child.scale.setScalar((ev.golden ? 0.62 : 0.48) * (1 - t * 0.85))
+      child.position.set(ev.x + (mx - ev.x) * k, 0.42 + (my - 0.42) * k + Math.sin(t * Math.PI) * 0.22, ev.z + (mz - ev.z) * k)
+      child.scale.setScalar((ev.golden ? 0.78 : 0.6) * (1 - t * 0.72))
     }
   })
 
   return (
     <group ref={group}>
       {eats.flatMap((ev) =>
-        [0, 1, 2].map((lane) => (
+        [0, 1, 2, 3, 4].map((lane) => (
           <mesh key={`${ev.id}-${lane}`} visible={false}>
             <sphereGeometry args={[1, 10, 8]} />
             <meshBasicMaterial
               color={ev.golden ? '#ffd45a' : '#7fe7ff'}
               transparent
-              opacity={0.95}
+              opacity={0.98}
               blending={AdditiveBlending}
               depthWrite={false}
             />

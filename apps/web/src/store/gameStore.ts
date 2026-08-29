@@ -84,12 +84,12 @@ interface GameState {
   bindNet: (handlers: { send: (input: ChompInput) => void; leave: () => void }) => void
 }
 
-function finishLocal(state: GameState): Pick<GameState, 'ui' | 'result' | 'chompDown'> {
+function finishLocal(state: GameState): Pick<GameState, 'ui' | 'result' | 'chompDown' | 'chompHeld'> {
   const wallet = useWalletStore.getState().address
   const addresses: Partial<Record<Seat, Address>> = wallet ? { [state.localSeat]: wallet } : {}
   const result = makeMatchResult(state.matchId, state.scores, addresses)
   sfxEnd()
-  return { ui: 'results', result, chompDown: emptyChomp() }
+  return { ui: 'results', result, chompDown: emptyChomp(), chompHeld: false }
 }
 
 export const useGameStore = create<GameState>((set, get) => ({
@@ -389,6 +389,7 @@ export const useGameStore = create<GameState>((set, get) => ({
       ui: 'results',
       result: { ...result, txHashes: result.txHashes ?? [] },
       chompDown: emptyChomp(),
+      chompHeld: false,
     })
   },
 

@@ -240,6 +240,40 @@ describe('seat 0 human ChompInput', () => {
     expect(pellets.some((p) => pelletInChompZone(p, 2, 1))).toBe(true)
     expect(pellets.some((p) => pelletInChompZone(p, 3, 1))).toBe(true)
   })
+
+  it('seat 0 at extend=1 overlaps the mid-pond chip cluster, same reach on every seat', () => {
+    const cluster = [
+      crumb('mid-0', 0, 0),
+      crumb('mid-1', 0.42, -0.28),
+      crumb('mid-2', -0.36, 0.22),
+      crumb('mid-3', 0.12, 0.7),
+      crumb('mid-4', -0.18, -0.55),
+    ]
+    for (const pellet of cluster) {
+      expect(pelletInChompZone(pellet, 0, 1)).toBe(true)
+    }
+    const origin = crumb('origin', 0, 0)
+    expect(pelletInChompZone(origin, 0, 1)).toBe(true)
+    expect(pelletInChompZone(origin, 1, 1)).toBe(true)
+    expect(pelletInChompZone(origin, 2, 1)).toBe(true)
+    expect(pelletInChompZone(origin, 3, 1)).toBe(true)
+    const spawned = spawnPellets(seededRng(7))
+    const midPond = spawned.filter((p) => Math.abs(p.x) < 1.15 && Math.abs(p.z) < 1.15)
+    expect(midPond.length).toBeGreaterThan(0)
+    expect(midPond.some((p) => pelletInChompZone(p, 0, 1))).toBe(true)
+  })
+
+  it('a continuous seat 0 CHOMP hold eats a mid-pond pellet, not only the north rim', () => {
+    const pellets = [crumb('mid-pond', 0.08, 0.06), crumb('mid-b', -0.22, -0.12)]
+    const result = simulateRound({
+      pellets,
+      policies: [holdSeat0()],
+      seconds: 4,
+    })
+    expect(result.maxNeckExtend[0]).toBeGreaterThan(0.85)
+    expect(result.scores[0]).toBeGreaterThan(0)
+    expect(result.pellets.some((p) => p.eatenBy === 0 && Math.abs(p.z) < 0.4)).toBe(true)
+  })
 })
 
 describe('practice wall clock', () => {
