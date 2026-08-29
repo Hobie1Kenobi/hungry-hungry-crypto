@@ -76,6 +76,8 @@ After PR #8, Practice vs AI fixed BYTEBITE’s hold (cyan neck + score 0→22) a
 
 **Verify (local, no XRPL):** `pnpm --filter web dev` → Practice vs AI → hold Space or CHOMP. Cyan neck must reach into the pond and BYTEBITE’s score must leave 0. Hopper shakes and dumps again when a lane empties. RIPSAW / GOLDGRUB / BLOCKMAW scores must still move after ~22s. HUD still reads `LOCAL RESULT · NO LEDGER WRITES`.
 
+Arena framing: the 11.2-radius dark cylinder plus shallow camera/fog read as a black oval that hid GOLDGRUB. The table is now a 13.1 square slab under the pond (not a planet disc). Camera sits more overhead and pulled back so the square pond and all four labeled beasts fit; HUD is thinner so it does not cover GOLDGRUB. Tokens are sphere marbles — cyan glass / gold glass — with a generated two-chevron mark. Eat AABBs still use sim pellet `x`/`z`. No Rapier. Practice vs AI stays local. No Mainnet.
+
 ### Quick Match (local Colyseus)
 
 1. Start the server, then the web client. Connect a wallet first if you want CRUMB settlement.

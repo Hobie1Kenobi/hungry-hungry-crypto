@@ -1,28 +1,38 @@
 import { Grid } from '@react-three/drei'
-import { POND_SIZE } from '@hhc/shared'
+
+const TABLE = 13.1
+const TOP = 12.4
 
 export function Table() {
   return (
     <group>
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.08, 0]} receiveShadow>
-        <cylinderGeometry args={[11.2, 11.2, 0.16, 48]} />
-        <meshStandardMaterial color="#121722" metalness={0.55} roughness={0.42} />
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.42, 0]} receiveShadow>
+        <planeGeometry args={[64, 64]} />
+        <meshStandardMaterial color="#141b28" roughness={1} metalness={0} />
       </mesh>
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.01, 0]} receiveShadow>
-        <planeGeometry args={[POND_SIZE + 5.4, POND_SIZE + 5.4]} />
-        <meshStandardMaterial color="#0b0f18" metalness={0.3} roughness={0.7} />
+      <mesh position={[0, -0.16, 0]} receiveShadow castShadow>
+        <boxGeometry args={[TABLE, 0.28, TABLE]} />
+        <meshStandardMaterial color="#3a4d66" metalness={0.38} roughness={0.48} />
+      </mesh>
+      <mesh position={[0, -0.01, 0]} receiveShadow>
+        <boxGeometry args={[TOP + 0.28, 0.06, TOP + 0.28]} />
+        <meshStandardMaterial color="#5a6f88" metalness={0.42} roughness={0.38} />
+      </mesh>
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.03, 0]} receiveShadow>
+        <planeGeometry args={[TOP, TOP]} />
+        <meshStandardMaterial color="#2a3a4e" metalness={0.18} roughness={0.62} />
       </mesh>
       <Grid
-        args={[16, 16]}
+        args={[12, 12]}
         cellSize={0.5}
-        cellThickness={0.6}
-        cellColor="#123044"
+        cellThickness={0.55}
+        cellColor="#3a6a82"
         sectionSize={2}
-        sectionThickness={1.1}
-        sectionColor="#1b4d63"
-        fadeDistance={22}
-        fadeStrength={1.4}
-        position={[0, 0.02, 0]}
+        sectionThickness={1}
+        sectionColor="#4d8aa4"
+        fadeDistance={14}
+        fadeStrength={1.1}
+        position={[0, 0.04, 0]}
       />
     </group>
   )

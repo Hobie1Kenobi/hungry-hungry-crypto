@@ -21,4 +21,4 @@ CRUMB (issued token on XRPL Testnet) **has no value**. This is not money. Testne
 
 ## License
 
-Source code is MIT. Do not import third-party character art, audio, or trademarks. Pellet chips are original hex meshes themed as in-game liquidity chips, not copies of any corporate logo file.
+Source code is MIT. Do not import third-party character art, audio, or trademarks. Pond tokens are original glass/plastic marble meshes with a generated two-chevron mark. Do not download or embed Ripple/XRP wordmarks or brand kits. This is not a Ripple product.
