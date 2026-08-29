@@ -72,23 +72,28 @@ export function Hopper() {
   return (
     <group ref={ref} position={[0, 3.85, 0]}>
       <mesh position={[0, 0.72, 0]} castShadow>
-        <boxGeometry args={[1.35, 0.72, 1.15]} />
-        <meshPhysicalMaterial color="#3a4654" metalness={0.62} roughness={0.32} clearcoat={0.35} />
+        <boxGeometry args={[1.45, 0.78, 1.22]} />
+        <meshPhysicalMaterial color="#5a6d7c" metalness={0.58} roughness={0.3} clearcoat={0.4} />
       </mesh>
-      <mesh position={[0, 0.72, 0.52]} castShadow>
-        <boxGeometry args={[0.72, 0.42, 0.06]} />
+      <mesh position={[0, 1.02, 0]} castShadow>
+        <boxGeometry args={[1.55, 0.1, 1.32]} />
+        <meshStandardMaterial color="#d4af37" metalness={0.7} roughness={0.28} />
+      </mesh>
+      <mesh position={[0, 0.72, 0.58]} castShadow>
+        <boxGeometry args={[0.78, 0.48, 0.07]} />
         <meshPhysicalMaterial
-          color="#7ad7e6"
-          metalness={0.1}
-          roughness={0.12}
+          color="#7fe9ff"
+          emissive="#2ad4e8"
+          emissiveIntensity={0.55}
+          metalness={0.08}
+          roughness={0.1}
           transparent
-          opacity={0.35}
-          transmission={0.4}
+          opacity={0.55}
         />
       </mesh>
       <mesh position={[0, 0.28, 0]} castShadow>
-        <cylinderGeometry args={[0.22, 0.48, 0.42, 8]} />
-        <meshStandardMaterial color="#2c3642" metalness={0.7} roughness={0.28} />
+        <cylinderGeometry args={[0.24, 0.52, 0.46, 8]} />
+        <meshStandardMaterial color="#8a96a4" metalness={0.72} roughness={0.26} />
       </mesh>
       {[-0.38, -0.12, 0.14, 0.38].map((y, i) => (
         <mesh key={i} position={[0, y, 0]} rotation={[Math.PI / 2, 0, 0]} castShadow>

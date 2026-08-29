@@ -58,21 +58,21 @@ export function Table() {
       <mesh position={[0, -0.28, 0]} receiveShadow castShadow>
         <boxGeometry args={[TABLE, 0.62, TABLE]} />
         <meshPhysicalMaterial
-          color="#1b2a38"
-          metalness={0.28}
-          roughness={0.34}
-          clearcoat={0.65}
-          clearcoatRoughness={0.28}
+          color="#2a3d52"
+          metalness={0.3}
+          roughness={0.32}
+          clearcoat={0.7}
+          clearcoatRoughness={0.24}
         />
       </mesh>
       <mesh position={[0, 0.06, 0]} receiveShadow>
         <boxGeometry args={[APRON, 0.1, APRON]} />
         <meshPhysicalMaterial
-          color="#0e3a42"
-          metalness={0.35}
-          roughness={0.32}
-          clearcoat={0.7}
-          clearcoatRoughness={0.22}
+          color="#145864"
+          metalness={0.38}
+          roughness={0.3}
+          clearcoat={0.75}
+          clearcoatRoughness={0.2}
         />
       </mesh>
       <mesh position={[0, 0.14, 0]} receiveShadow>

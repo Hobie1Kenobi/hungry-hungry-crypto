@@ -11,7 +11,7 @@ export function makeHexTexture(): CanvasTexture {
     ctx.fillRect(0, 0, size, size)
     const r = 18
     const h = r * Math.sqrt(3)
-    ctx.strokeStyle = 'rgba(0, 180, 190, 0.22)'
+    ctx.strokeStyle = 'rgba(90, 230, 235, 0.42)'
     ctx.lineWidth = 1.2
     for (let row = -1; row < size / h + 2; row += 1) {
       for (let col = -1; col < size / (r * 1.5) + 2; col += 1) {

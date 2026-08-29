@@ -26,26 +26,26 @@ export function Pond() {
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.1, 0]} receiveShadow>
         <planeGeometry args={[inner, inner]} />
         <meshPhysicalMaterial
-          color="#041820"
-          roughness={0.12}
-          metalness={0.18}
-          transmission={0.18}
-          thickness={0.4}
+          color="#0a3c48"
+          roughness={0.14}
+          metalness={0.22}
           transparent
-          opacity={0.96}
-          envMapIntensity={0.9}
+          opacity={0.94}
+          emissive="#063038"
+          emissiveIntensity={0.35}
+          envMapIntensity={1.05}
         />
       </mesh>
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.085, 0]}>
         <planeGeometry args={[inner, inner]} />
-        <meshBasicMaterial map={hex} transparent opacity={0.55} />
+        <meshBasicMaterial map={hex} transparent opacity={0.72} />
       </mesh>
       <mesh ref={shimmer} rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.07, 0]}>
         <planeGeometry args={[inner * 0.92, inner * 0.92]} />
         <meshBasicMaterial
           map={caustic}
           transparent
-          opacity={0.18}
+          opacity={0.32}
           blending={AdditiveBlending}
           depthWrite={false}
         />

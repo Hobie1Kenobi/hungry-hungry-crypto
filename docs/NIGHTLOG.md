@@ -24,7 +24,7 @@ Path B remains locked: `apps/web` stays Vite + React 18 + R3F + drei. No Godot, 
 
 ### What still sucks
 
-- No real post-process bloom stack — visor / golden / hopper glow is additive + lights, not a selective Unreal bloom pass.
+- Live Practice pass: CHOMP hold still scores; gums/teeth read on open jaws; T is a HUD + key debug overlay. Additive glow stands in for a real bloom pass.
 - Beasts share one rig; silhouette variants are fat/saw/gold/antenna only, not four unique machines.
 - Pond liquid is a cheap plane, not a volume. Hopper gantry is still a bit floaty.
 - Miss audio is local-only so AI chatter does not drown the mix; AI head-shakes without a click.

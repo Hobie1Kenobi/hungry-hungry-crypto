@@ -34,10 +34,10 @@ export function ArenaCamera() {
     }
 
     if (debug) {
-      cam.fov = aspect < 1.1 ? 42 : 36
-      target.set(0, 19.6, -0.35)
-      cam.position.lerp(target, 1 - Math.pow(0.001, dt))
-      look.set(0, 0.2, 0.05)
+      cam.fov = 40
+      target.set(0, 21.5, 0.02)
+      cam.position.lerp(target, 1 - Math.pow(0.0005, dt))
+      look.set(0, 0, 0)
       cam.lookAt(look)
       cam.near = 0.1
       cam.far = 80
@@ -49,10 +49,10 @@ export function ArenaCamera() {
     const dolly = MathUtils.lerp(1.12, 1, goAge * Math.min(1, dumpT + 0.25))
     const goldenLive = pellets.some((p) => p.golden && p.eatenBy === undefined && dumpT > 0.55)
     const zoom = goldenLive ? 0.93 : 1
-    const elev = 0.7
-    let az = 0.58
+    const elev = 0.58
+    let az = 0.62
     if (ui === 'results') az += clock.elapsedTime * 0.1
-    const dist = 17.2 * dolly * zoom
+    const dist = 15.6 * dolly * zoom
     const x = dist * Math.cos(elev) * Math.sin(az)
     const y = dist * Math.sin(elev)
     const z = dist * Math.cos(elev) * Math.cos(az)
