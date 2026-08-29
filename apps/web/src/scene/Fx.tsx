@@ -139,13 +139,13 @@ function ScorePops() {
       {eats.map((ev) => (
         <Billboard key={ev.id} visible={false}>
           <Text
-            fontSize={0.46}
+            fontSize={0.52}
             color={ev.golden ? '#ffd45a' : BEASTS[ev.seat].color}
             anchorX="center"
             anchorY="middle"
-            outlineWidth={0.034}
+            outlineWidth={0.04}
             outlineColor="#041018"
-            fillOpacity={0.98}
+            renderOrder={20}
           >
             {ev.golden ? '+5' : '+1'}
           </Text>
