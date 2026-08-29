@@ -30,6 +30,8 @@ export const HUMAN_SEAT: Seat = 0
 
 export const ROUND_SECONDS = 45
 
+export const PRACTICE_MAX_STEP_DT = 0.1
+
 export function practiceWallClock(
   nowMs: number,
   originMs: number,
@@ -38,7 +40,8 @@ export function practiceWallClock(
 ): { elapsed: number; timeLeft: number; dt: number; ended: boolean } {
   const elapsed = Math.max(0, (nowMs - originMs) / 1000)
   const timeLeft = Math.max(0, roundSeconds - elapsed)
-  const dt = Math.max(0, previousTimeLeft - timeLeft)
+  const rawDt = Math.max(0, previousTimeLeft - timeLeft)
+  const dt = Math.min(rawDt, PRACTICE_MAX_STEP_DT)
   return { elapsed, timeLeft, dt, ended: timeLeft <= 0 }
 }
 
@@ -60,7 +63,7 @@ export const BEAST_OFFSET = 5.2
 
 export const CHOMP_HALF_WIDTH = 1.55
 
-export const CHOMP_MOUTH_DEPTH = 1.9
+export const CHOMP_MOUTH_DEPTH = 3.65
 
 export const CHOMP_MOUTH_PAD = 0.28
 

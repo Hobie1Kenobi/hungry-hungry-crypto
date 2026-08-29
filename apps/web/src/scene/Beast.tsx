@@ -68,13 +68,13 @@ export function Beast({ seat }: { seat: Seat }) {
 
     const winner = ui === 'results' && result?.winner === seat
     const loser = ui === 'results' && result && result.winner !== seat
-    const restJaw = 0.78
-    const targetJaw = winner ? 0.92 : loser ? 0.22 : down ? Math.min(1, Math.max(extend * 1.15, 0.94)) : restJaw + extend * 0.04
+    const restJaw = 0.86
+    const targetJaw = winner ? 1 : loser ? 0.18 : down ? 1 : restJaw + extend * 0.06
     jaw.current += (targetJaw - jaw.current) * Math.min(1, dt * (down ? 12 : 16))
 
-    const punch = down ? extend + slam.current * 0.16 - anticip.current * 0.18 : extend
-    const want = Math.max(0, Math.min(1.06, punch))
-    visExt.current += (want - visExt.current) * Math.min(1, dt * (down ? 28 : 22))
+    const punch = down ? extend + slam.current * 0.22 - anticip.current * 0.2 : extend
+    const want = Math.max(0, Math.min(1.08, punch))
+    visExt.current += (want - visExt.current) * Math.min(1, dt * (down ? 34 : 22))
 
     const breathe = 1 + Math.sin(t * 2.05 + seat) * (down ? 0.01 : 0.03)
     const sq = 1 - squash.current * 0.36
@@ -82,9 +82,9 @@ export function Beast({ seat }: { seat: Seat }) {
     const fat = seat === 2 ? 1.02 : 1
 
     if (rig.current) {
-      rig.current.rotation.x = winner ? -0.48 : loser ? 0.46 : squash.current * -0.12
-      rig.current.rotation.z = winner ? Math.sin(t * 2.4) * 0.08 : loser ? 0.16 : 0
-      rig.current.position.y = winner ? 0.16 : loser ? -0.2 : slam.current * 0.04
+      rig.current.rotation.x = winner ? -0.72 : loser ? 0.58 : squash.current * -0.2
+      rig.current.rotation.z = winner ? Math.sin(t * 2.8) * 0.14 : loser ? 0.22 : slam.current * 0.06
+      rig.current.position.y = winner ? 0.28 : loser ? -0.28 : slam.current * 0.1
     }
     if (body.current) {
       body.current.scale.set(fat * gulpS * (1 + squash.current * 0.2), breathe * sq * (loser ? 0.78 : 1), fat * gulpS)
@@ -114,7 +114,7 @@ export function Beast({ seat }: { seat: Seat }) {
         if (ring) ring.position.set(0, 0, barrel + ((i + 0.4) / RING_COUNT) * rod)
       }
     }
-    if (head.current) head.current.position.set(0, 0.02, len)
+    if (head.current) head.current.position.set(0, 0.02, Math.max(0.62, len - 0.72))
     if (jaws.current) {
       const open = jaw.current
       const up = jaws.current.children[1]

@@ -1,4 +1,4 @@
-import { Canvas, useThree } from '@react-three/fiber'
+import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import { ContactShadows } from '@react-three/drei'
 import { useLayoutEffect } from 'react'
 import { SEATS } from '@hhc/shared'
@@ -30,6 +30,14 @@ function SoftEnvironment() {
   return null
 }
 
+function GoOnFirstFrame() {
+  useFrame(() => {
+    const s = useGameStore.getState()
+    if (s.ui === 'playing' && s.matchClockOrigin <= 0) s.markMatchGo()
+  })
+  return null
+}
+
 export function ArenaCanvas() {
   const pellets = useGameStore((s) => s.pellets)
 
@@ -41,6 +49,7 @@ export function ArenaCanvas() {
         camera={{ position: toyCameraPosition(), fov: TOY_FOV, near: 0.35, far: 90 }}
         gl={{ antialias: true }}
       >
+        <GoOnFirstFrame />
         <ArenaCamera />
         <SoftEnvironment />
         <color attach="background" args={[BG]} />

@@ -12,6 +12,7 @@ import {
   livePelletCount,
   pelletInChompZone,
   pelletInLane,
+  PRACTICE_MAX_STEP_DT,
   practiceWallClock,
   spawnPellets,
   stepArena,
@@ -225,6 +226,20 @@ describe('seat 0 human ChompInput', () => {
     expect(result.scores[0]).toBeGreaterThan(0)
     expect(result.pellets.some((p) => p.eatenBy === 0)).toBe(true)
   })
+
+  it('seat 0 at extend=1 overlaps pond chips, including the north field', () => {
+    const north = crumb('north-field', 0.1, -2.35)
+    const mid = crumb('mid-field', -0.12, -1.18)
+    const center = crumb('center', 0.08, 0)
+    expect(pelletInChompZone(north, 0, 1)).toBe(true)
+    expect(pelletInChompZone(mid, 0, 1)).toBe(true)
+    expect(pelletInChompZone(center, 0, 1)).toBe(true)
+    const pellets = spawnPellets(seededRng(7))
+    expect(pellets.some((p) => pelletInChompZone(p, 0, 1))).toBe(true)
+    expect(pellets.some((p) => pelletInChompZone(p, 1, 1))).toBe(true)
+    expect(pellets.some((p) => pelletInChompZone(p, 2, 1))).toBe(true)
+    expect(pellets.some((p) => pelletInChompZone(p, 3, 1))).toBe(true)
+  })
 })
 
 describe('practice wall clock', () => {
@@ -261,10 +276,22 @@ describe('practice wall clock', () => {
   it('does not crawl when rAF is starved the way a 0.05 dt cap would', () => {
     const twentyWall = practiceWallClock(20_000, 0, ROUND_SECONDS)
     expect(twentyWall.timeLeft).toBe(25)
-    expect(twentyWall.dt).toBe(20)
+    expect(twentyWall.elapsed).toBe(20)
     const starvedLeft = ROUND_SECONDS - 40 * 0.05
     expect(starvedLeft).toBeCloseTo(43, 5)
     expect(twentyWall.timeLeft).toBeLessThan(starvedLeft - 10)
+  })
+
+  it('a 10s hitch cannot skip 10s of dump and hopper in one step', () => {
+    const hitch = practiceWallClock(10_000, 0, ROUND_SECONDS)
+    expect(hitch.timeLeft).toBe(35)
+    expect(hitch.elapsed).toBe(10)
+    expect(hitch.dt).toBeLessThanOrEqual(PRACTICE_MAX_STEP_DT)
+    expect(hitch.dt).toBeLessThan(1)
+    const snapshot = blankArena()
+    const stepped = stepArena(snapshot, hitch.dt, hitch.elapsed * 1000)
+    expect(stepped.snapshot.dumpT).toBeLessThan(0.2)
+    expect(stepped.snapshot.refillCount).toBe(0)
   })
 })
 

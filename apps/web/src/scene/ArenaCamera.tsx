@@ -40,7 +40,9 @@ export function ArenaCamera() {
     const shakeAt = useJuiceStore.getState().shakeAt
     const now = performance.now()
 
-    if (ui === 'playing' && playBorn.current === 0) playBorn.current = now
+    const origin = useGameStore.getState().matchClockOrigin
+    if (origin <= 0) playBorn.current = 0
+    if (ui === 'playing' && origin > 0 && playBorn.current === 0) playBorn.current = now
     if (ui !== 'playing' && ui !== 'results') playBorn.current = 0
 
     const eatMax = Math.max(lastEatAt[0], lastEatAt[1], lastEatAt[2], lastEatAt[3], shakeAt)

@@ -66,6 +66,7 @@ interface GameState {
   setChomp: (input: ChompInput) => void
   setChompHeld: (down: boolean) => void
   startPractice: () => void
+  markMatchGo: (now?: number) => void
   tick: (dt: number, now?: number) => void
   backToLobby: () => void
   beginWaiting: (opts: { queueMode: 'quick' | 'private'; hint: string; roomCode?: string }) => void
@@ -174,7 +175,7 @@ export const useGameStore = create<GameState>((set, get) => ({
       refillCount: 0,
       lastRefillAt: 0,
       chompHeld: false,
-      matchClockOrigin: performance.now(),
+      matchClockOrigin: 0,
       result: null,
       netSend: null,
       netLeave: null,
@@ -183,9 +184,16 @@ export const useGameStore = create<GameState>((set, get) => ({
     useJuiceStore.getState().notifyDump()
   },
 
+  markMatchGo: (now = performance.now()) => {
+    const state = get()
+    if (state.ui !== 'playing' || state.matchClockOrigin > 0) return
+    set({ matchClockOrigin: now, timeLeft: ROUND_SECONDS })
+  },
+
   tick: (dt, now = performance.now()) => {
     const state = get()
     if (state.ui !== 'playing') return
+    if (state.playMode === 'practice' && state.matchClockOrigin <= 0) return
     const origin = state.matchClockOrigin
     const clock = origin > 0 ? Math.max(0, now - origin) : now
     const wall = state.playMode === 'practice' && origin > 0 ? practiceWallClock(now, origin, state.timeLeft) : null

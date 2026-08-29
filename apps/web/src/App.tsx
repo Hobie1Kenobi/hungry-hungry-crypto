@@ -25,27 +25,14 @@ export function App() {
     return () => window.removeEventListener('keydown', onKey)
   }, [ui])
 
-  if (ui === 'lobby') {
-    return (
-      <div className="app">
-        <Lobby />
-      </div>
-    )
-  }
-
-  if (ui === 'waiting') {
-    return (
-      <div className="app">
-        <Waiting />
-      </div>
-    )
-  }
-
   return (
     <div className="app">
-      <RoundClock />
       <ArenaCanvas />
-      {ui === 'playing' ? <Hud /> : <Results />}
+      {ui === 'playing' || ui === 'results' ? <RoundClock /> : null}
+      {ui === 'lobby' ? <Lobby /> : null}
+      {ui === 'waiting' ? <Waiting /> : null}
+      {ui === 'playing' ? <Hud /> : null}
+      {ui === 'results' ? <Results /> : null}
     </div>
   )
 }
