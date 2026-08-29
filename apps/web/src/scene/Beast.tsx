@@ -145,7 +145,7 @@ export function Beast({ seat }: { seat: Seat }) {
         </group>
         <group position={[0, BEAST_NECK_LIFT, NECK_VISUAL_ORIGIN]}>
           <MachineNeck seat={seat} pistonRef={piston} ringsRef={ringsRef} color={spec.color} />
-          <group ref={head} position={[0, 0.04, 1]} scale={you ? 1.32 : 1.18}>
+          <group ref={head} position={[0, 0.04, 1]} scale={you ? 1.22 : 1.12}>
             <HeadDressing seat={seat} visorRef={visorMat} antL={antL} antR={antR} />
             <MachineMouth jawsRef={jaws} seat={seat} />
             <pointLight ref={mouthLight} position={[0, 0.04, 0.62]} color="#ff6a88" intensity={3.2} distance={2.8} />
