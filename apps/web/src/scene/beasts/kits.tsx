@@ -526,10 +526,10 @@ function useVisorMaterial(visorRef: Ref<MeshStandardMaterial>, color: string) {
   )
   useLayoutEffect(() => {
     if (typeof visorRef === 'function') visorRef(mat)
-    else if (visorRef) visorRef.current = mat
+    else if (visorRef) (visorRef as { current: MeshStandardMaterial | null }).current = mat
     return () => {
       if (typeof visorRef === 'function') visorRef(null)
-      else if (visorRef) visorRef.current = null
+      else if (visorRef) (visorRef as { current: MeshStandardMaterial | null }).current = null
     }
   }, [mat, visorRef])
   useLayoutEffect(() => () => mat.dispose(), [mat])
