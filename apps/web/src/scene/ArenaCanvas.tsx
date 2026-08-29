@@ -14,7 +14,7 @@ import { Pond } from './Pond'
 import { Studio } from './Studio'
 import { Table } from './Table'
 
-const BG = '#161018'
+const BG = '#eddcc6'
 
 function SoftEnvironment() {
   const scene = useThree((s) => s.scene)
@@ -38,7 +38,7 @@ export function ArenaCanvas() {
       <Canvas
         shadows
         dpr={[1, 1.75]}
-        camera={{ position: [11.4, 17.6, 16.8], fov: 45, near: 0.1, far: 90 }}
+        camera={{ position: [4.8, 6.4, 10.4], fov: 34, near: 0.1, far: 90 }}
         gl={{ antialias: true }}
       >
         <ArenaCamera />

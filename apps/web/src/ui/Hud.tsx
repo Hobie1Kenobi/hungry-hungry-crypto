@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { BEASTS, SEATS, SCORE_GOLDEN, SCORE_NORMAL } from '@hhc/shared'
 import { useGameStore } from '../store/gameStore'
 import { useViewStore } from '../store/viewStore'
-import { pointerChomp } from './useChompInput'
+import { bindChompPointer, releaseChompPointer } from './useChompInput'
 
 interface Pop {
   id: number
@@ -135,14 +135,9 @@ export function Hud() {
       <div
         className="chomp-catcher"
         role="presentation"
-        onPointerDown={(e) => {
-          e.preventDefault()
-          e.currentTarget.setPointerCapture(e.pointerId)
-          pointerChomp(true)
-        }}
-        onPointerUp={() => pointerChomp(false)}
-        onPointerCancel={() => pointerChomp(false)}
-        onLostPointerCapture={() => pointerChomp(false)}
+        onPointerDown={bindChompPointer}
+        onPointerUp={releaseChompPointer}
+        onPointerCancel={releaseChompPointer}
       />
       <div className="hud">
         <div className="hud-top">
@@ -169,18 +164,13 @@ export function Hud() {
           </div>
           <button
             type="button"
+            tabIndex={-1}
             className={`chomp-btn${chompHeld ? ' held' : ''}`}
             aria-label="CHOMP"
             aria-pressed={chompHeld}
-            onPointerDown={(e) => {
-              e.preventDefault()
-              e.currentTarget.blur()
-              e.currentTarget.setPointerCapture(e.pointerId)
-              pointerChomp(true)
-            }}
-            onPointerUp={() => pointerChomp(false)}
-            onPointerCancel={() => pointerChomp(false)}
-            onLostPointerCapture={() => pointerChomp(false)}
+            onPointerDown={bindChompPointer}
+            onPointerUp={releaseChompPointer}
+            onPointerCancel={releaseChompPointer}
           >
             CHOMP
           </button>

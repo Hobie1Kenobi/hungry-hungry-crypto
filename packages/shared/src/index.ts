@@ -30,6 +30,18 @@ export const HUMAN_SEAT: Seat = 0
 
 export const ROUND_SECONDS = 45
 
+export function practiceWallClock(
+  nowMs: number,
+  originMs: number,
+  previousTimeLeft = ROUND_SECONDS,
+  roundSeconds = ROUND_SECONDS,
+): { elapsed: number; timeLeft: number; dt: number; ended: boolean } {
+  const elapsed = Math.max(0, (nowMs - originMs) / 1000)
+  const timeLeft = Math.max(0, roundSeconds - elapsed)
+  const dt = Math.max(0, previousTimeLeft - timeLeft)
+  return { elapsed, timeLeft, dt, ended: timeLeft <= 0 }
+}
+
 export const NORMAL_PELLET_COUNT = 28
 
 export const GOLDEN_PELLET_COUNT = 1

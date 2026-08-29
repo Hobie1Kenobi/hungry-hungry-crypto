@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import {
+  ROUND_SECONDS,
   applyChompInput,
   collectEats,
   emptyChomp,
@@ -11,8 +12,10 @@ import {
   livePelletCount,
   pelletInChompZone,
   pelletInLane,
+  practiceWallClock,
   spawnPellets,
   stepArena,
+  type ArenaSnapshot,
   type Pellet,
 } from '@hhc/shared'
 import { createEasyPolicy } from './easy'
@@ -209,6 +212,59 @@ describe('seat 0 human ChompInput', () => {
     expect(result.maxNeckExtend[0]).toBeGreaterThan(0.85)
     expect(result.scores[0]).toBeGreaterThan(0)
     expect(result.pellets.some((p) => p.eatenBy === 0)).toBe(true)
+  })
+
+  it('a continuous seat 0 CHOMP hold scores across a full practice step', () => {
+    const pellets = spawnPellets(seededRng(7))
+    const result = simulateRound({
+      pellets,
+      policies: [holdSeat0()],
+      seconds: 6,
+    })
+    expect(result.maxNeckExtend[0]).toBeGreaterThan(0.85)
+    expect(result.scores[0]).toBeGreaterThan(0)
+    expect(result.pellets.some((p) => p.eatenBy === 0)).toBe(true)
+  })
+})
+
+describe('practice wall clock', () => {
+  function blankArena(timeLeft = ROUND_SECONDS): ArenaSnapshot {
+    return {
+      pellets: spawnPellets(seededRng(3)),
+      scores: emptyScores(),
+      neckExtend: emptyNecks(),
+      chompDown: emptyChomp(),
+      chompPulseUntil: emptyPulse(),
+      lastEatAt: emptyLastEat(),
+      refillCount: 0,
+      lastRefillAt: 0,
+      dumpT: 0,
+      timeLeft,
+    }
+  }
+
+  it('a 45s round ends after 45s of now even when ticks are 2fps', () => {
+    const origin = 8_000
+    let now = origin
+    let snapshot = blankArena()
+    for (let i = 0; i < 90; i += 1) {
+      now += 500
+      const wall = practiceWallClock(now, origin, snapshot.timeLeft)
+      const stepped = stepArena(snapshot, wall.dt, now - origin)
+      snapshot = { ...stepped.snapshot, timeLeft: wall.timeLeft }
+    }
+    expect(now - origin).toBe(45_000)
+    expect(snapshot.timeLeft).toBe(0)
+    expect(practiceWallClock(origin + 45_000, origin).ended).toBe(true)
+  })
+
+  it('does not crawl when rAF is starved the way a 0.05 dt cap would', () => {
+    const twentyWall = practiceWallClock(20_000, 0, ROUND_SECONDS)
+    expect(twentyWall.timeLeft).toBe(25)
+    expect(twentyWall.dt).toBe(20)
+    const starvedLeft = ROUND_SECONDS - 40 * 0.05
+    expect(starvedLeft).toBeCloseTo(43, 5)
+    expect(twentyWall.timeLeft).toBeLessThan(starvedLeft - 10)
   })
 })
 
