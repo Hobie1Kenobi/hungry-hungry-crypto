@@ -42,8 +42,8 @@ export function Beast({ seat }: { seat: Seat }) {
 
   const [x, y, z] = beastPosition(seat)
   const yaw = beastYaw(seat)
-  const visX = seat === 1 ? x - 0.22 : x
-  const visZ = seat === 1 ? z + 1.18 : z
+  const visX = seat === 1 ? x - 0.48 : x
+  const visZ = seat === 1 ? z + 1.42 : z
 
   useFrame((_, dt) => {
     const snap = useGameStore.getState()
@@ -120,7 +120,7 @@ export function Beast({ seat }: { seat: Seat }) {
       }
     }
     if (head.current) head.current.position.set(0, 0.04, headZ)
-    if (label.current) label.current.position.set(you ? -0.15 : 0, you ? 1.72 : 2.02, you ? 1.15 : seat === 1 ? 0.2 : -0.55)
+    if (label.current) label.current.position.set(you ? -0.35 : 0, you ? 1.55 : 2.02, you ? 1.42 : seat === 1 ? 0.28 : -0.55)
     if (jaws.current) {
       const open = jaw.current
       const up = jaws.current.children[1]
@@ -152,7 +152,7 @@ export function Beast({ seat }: { seat: Seat }) {
           </group>
         </group>
       </group>
-      <Billboard ref={label} position={[you ? -0.15 : 0, you ? 1.72 : 2.02, you ? 1.15 : seat === 1 ? 0.2 : -0.55]}>
+      <Billboard ref={label} position={[you ? -0.35 : 0, you ? 1.55 : 2.02, you ? 1.42 : seat === 1 ? 0.28 : -0.55]}>
         <Text
           fontSize={you ? 0.24 : 0.2}
           color={spec.color}

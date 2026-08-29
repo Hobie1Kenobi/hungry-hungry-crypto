@@ -9,8 +9,8 @@ import { useViewStore } from '../store/viewStore'
 const look = new Vector3()
 const pos = new Vector3()
 
-export const TOY_POS = { x: 6.35, y: 6.48, z: -8.12 }
-export const TOY_LOOK = { x: -0.22, y: 0.22, z: 0.18 }
+export const TOY_POS = { x: 4.42, y: 6.62, z: -6.72 }
+export const TOY_LOOK = { x: 0.06, y: 0.12, z: 0.48 }
 export const TOY_FOV = 38
 const SHAKE_MS = 120
 
@@ -83,7 +83,7 @@ export function ArenaCamera() {
     const [bx, , bz] = beastPosition(result?.winner ?? 0)
     const x = TOY_POS.x * k + sx + swing
     const y = TOY_POS.y * Math.min(k, 1.16) + sy + (ui === 'results' ? 0.36 : 0)
-    pos.set(x, y, ui === 'results' ? TOY_POS.z * 1.08 : TOY_POS.z)
+    pos.set(x, y, ui === 'results' ? Math.max(-7.35, TOY_POS.z - 0.42) : TOY_POS.z)
     if (now < shakeUntil.current || (playBorn.current && now - playBorn.current < 32)) {
       cam.position.copy(pos)
     } else {

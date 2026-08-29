@@ -461,10 +461,10 @@ describe('hopper refill', () => {
     expect(west.length).toBeGreaterThan(3)
     const centerOnly = pellets.filter((p) => Math.abs(p.x) < 0.9 && Math.abs(p.z) < 0.9)
     expect(centerOnly.length).toBeLessThan(10)
-    expect(north.some((p) => p.z < -3.1)).toBe(true)
-    expect(east.some((p) => p.x > 3.1)).toBe(true)
-    expect(south.some((p) => p.z > 3.1)).toBe(true)
-    expect(west.some((p) => p.x < -3.1)).toBe(true)
+    expect(north.some((p) => p.z < -3.4)).toBe(true)
+    expect(east.some((p) => p.x > 3.4)).toBe(true)
+    expect(south.some((p) => p.z > 3.4)).toBe(true)
+    expect(west.some((p) => p.x < -3.4)).toBe(true)
   })
 
   it('pickWinner on equal 22s returns seat 0', () => {
