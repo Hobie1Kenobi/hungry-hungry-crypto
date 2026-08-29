@@ -884,8 +884,8 @@ Results `RESULTS_*` not touched. Results is a later cycle. If a foot clips, stop
 
 ### What changed
 
-- GOLDGRUB brow bar sits ON the vinyl dome, proud toward the camera: 0.8 x 0.056 x 0.072 at head local [0, 0.74, 0.14], slight pitch 0.28 so the strip faces the locked toy camera. Still a bar, not a cap. Vinyl hull stays paint / off BLOOM_LAYER 10.
-- GOLDGRUB visor idle drive is 0.9x beast color (chomp 0.96, winner 1.0). BYTEBITE / RIPSAW / BLOCKMAW stay on the Cycle 22 0.72 / 0.8 / 0.92 curve. No shared multiplyScalar flood.
+- GOLDGRUB brow bar sits ON the vinyl dome, proud toward the camera: pale unlit strip 0.94 x 0.068 x 0.07 at head local [0, 0.63, 0.54], pitch 0.4, over a dark olive paint slot (off BLOOM_LAYER 10) so it reads at far-seat size. Still a bar, not a cap. Vinyl hull stays paint.
+- GOLDGRUB visor uses local pale chartreuse `#F2FF9A` at 1.0x. BYTEBITE / RIPSAW / BLOCKMAW stay on the Cycle 22 0.72 / 0.8 / 0.92 curve and their own colors. No shared multiplyScalar flood.
 - RIPSAW / BLOCKMAW get the same proud-thin-bar treatment so the side seats do not fail next play. BYTEBITE HeadDressing visor mesh unchanged.
 - SelectiveBloom globals untouched (intensity 0.95, luminanceThreshold 0.28, radius 0.3). Chassis BloomSelect stays deleted. Golden chip BloomSelect + pointLight untouched.
 - Play path untouched: latch CHOMP, same `chompReach` / AABB / `BEAST_OFFSET` / `NECK_EXTEND_SPEED` on all four seats. AI not nerfed. Hitch clamp stays. `PRACTICE_GO_DUMP_T` still lands on GO. Canvas wrap / WebGL clear stay warm #eddcc6. drei `Preload all` stays. Camera constants unchanged. No GLB. No chip squash/trail. No results-camera rewrite. No HungryRoom sync. No XRPL.
