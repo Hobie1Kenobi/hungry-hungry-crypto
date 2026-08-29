@@ -9,8 +9,8 @@ import { RESULT_LOOK } from './beasts/vinyl'
 const look = new Vector3()
 const pos = new Vector3()
 
-export const TOY_POS = { x: 3.85, y: 7.55, z: -14.15 }
-export const TOY_LOOK = { x: 0.02, y: 0.82, z: -1.45 }
+export const TOY_POS = { x: 4.35, y: 8.85, z: -11.85 }
+export const TOY_LOOK = { x: 0.05, y: 0.68, z: -2.42 }
 export const TOY_FOV = 36
 const SHAKE_MS = 120
 

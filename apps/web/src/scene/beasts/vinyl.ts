@@ -12,7 +12,7 @@ export const RESULT_LOOK = { x: 0.35, y: 0.68, z: 0.85 }
 /** RIPSAW stays on the east cardinal. BYTEBITE sits a hair toward the pond so the barrel is not on the clip. */
 export function beastVisualRoot(seat: Seat): [number, number, number] {
   const [x, y, z] = beastPosition(seat)
-  if (seat === 0) return [x, y, z + 0.62]
+  if (seat === 0) return [x, y, z + 0.22]
   if (seat === 1) return [x - 0.12, y, z + 0.18]
   return [x, y, z]
 }
