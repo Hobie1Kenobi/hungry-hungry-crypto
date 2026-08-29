@@ -70,11 +70,11 @@ export const CHOMP_EAT_COOLDOWN_MS = 640
 
 export const POND_REFILL_LIVE = 16
 
-export const POND_REFILL_MAX = 7
+export const POND_REFILL_MAX = 6
 
 export const POND_REFILL_MIN_TIME_LEFT = 6
 
-export const POND_REFILL_GAP_MS = 4200
+export const POND_REFILL_GAP_MS = 7200
 
 export type Cardinal = 'north' | 'east' | 'south' | 'west'
 

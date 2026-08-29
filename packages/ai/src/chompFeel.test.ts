@@ -281,6 +281,13 @@ describe('AI nibble through the round', () => {
     expect(result.chompFlipsAfter22[2]).toBeGreaterThan(0)
     expect(result.chompFlipsAfter22[3]).toBeGreaterThan(0)
     expect(aiSum(result.scoresAt[20]!)).toBeLessThan(90)
+    const opening = simulateRound({
+      pellets: spawnPellets(seededRng(99)),
+      policies: [createIdlePolicy(0), ...createPracticePolicies({ rng: seededRng(11) })],
+      seconds: 22,
+    })
+    expect(opening.refillCount).toBeLessThan(6)
+    expect(result.refillCount).toBeGreaterThan(opening.refillCount)
   })
 
   it('hopper dumpT reset re-arms Easy / Normal / Hungry instead of freezing them', () => {
