@@ -19,6 +19,8 @@ import {
   pelletInLane,
   pickWinner,
   PRACTICE_GO_DUMP_T,
+  PRACTICE_GO_MIN_CALLS,
+  PRACTICE_GO_MIN_TRIANGLES,
   PRACTICE_GO_PRESENT_FRAMES,
   PRACTICE_MAX_STEP_DT,
   practiceGoReady,
@@ -360,12 +362,15 @@ describe('practice wall clock', () => {
 
   it('Practice clock does not start until presented GO', () => {
     expect(PRACTICE_GO_PRESENT_FRAMES).toBe(2)
+    expect(PRACTICE_GO_MIN_TRIANGLES).toBe(2500)
+    expect(PRACTICE_GO_MIN_CALLS).toBe(12)
     const warm = {
       sizeW: 1280,
       sizeH: 800,
       drawingBufferW: 1280,
       drawingBufferH: 800,
       renderCalls: 40,
+      triangles: 8000,
     }
     expect(
       practiceGoReady({ ui: 'lobby', matchClockOrigin: 0, playingPresents: 99, ...warm }),
@@ -387,6 +392,9 @@ describe('practice wall clock', () => {
     ).toBe(false)
     expect(
       practiceGoReady({ ui: 'playing', matchClockOrigin: 0, playingPresents: 2, ...warm, renderCalls: 0 }),
+    ).toBe(false)
+    expect(
+      practiceGoReady({ ui: 'playing', matchClockOrigin: 0, playingPresents: 2, ...warm, triangles: 0 }),
     ).toBe(false)
     expect(
       practiceGoReady({ ui: 'playing', matchClockOrigin: 100, playingPresents: 2, ...warm }),

@@ -80,10 +80,16 @@ export const PRACTICE_GO_DUMP_T = 1
 
 /**
  * Practice clock stays frozen until this many playing useFrames have seen a
- * real drawing buffer. useFrame runs before render, so 2 means: skip the
- * pre-present hitch frame, then mark GO after one completed present.
+ * full 3D present. useFrame runs before render and the first playing useFrame
+ * still carries lobby stats, so GoOnFirstFrame drops that frame, then counts
+ * only presents with a real drawing buffer and enough triangles/calls that the
+ * pond actually drew (not a warm clear-color hitch).
  */
 export const PRACTICE_GO_PRESENT_FRAMES = 2
+
+export const PRACTICE_GO_MIN_TRIANGLES = 2500
+
+export const PRACTICE_GO_MIN_CALLS = 12
 
 /** True only when Practice may call markMatchGo. startPractice must not. */
 export function practiceGoReady(opts: {
@@ -95,11 +101,13 @@ export function practiceGoReady(opts: {
   drawingBufferW: number
   drawingBufferH: number
   renderCalls: number
+  triangles: number
 }): boolean {
   if (opts.ui !== 'playing' || opts.matchClockOrigin > 0) return false
   if (opts.sizeW < 8 || opts.sizeH < 8) return false
   if (opts.drawingBufferW < 8 || opts.drawingBufferH < 8) return false
-  if (opts.renderCalls < 1) return false
+  if (opts.renderCalls < PRACTICE_GO_MIN_CALLS) return false
+  if (opts.triangles < PRACTICE_GO_MIN_TRIANGLES) return false
   return opts.playingPresents >= PRACTICE_GO_PRESENT_FRAMES
 }
 

@@ -10,9 +10,9 @@ import { beastVisualRoot } from './beasts/vinyl'
 const look = new Vector3()
 const pos = new Vector3()
 
-export const TOY_POS = { x: 2.95, y: 8.05, z: -10.85 }
-export const TOY_LOOK = { x: 0.55, y: 0.18, z: 0.42 }
-export const TOY_FOV = 36
+export const TOY_POS = { x: 1.85, y: 6.95, z: -9.35 }
+export const TOY_LOOK = { x: 0.95, y: 0.08, z: 1.72 }
+export const TOY_FOV = 33
 const RESULTS_DIST = 14.6
 const RESULTS_SIDE = 7.4
 const RESULTS_ELEV = 8.6
