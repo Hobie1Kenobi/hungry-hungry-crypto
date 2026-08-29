@@ -8,11 +8,12 @@ import { makeXrpMarkTexture } from './xrpMarkTexture'
 
 const cyanMark = makeXrpMarkTexture('#e7fbff', '#0a3340')
 const goldMark = makeXrpMarkTexture('#ffe7a0', '#4a3000')
+const HOPPER = { x: 0, y: 2.18, z: -6.42 }
 
 function hashDelay(id: string): number {
   let n = 0
   for (let i = 0; i < id.length; i += 1) n = (n + id.charCodeAt(i) * (i + 1)) % 17
-  return n * 0.028
+  return n * 0.018
 }
 
 function easeOut(t: number): number {
@@ -46,39 +47,45 @@ function XrpFace({ r, face, ink, map }: { r: number; face: string; ink: string; 
 }
 
 export function PelletChip({ pellet }: { pellet: Pellet }) {
-  const dumpT = useGameStore((s) => s.dumpT)
   const delay = useMemo(() => hashDelay(pellet.id), [pellet.id])
-  const grounded = useRef(false)
-  const splashed = useRef(false)
+  const born = useRef(performance.now())
+  const grounded = useRef(useGameStore.getState().dumpT >= 0.92)
+  const splashed = useRef(grounded.current)
   const group = useRef<Group>(null)
   const r = pellet.golden ? 0.4 : 0.3
   const restY = 0.08 + r
   const face = pellet.golden ? '#ffe7a0' : '#e7fbff'
   const ink = pellet.golden ? '#4a3000' : '#0a3340'
   const mark = pellet.golden ? goldMark : cyanMark
-  const land = Math.max(0, Math.min(1, (dumpT - delay) / 0.32))
-  if (land >= 1) grounded.current = true
-  const drop = easeOut(grounded.current ? 1 : land)
-  const y = 3.55 + (restY - 3.55) * drop
 
   useFrame(() => {
     if (!group.current || pellet.eatenBy !== undefined) return
-    if (land >= 1 && !splashed.current) {
-      splashed.current = true
-      useJuiceStore.getState().notifySplash(pellet.x, pellet.z)
+    if (grounded.current) {
+      group.current.position.set(pellet.x, restY, pellet.z)
+      group.current.rotation.set(0.12, delay * 4, 0.08)
+      return
     }
-    group.current.position.set(pellet.x, y, pellet.z)
-    if (!grounded.current) {
-      group.current.rotation.set(0.14 * (1 - drop), dumpT * 4 + delay * 10, 0)
-    } else {
-      group.current.rotation.set(0.12, delay * 4 + dumpT * 0.4, 0.08)
+    const t = Math.max(0, Math.min(1, (performance.now() - born.current) / 1000 / 0.46 - delay))
+    const k = easeOut(t)
+    const x = HOPPER.x + (pellet.x - HOPPER.x) * k
+    const z = HOPPER.z + (pellet.z - HOPPER.z) * k
+    const arc = Math.sin(k * Math.PI) * 0.28
+    const y = HOPPER.y + (restY - HOPPER.y) * k + arc
+    group.current.position.set(x, y, z)
+    group.current.rotation.set(0.18 * (1 - k), delay * 10 + k * 3.2, 0.1 * (1 - k))
+    if (t >= 1) {
+      grounded.current = true
+      if (!splashed.current) {
+        splashed.current = true
+        useJuiceStore.getState().notifySplash(pellet.x, pellet.z)
+      }
     }
   })
 
   if (pellet.eatenBy !== undefined) return null
 
   return (
-    <group ref={group} position={[pellet.x, y, pellet.z]}>
+    <group ref={group} position={grounded.current ? [pellet.x, restY, pellet.z] : [HOPPER.x, HOPPER.y, HOPPER.z]}>
       <mesh castShadow>
         <sphereGeometry args={[r, 28, 22]} />
         <meshPhysicalMaterial

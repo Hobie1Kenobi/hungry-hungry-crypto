@@ -46,7 +46,7 @@ export function ArenaCanvas() {
       <Canvas
         shadows
         dpr={[1, 1.75]}
-        camera={{ position: toyCameraPosition(), fov: TOY_FOV, near: 0.35, far: 90 }}
+        camera={{ position: toyCameraPosition(), fov: TOY_FOV, near: 0.45, far: 90 }}
         gl={{ antialias: true }}
       >
         <GoOnFirstFrame />

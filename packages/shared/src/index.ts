@@ -465,10 +465,10 @@ export function spawnPellets(rng: () => number = Math.random, idPrefix = ''): Pe
     }
   }
   spots.push(
-    [0.52 + phase * 0.35, 0.2],
-    [-0.46 + phase * 0.35, -0.14],
-    [0.16, -0.6 + phase * 0.25],
-    [-0.2, 0.56 + phase * 0.25],
+    [0.58, -1.22 + phase * 0.12],
+    [1.22 + phase * 0.12, 0.58],
+    [-0.58, 1.22 + phase * 0.12],
+    [-1.22 + phase * 0.12, -0.58],
   )
 
   let i = 0

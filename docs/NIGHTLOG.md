@@ -226,4 +226,38 @@ Play path stays locked: GO on first presented frame, `PRACTICE_MAX_STEP_DT` hitc
 
 ### Next action
 
-Cycle 8: volume pond or a real bloom pass — the neck, the lanes, and the closer BYTEBITE should be honest now.
+Cycle 8: latch CHOMP so the north neck stays out, prove it on the HUD, and keep four floor lanes.
+
+## Cycle 8 — 2026-08-29 America/Chicago
+
+Hats used: **HAT DIRECTOR** (Cycle 7 playtest LOOK FAILED), **ATLAS** (Path B lock).
+
+Path B remains locked. Beauty and feel. No new modes, shops, quests, tokenomics, engine rewrite, Godot, Unreal, Unity, Babylon, Rapier, Mainnet, Hooks, EVM, or licensed-toy names. Applications stay locked.
+
+Cycle 7 live Practice on a 1280×800 box desktop, one tab (`f562916`) is the incoming ground truth. Do not invent new scores.
+
+- Image 1 / mid-hold ~26.7s: BYTEBITE 1, RIPSAW 4, GOLDGRUB 5, BLOCKMAW 5. BYTEBITE is a tiny cyan nub at the north rail. GOLDGRUB / RIPSAW / BLOCKMAW tongues stretch into a CENTER chip blob. Labels collide. A vertical column of chips floats in mid-air. CHOMP button looks pressed.
+- Image 2 / results: BLOCKMAW 20, GOLDGRUB 16, RIPSAW 13, BYTEBITE 3. Left-docked sticky card with Replay / Lobby. WIN for sticky results. Do not regress.
+- The visual-neck math did not matter because seat 0 was not held. `Beast.tsx` already drives visExt from sim `extend`. A stub head means `neckExtend[0]` is ~0. AI necks are long because AI `chompDown` stays true. Player hold was pulse-only: `useChompInput` listened to document `pointerup` capture, so every desktop drag ended the hold. Tests that force `chompDown[0]=true` for a full step still pass and still fail on the box desktop.
+
+### What changed
+
+- Practice CHOMP is a latch. One tap (CHOMP control or pond) stays ON until the next tap. Space stays hold-while-down. Documented on the HUD as **CHOMP LATCHED**. A stranger taps once and the north neck stays out for the rest of the hold. AI not nerfed. Same reach / AABB on all four seats.
+- Practice HUD debug line: `HOLD on/off  EXT 0.00` from `chompHeld` and `neckExtend[0]`. If HOLD is on and EXT is 0, the latch is still broken.
+- Camera sits behind BYTEBITE (north), three-quarter, in front of the north cabinet wall. Player is the largest readable beast. All four bodies stay on 1280×800. No camera-inside-mesh. No Cycle 2 void. Sticky left results stay.
+- Hopper dump flies chips from the north chute onto four floor lanes. Chips that land stay landed — no mid-air column, no dumpT reset float. Spawn keeps a lane in front of each mouth; the four inner chips sit in-lane, not a center blob that starves north.
+- Per-eat `+1` / `+5` pops at the mouth (depth-test off, bigger). Labels stay on the body at the rail so they do not stack in the scrum.
+
+Play path stays locked: GO on first presented frame, `PRACTICE_MAX_STEP_DT` hitch clamp, `practiceWallClock` after GO, seat-0 hold-scores + mid-pond reach tests, 28+1 pond, hopper refill + `dumpT` reset, AI nibble after t=22s, Practice `txHashes: []`. Locked types unchanged. Eat AABBs still use sim pellet `x`/`z`.
+
+### Five leftover notes
+
+1. Pond liquid is still a cheap hex/caustic plane, not a volume.
+2. Glow is still additive materials. No real bloom pass on visor / golden / hopper sparks.
+3. Kits are in-engine primitives. They are four machines now; they are not hero sculpts.
+4. Results is still a CSS card. The 3D lean/slump is visible beside it; the overlay no longer owns a bottom-right CHOMP collision.
+5. Online HungryRoom still uses the server tick. Only Practice waits for GO and clamps a hitch step.
+
+### Next action
+
+Cycle 9: volume pond or a real bloom pass — the latch, the north neck, and the floor lanes should be honest now.

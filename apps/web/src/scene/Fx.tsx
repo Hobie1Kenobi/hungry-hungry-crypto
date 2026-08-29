@@ -129,8 +129,8 @@ function ScorePops() {
       }
       const [mx, my, mz] = mouthWorld(ev.seat, necks[ev.seat])
       child.visible = true
-      child.position.set(mx, my + 0.62 + t * 1.05, mz)
-      child.scale.setScalar(1 + t * 0.22)
+      child.position.set(mx, my + 1.05 + t * 1.45, mz)
+      child.scale.setScalar(1.15 + t * 0.35)
     }
   })
 
@@ -139,13 +139,13 @@ function ScorePops() {
       {eats.map((ev) => (
         <Billboard key={ev.id} visible={false}>
           <Text
-            fontSize={0.52}
+            fontSize={0.72}
             color={ev.golden ? '#ffd45a' : BEASTS[ev.seat].color}
             anchorX="center"
             anchorY="middle"
-            outlineWidth={0.04}
+            outlineWidth={0.055}
             outlineColor="#041018"
-            renderOrder={20}
+            renderOrder={30}
           >
             {ev.golden ? '+5' : '+1'}
           </Text>

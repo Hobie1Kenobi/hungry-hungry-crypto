@@ -19,6 +19,30 @@ function seatLabel(seat: (typeof SEATS)[number], localSeat: number, occupants: {
   return (occ.personality ?? 'AI').toUpperCase()
 }
 
+function HoldDebug() {
+  const ref = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    let raf = 0
+    const loop = () => {
+      const s = useGameStore.getState()
+      if (ref.current) {
+        const hold = s.chompHeld ? 'on' : 'off'
+        ref.current.textContent = `HOLD ${hold}  EXT ${s.neckExtend[0].toFixed(2)}`
+      }
+      raf = requestAnimationFrame(loop)
+    }
+    raf = requestAnimationFrame(loop)
+    return () => cancelAnimationFrame(raf)
+  }, [])
+
+  return (
+    <div className="hold-debug" ref={ref}>
+      HOLD off  EXT 0.00
+    </div>
+  )
+}
+
 function LiveTimer() {
   const ref = useRef<HTMLSpanElement>(null)
 
@@ -144,6 +168,7 @@ export function Hud() {
           <LiveScores />
           <div className="hud-top-right">
             {playMode === 'practice' ? <div className="ledger-banner">LOCAL · NO LEDGER WRITES</div> : null}
+            {playMode === 'practice' ? <HoldDebug /> : null}
             <LiveTimer />
             <button type="button" className={`cam-toggle${debugTopDown ? ' on' : ''}`} onClick={toggleDebug}>
               {debugTopDown ? 'CAM DEBUG' : 'CAM TOY'}
@@ -153,13 +178,13 @@ export function Hud() {
         </div>
         <div className="hud-bottom">
           <div className="hint">
-            <strong>CHOMP</strong> — Space, click, tap, or the CHOMP control. Neck extends. Jaws eat on overlap.
+            <strong>CHOMP LATCHED</strong> — tap CHOMP or the pond once. Neck stays out until the next tap. Space is hold-while-down.
             <div className="hint-sub">
               {dumpT < 0.9
-                ? 'Hopper dumping chips — hold CHOMP, neck reaches in.'
+                ? 'Hopper dumping chips — tap once, neck stays in the lanes.'
                 : playMode === 'online'
                   ? `Server-authoritative. You are ${you.name} (seat ${localSeat}). Client predictions are cosmetic.`
-                  : `Board live · ${live} chips${refillCount ? ` · hopper x${refillCount}` : ''}. You are ${you.name}. Hold CHOMP to reach. RIPSAW Easy · GOLDGRUB Normal · BLOCKMAW Hungry.`}
+                  : `Board live · ${live} chips${refillCount ? ` · hopper x${refillCount}` : ''}. You are ${you.name}. Tap CHOMP to latch. RIPSAW Easy · GOLDGRUB Normal · BLOCKMAW Hungry.`}
             </div>
           </div>
           <button
@@ -173,6 +198,7 @@ export function Hud() {
             onPointerCancel={releaseChompPointer}
           >
             CHOMP
+            <span className="chomp-latch">{chompHeld ? 'LATCHED' : 'TAP ONCE'}</span>
           </button>
         </div>
       </div>
