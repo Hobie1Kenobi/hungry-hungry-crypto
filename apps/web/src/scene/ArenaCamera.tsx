@@ -11,7 +11,7 @@ const pos = new Vector3()
 
 export const TOY_POS = { x: -4.05, y: 9.48, z: -12.28 }
 export const TOY_LOOK = { x: 0.0, y: 0.42, z: -0.95 }
-export const TOY_FOV = 35
+export const TOY_FOV = 39
 const RESULTS_WEST = -4.55
 const RESULTS_ELEV = 8.2
 const RESULTS_NORTH = -10.55
