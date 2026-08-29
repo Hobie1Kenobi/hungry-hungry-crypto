@@ -479,8 +479,9 @@ export function stepArena(state: ArenaSnapshot, dt: number, now: number): StepRe
   let refillCount = state.refillCount ?? 0
   let lastRefillAt = state.lastRefillAt ?? 0
   const live = livePelletCount(pellets)
-  const opened = dumpT >= 1 && timeLeft <= ROUND_SECONDS - 4
-  const gapOk = refillCount === 0 || now - lastRefillAt >= POND_REFILL_GAP_MS
+  const elapsed = ROUND_SECONDS - timeLeft
+  const opened = dumpT >= 1 && elapsed >= 4
+  const gapOk = elapsed >= 4 + refillCount * (POND_REFILL_GAP_MS / 1000)
   const hungryLanes = live <= POND_REFILL_LIVE || anyLiveLaneEmpty(pellets)
   const canRefill =
     opened &&
