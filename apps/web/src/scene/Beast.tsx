@@ -42,11 +42,13 @@ export function Beast({ seat }: { seat: Seat }) {
 
   const [x, y, z] = beastPosition(seat)
   const yaw = beastYaw(seat)
+  const visX = seat === 1 ? x + 0.06 : x
+  const visZ = seat === 1 ? z + 0.78 : z
 
   useFrame((_, dt) => {
     const snap = useGameStore.getState()
-    const extend = snap.neckExtend[seat]
-    const down = snap.chompDown[seat]
+    const extend = ui === 'results' ? Math.min(snap.neckExtend[seat], 0.18) : snap.neckExtend[seat]
+    const down = ui === 'results' ? false : snap.chompDown[seat]
     const t = performance.now() / 1000
     if (down && !lastDown.current) {
       anticip.current = 1
@@ -118,7 +120,7 @@ export function Beast({ seat }: { seat: Seat }) {
       }
     }
     if (head.current) head.current.position.set(0, 0.04, headZ)
-    if (label.current) label.current.position.set(you ? 0.12 : 0, 1.58, -0.42)
+    if (label.current) label.current.position.set(you ? -0.92 : 0, 2.02, seat === 1 ? 0.12 : -0.62)
     if (jaws.current) {
       const open = jaw.current
       const up = jaws.current.children[1]
@@ -132,13 +134,13 @@ export function Beast({ seat }: { seat: Seat }) {
   })
 
   return (
-    <group position={[x, y, z]} rotation={[0, yaw, 0]}>
+    <group position={[visX, y, visZ]} rotation={[0, yaw, 0]}>
       <mesh position={[0, 0.02, -0.12]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
         <circleGeometry args={[0.82, 24]} />
         <meshStandardMaterial color={spec.color} transparent opacity={0.2} />
       </mesh>
       <group ref={rig}>
-        <group ref={body} position={[0, 0.02, seat === 2 ? 0.08 : seat === 1 ? -0.52 : -0.18]}>
+        <group ref={body} position={[0, 0.02, seat === 2 ? 0.08 : -0.18]}>
           <Chassis seat={seat} />
         </group>
         <group position={[0, BEAST_NECK_LIFT, NECK_VISUAL_ORIGIN]}>
@@ -148,23 +150,23 @@ export function Beast({ seat }: { seat: Seat }) {
             <MachineMouth jawsRef={jaws} seat={seat} />
             <pointLight ref={mouthLight} position={[0, 0.04, 0.62]} color="#ff6a88" intensity={3.2} distance={2.8} />
           </group>
-          <Billboard ref={label} position={[you ? 0.12 : 0, 1.58, -0.42]}>
-            <Text
-              fontSize={you ? 0.28 : 0.2}
-              color={spec.color}
-              anchorX="center"
-              anchorY="bottom"
-              outlineWidth={0.028}
-              outlineColor="#041018"
-              maxWidth={3.4}
-              lineHeight={1.15}
-              renderOrder={12}
-            >
-              {you ? `${spec.name}\nYOU` : spec.name}
-            </Text>
-          </Billboard>
         </group>
       </group>
+      <Billboard ref={label} position={[you ? -0.92 : 0, 2.02, seat === 1 ? 0.12 : -0.62]}>
+        <Text
+          fontSize={you ? 0.26 : 0.2}
+          color={spec.color}
+          anchorX={you ? 'right' : 'center'}
+          anchorY="bottom"
+          outlineWidth={0.028}
+          outlineColor="#041018"
+          maxWidth={3.2}
+          lineHeight={1.15}
+          renderOrder={12}
+        >
+          {you ? `${spec.name}\nYOU` : spec.name}
+        </Text>
+      </Billboard>
     </group>
   )
 }

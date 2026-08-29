@@ -61,6 +61,9 @@ export function Results() {
   const champ = BEASTS[result.winner]
   const ranked = [...SEATS].sort((a, b) => result.scores[b] - result.scores[a])
   const hashes = result.txHashes
+  const topScore = result.scores[result.winner]
+  const tiedSeats = SEATS.filter((seat) => result.scores[seat] === topScore)
+  const isTie = tiedSeats.length > 1
 
   const guard = (event: ReactPointerEvent<HTMLButtonElement> | ReactMouseEvent<HTMLButtonElement>) => {
     if (!armed) {
@@ -96,9 +99,13 @@ export function Results() {
           <div className="results-hero">
             <WinnerPortrait seat={result.winner} />
             <div>
-              <h2 style={{ color: champ.color }}>{champ.name} wins</h2>
+              <h2 style={{ color: champ.color }}>
+                {isTie ? `TIE · ${champ.name} wins it` : `${champ.name} wins`}
+              </h2>
               <p className="tag" style={{ marginTop: 0 }}>
-                Match {result.matchId}
+                {isTie
+                  ? `${tiedSeats.length} beasts share ${topScore}. First highest seat keeps the star. Match ${result.matchId}`
+                  : `Match ${result.matchId}`}
               </p>
               <div className="score-burst" style={{ color: champ.color }}>
                 {result.scores[result.winner]}

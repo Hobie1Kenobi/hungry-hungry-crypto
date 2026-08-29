@@ -208,7 +208,9 @@ export function Hud() {
           </div>
         </div>
         <div className="hud-bottom">
-          <HintCard />
+          <div className="hint-slot">
+            <HintCard />
+          </div>
           <button
             type="button"
             tabIndex={-1}

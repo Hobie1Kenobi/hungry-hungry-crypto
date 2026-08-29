@@ -1,7 +1,7 @@
 import { useFrame, useThree } from '@react-three/fiber'
 import { useRef } from 'react'
 import { MathUtils, type PerspectiveCamera, Vector3 } from 'three'
-import { mouthWorldOnPond } from '@hhc/shared'
+import { beastPosition } from '@hhc/shared'
 import { useJuiceStore } from '../game/juice'
 import { useGameStore } from '../store/gameStore'
 import { useViewStore } from '../store/viewStore'
@@ -31,7 +31,7 @@ export function ArenaCamera() {
     const cam = camera as PerspectiveCamera
     const aspect = width / Math.max(1, height)
     const debug = useViewStore.getState().debugTopDown
-    const { ui, dumpT, lastEatAt, pellets, result, neckExtend } = useGameStore.getState()
+    const { ui, dumpT, lastEatAt, pellets, result } = useGameStore.getState()
     const shakeAt = useJuiceStore.getState().shakeAt
     const now = performance.now()
 
@@ -67,7 +67,7 @@ export function ArenaCamera() {
     const zoom = goldenLive ? 0.985 : 1
     const short = height > 0 && height < 600 ? 1.06 : 1
     const tall = height > 0 && aspect < 1.05 ? 1.06 : 1
-    const resultPull = ui === 'results' ? 1.08 : 1
+    const resultPull = ui === 'results' ? 1.16 : 1
     const k = short * tall * dolly * zoom * resultPull
 
     let sx = 0
@@ -79,22 +79,21 @@ export function ArenaCamera() {
       sy = Math.cos(age * 47) * 0.05 * t
     }
 
-    const swing = ui === 'results' ? Math.sin(clock.elapsedTime * 0.28) * 0.16 : 0
-    const track = ui === 'playing' || ui === 'results' ? neckExtend[0] : 0
-    const head = mouthWorldOnPond(0, track)
-    const x = TOY_POS.x * k + (ui === 'results' ? 0.35 : 0) + sx + swing - 0.42 * track
-    const y = TOY_POS.y * Math.min(k, 1.12) + sy + 0.06 * track
-    pos.set(x, y, Math.max(-7.2, TOY_POS.z + 0.16 * track))
+    const swing = ui === 'results' ? Math.sin(clock.elapsedTime * 0.28) * 0.12 : 0
+    const [bx, , bz] = beastPosition(result?.winner ?? 0)
+    const x = TOY_POS.x * k + (ui === 'results' ? 0.18 : 0) + sx + swing
+    const y = TOY_POS.y * Math.min(k, 1.14) + sy + (ui === 'results' ? 0.28 : 0)
+    pos.set(x, y, ui === 'results' ? TOY_POS.z * 1.05 : TOY_POS.z)
     if (now < shakeUntil.current || (playBorn.current && now - playBorn.current < 32)) {
       cam.position.copy(pos)
     } else {
       cam.position.lerp(pos, 1 - Math.pow(0.0004, dt))
     }
-    look.set(
-      TOY_LOOK.x + (head.x - TOY_LOOK.x) * 0.06 * track,
-      TOY_LOOK.y + 0.1 * track,
-      (result ? TOY_LOOK.z + 0.18 : TOY_LOOK.z) + (head.z - TOY_LOOK.z) * 0.08 * track,
-    )
+    if (ui === 'results') {
+      look.set(bx * 0.28, 0.82, bz * 0.42)
+    } else {
+      look.set(TOY_LOOK.x, TOY_LOOK.y, TOY_LOOK.z)
+    }
     cam.lookAt(look)
     cam.fov = aspect < 1.1 ? 46 : TOY_FOV
     cam.near = 0.45

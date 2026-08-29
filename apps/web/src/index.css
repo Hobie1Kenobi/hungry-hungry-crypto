@@ -316,6 +316,7 @@ h2,
 
 .hud-bottom {
   align-items: flex-end;
+  justify-content: flex-start;
   position: relative;
   min-height: 118px;
   padding: 0 4px 22px;
@@ -462,12 +463,19 @@ h2,
   }
 }
 
+.hint-slot {
+  min-width: 260px;
+  min-height: 1px;
+  pointer-events: none;
+}
+
 .hint {
   background: var(--panel);
   border: 1px solid var(--line);
   padding: 6px 8px;
   max-width: 260px;
   font-size: 10px;
+  pointer-events: none;
 }
 
 .hint-sub {
@@ -498,10 +506,12 @@ h2,
 .chomp-btn {
   pointer-events: auto;
   appearance: none;
-  position: relative;
+  position: absolute;
+  right: 12px;
+  bottom: 22px;
   min-width: 168px;
   min-height: 64px;
-  margin: 18px 8px 0 0;
+  margin: 0;
   padding: 10px 22px 10px;
   border: 2px solid #b8fbff;
   background: var(--cyan);

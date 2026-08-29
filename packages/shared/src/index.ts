@@ -456,8 +456,8 @@ export function spawnPellets(rng: () => number = Math.random, idPrefix = ''): Pe
   const wave = idPrefix.startsWith('w') ? Number.parseInt(idPrefix.slice(1), 10) || 1 : 0
   const phase = wave === 0 ? 0 : wave % 2 === 1 ? 0.22 : -0.22
   const spots: Array<[number, number]> = []
-  const along = [3.12, 2.42, 1.72]
-  const across = [-0.68, 0.68]
+  const along = [3.52, 2.72, 1.88]
+  const across = [-0.36, 0.36]
 
   for (const a of along) {
     for (const c of across) {
@@ -468,10 +468,10 @@ export function spawnPellets(rng: () => number = Math.random, idPrefix = ''): Pe
     }
   }
   spots.push(
-    [0.58, -1.22 + phase * 0.12],
-    [1.22 + phase * 0.12, 0.58],
-    [-0.58, 1.22 + phase * 0.12],
-    [-1.22 + phase * 0.12, -0.58],
+    [0.42, -0.72 + phase * 0.08],
+    [0.72 + phase * 0.08, 0.42],
+    [-0.42, 0.72 + phase * 0.08],
+    [-0.72 + phase * 0.08, -0.42],
   )
 
   let i = 0
