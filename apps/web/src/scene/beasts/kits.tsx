@@ -1,7 +1,7 @@
-import type { Ref } from 'react'
+import { useLayoutEffect, useMemo, type Ref } from 'react'
 import type { Seat } from '@hhc/shared'
 import { BEASTS } from '@hhc/shared'
-import type { Group, Mesh, MeshStandardMaterial } from 'three'
+import { MeshStandardMaterial, type Group, type Mesh } from 'three'
 import { BloomSelect } from '../bloom'
 import { vinyl } from './vinyl'
 
@@ -511,6 +511,31 @@ export function MachineMouth({
   )
 }
 
+function useVisorMaterial(visorRef: Ref<MeshStandardMaterial>, color: string) {
+  const mat = useMemo(
+    () =>
+      new MeshStandardMaterial({
+        color,
+        emissive: color,
+        emissiveIntensity: 6.6,
+        metalness: 0.04,
+        roughness: 0.08,
+        toneMapped: false,
+      }),
+    [color],
+  )
+  useLayoutEffect(() => {
+    if (typeof visorRef === 'function') visorRef(mat)
+    else if (visorRef) visorRef.current = mat
+    return () => {
+      if (typeof visorRef === 'function') visorRef(null)
+      else if (visorRef) visorRef.current = null
+    }
+  }, [mat, visorRef])
+  useLayoutEffect(() => () => mat.dispose(), [mat])
+  return mat
+}
+
 export function HeadDressing({
   seat,
   visorRef,
@@ -523,6 +548,7 @@ export function HeadDressing({
   antR: Ref<Group>
 }) {
   const { color, accent } = BEASTS[seat]
+  const visor = useVisorMaterial(visorRef, seat === 3 ? accent : color)
   if (seat === 0) {
     return (
       <group>
@@ -531,18 +557,20 @@ export function HeadDressing({
           <meshStandardMaterial color="#061018" metalness={0.4} roughness={0.3} />
         </mesh>
         <BloomSelect>
-          <mesh position={[0, 0.34, 0.28]} castShadow>
-            <boxGeometry args={[0.96, 0.1, 0.07]} />
-            <meshStandardMaterial
-              ref={visorRef}
-              color={color}
-              emissive={color}
-              emissiveIntensity={2.6}
-              metalness={0.12}
-              roughness={0.12}
-              toneMapped={false}
-            />
+          <mesh position={[0, 0.52, 0.02]} material={visor}>
+            <boxGeometry args={[1.1, 0.14, 0.56]} />
           </mesh>
+          <mesh position={[0, 0.44, -0.28]} material={visor}>
+            <boxGeometry args={[1.06, 0.16, 0.12]} />
+          </mesh>
+          <mesh position={[0, 0.38, 0.32]} material={visor}>
+            <boxGeometry args={[1.02, 0.16, 0.12]} />
+          </mesh>
+          {[-0.56, 0.56].map((x) => (
+            <mesh key={x} position={[x, 0.44, 0.02]} material={visor}>
+              <boxGeometry args={[0.1, 0.16, 0.4]} />
+            </mesh>
+          ))}
         </BloomSelect>
         <group ref={antL} position={[-0.28, 0.48, -0.06]}>
           <mesh castShadow>
@@ -563,17 +591,14 @@ export function HeadDressing({
     return (
       <group>
         <BloomSelect>
-          <mesh position={[0, 0.32, 0.14]} rotation={[0.25, 0, 0]} castShadow>
-            <cylinderGeometry args={[0.36, 0.36, 0.08, 24]} />
-            <meshStandardMaterial
-              ref={visorRef}
-              color={color}
-              emissive={color}
-              emissiveIntensity={2.5}
-              metalness={0.45}
-              roughness={0.18}
-              toneMapped={false}
-            />
+          <mesh position={[0, 0.34, 0.16]} rotation={[0.22, 0, 0]} material={visor}>
+            <cylinderGeometry args={[0.42, 0.42, 0.16, 24]} />
+          </mesh>
+          <mesh position={[0, 0.34, 0.16]} rotation={[0.22, 0, 0]} material={visor}>
+            <torusGeometry args={[0.46, 0.07, 10, 24]} />
+          </mesh>
+          <mesh position={[0, 0.52, 0.0]} material={visor}>
+            <boxGeometry args={[0.78, 0.13, 0.34]} />
           </mesh>
         </BloomSelect>
         <group ref={antL} position={[-0.26, 0.42, -0.04]} />
@@ -593,17 +618,11 @@ export function HeadDressing({
           <meshPhysicalMaterial {...vinyl(color)} />
         </mesh>
         <BloomSelect>
-          <mesh position={[0, 0.28, 0.22]} castShadow>
-            <boxGeometry args={[0.78, 0.1, 0.08]} />
-            <meshStandardMaterial
-              ref={visorRef}
-              color={color}
-              emissive={color}
-              emissiveIntensity={2.2}
-              metalness={0.15}
-              roughness={0.16}
-              toneMapped={false}
-            />
+          <mesh position={[0, 0.32, 0.3]} material={visor}>
+            <boxGeometry args={[1.12, 0.28, 0.16]} />
+          </mesh>
+          <mesh position={[0, 0.46, 0.04]} material={visor}>
+            <boxGeometry args={[0.98, 0.14, 0.44]} />
           </mesh>
         </BloomSelect>
         <group ref={antL} position={[-0.46, 0.32, -0.06]} />
@@ -618,17 +637,14 @@ export function HeadDressing({
         <meshStandardMaterial color={accent} metalness={0.9} roughness={0.12} />
       </mesh>
       <BloomSelect>
-        <mesh position={[0, 0.28, 0.28]} castShadow>
-          <boxGeometry args={[0.86, 0.09, 0.06]} />
-          <meshStandardMaterial
-            ref={visorRef}
-            color={accent}
-            emissive={accent}
-            emissiveIntensity={2.4}
-            metalness={0.7}
-            roughness={0.16}
-            toneMapped={false}
-          />
+        <mesh position={[0, 0.5, 0.02]} material={visor}>
+          <boxGeometry args={[1.16, 0.13, 0.54]} />
+        </mesh>
+        <mesh position={[0, 0.36, 0.32]} material={visor}>
+          <boxGeometry args={[1.02, 0.16, 0.12]} />
+        </mesh>
+        <mesh position={[0, 0.42, -0.26]} material={visor}>
+          <boxGeometry args={[1.04, 0.14, 0.1]} />
         </mesh>
       </BloomSelect>
       <group ref={antL} position={[-0.36, 0.44, -0.08]}>

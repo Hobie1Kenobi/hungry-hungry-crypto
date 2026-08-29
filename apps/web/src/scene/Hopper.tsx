@@ -1,11 +1,25 @@
 import { useMemo, useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
-import { AdditiveBlending, type Group, type Mesh } from 'three'
+import { AdditiveBlending, type Group, type Mesh, type PointLight } from 'three'
 import { useJuiceStore } from '../game/juice'
 import { BloomSelect } from './bloom'
 import { useGameStore } from '../store/gameStore'
 
-function Sparks({ dumping }: { dumping: boolean }) {
+const SPARK_LINGER_MS = 600
+
+function sparkLiveNow(): number {
+  const ui = useGameStore.getState().ui
+  if (ui !== 'playing') return 0
+  const dumpT = useGameStore.getState().dumpT
+  if (dumpT < 0.88) return 1
+  const dumpAt = useJuiceStore.getState().dumpAt
+  if (dumpAt <= 0) return 0
+  const age = performance.now() - dumpAt
+  if (age >= SPARK_LINGER_MS) return 0
+  return Math.max(0, 1 - age / SPARK_LINGER_MS)
+}
+
+function Sparks() {
   const refs = useRef<Array<Mesh | null>>([])
   const seeds = useMemo(
     () =>
@@ -19,14 +33,14 @@ function Sparks({ dumping }: { dumping: boolean }) {
 
   useFrame(({ clock }) => {
     const t = clock.elapsedTime
+    const live = sparkLiveNow()
     for (let i = 0; i < seeds.length; i += 1) {
       const mesh = refs.current[i]
       if (!mesh) continue
-      const live = dumping ? 1 : 0
       const bounce = (Math.sin(t * 20 + seeds[i].phase) + 1) * 0.5
       mesh.position.set(seeds[i].x, -0.18 - bounce * 0.42, seeds[i].z + bounce * 0.18)
       mesh.scale.setScalar(live * (0.45 + bounce * 0.9))
-      mesh.visible = live > 0
+      mesh.visible = live > 0.04
     }
   })
 
@@ -52,6 +66,17 @@ function Sparks({ dumping }: { dumping: boolean }) {
       ))}
     </BloomSelect>
   )
+}
+
+function DumpGlow() {
+  const light = useRef<PointLight>(null)
+  useFrame(() => {
+    if (!light.current) return
+    const live = sparkLiveNow()
+    light.current.intensity = 2.4 * live
+    light.current.visible = live > 0.04
+  })
+  return <pointLight ref={light} position={[0, -0.4, 0.5]} intensity={0} distance={3.2} color="#ffe27a" />
 }
 
 function Bolt({ x, y, z }: { x: number; y: number; z: number }) {
@@ -166,8 +191,8 @@ export function Hopper() {
             roughness={0.3}
           />
         </mesh>
-        <Sparks dumping={dumping} />
-        {dumping ? <pointLight position={[0, -0.4, 0.5]} intensity={2.4} distance={3.2} color="#ffe27a" /> : null}
+        <Sparks />
+        <DumpGlow />
       </group>
     </group>
   )
