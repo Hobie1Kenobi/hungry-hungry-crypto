@@ -14,7 +14,13 @@ export function createEasyPolicy(seat: Seat, options: PolicyOptions = {}): AiPol
     seat,
     personality: 'easy',
     tick(world: ArenaView) {
-      if (world.dumpT < landDump) return null
+      if (world.dumpT < landDump) {
+        armed = false
+        if (!down) return null
+        down = false
+        nextFlip = world.now
+        return { seat, down: false, clientTime: world.now }
+      }
       if (!armed) {
         armed = true
         nextFlip = world.now + reaction

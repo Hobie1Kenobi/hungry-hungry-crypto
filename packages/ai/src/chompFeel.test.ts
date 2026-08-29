@@ -18,6 +18,7 @@ import {
 import { createEasyPolicy } from './easy'
 import { createHungryPolicy } from './hungry'
 import { createIdlePolicy } from './idle'
+import { createNormalPolicy } from './normal'
 import { createPracticePolicies, seededRng } from './fill'
 import { simulateRound } from './simulate'
 import type { AiPolicy, ArenaView } from './types'
@@ -242,6 +243,7 @@ describe('hopper refill', () => {
     )
     expect(livePelletCount(live)).toBe(5)
     expect(stepped.snapshot.refillCount).toBe(1)
+    expect(stepped.snapshot.dumpT).toBe(0)
     expect(stepped.snapshot.pellets.length).toBeGreaterThan(live.length + eaten.length)
     expect(livePelletCount(stepped.snapshot.pellets)).toBeGreaterThan(20)
   })
@@ -266,11 +268,46 @@ describe('AI nibble through the round', () => {
       seconds: 45,
     })
     expect(result.scoresAt[12]).toBeDefined()
+    expect(result.scoresAt[22]).toBeDefined()
     expect(result.scoresAt[30]).toBeDefined()
+    expect(result.scoresAt[35]).toBeDefined()
     expect(aiSum(result.scoresAt[12]!)).toBeGreaterThan(aiSum(result.scoresAt[8]!))
     expect(aiSum(result.scoresAt[20]!)).toBeGreaterThan(aiSum(result.scoresAt[12]!))
+    expect(aiSum(result.scoresAt[35]!)).toBeGreaterThan(aiSum(result.scoresAt[22]!))
     expect(result.chompFlips[1]).toBeGreaterThan(10)
     expect(result.chompFlips[2]).toBeGreaterThan(10)
     expect(result.chompFlips[3]).toBeGreaterThan(10)
+    expect(result.chompFlipsAfter22[1]).toBeGreaterThan(0)
+    expect(result.chompFlipsAfter22[2]).toBeGreaterThan(0)
+    expect(result.chompFlipsAfter22[3]).toBeGreaterThan(0)
+    expect(aiSum(result.scoresAt[20]!)).toBeLessThan(90)
+  })
+
+  it('hopper dumpT reset re-arms Easy / Normal / Hungry instead of freezing them', () => {
+    const easy = createEasyPolicy(1, { rng: seededRng(3) })
+    const normal = createNormalPolicy(2)
+    const hungry = createHungryPolicy(3)
+    const pellets = [crumb('east', 2.0, 0), crumb('south', 0, 2.0), crumb('west', -2.0, 0)]
+    const land = emptyView({ now: 2000, dumpT: 0.95, pellets })
+    expect(easy.tick(land) ?? easy.tick({ ...land, now: 2800 })).toMatchObject({ seat: 1, down: true })
+    expect(normal.tick(land)).toMatchObject({ seat: 2, down: true })
+    expect(hungry.tick(land)).toMatchObject({ seat: 3, down: true })
+
+    const dump = emptyView({ now: 3200, dumpT: 0.2, pellets, chompDown: { 0: false, 1: true, 2: true, 3: true } })
+    expect(easy.tick(dump)).toMatchObject({ seat: 1, down: false })
+    expect(normal.tick(dump)).toMatchObject({ seat: 2, down: false })
+    expect(hungry.tick(dump)).toMatchObject({ seat: 3, down: false })
+    expect(easy.tick(dump)).toBeNull()
+    expect(normal.tick({ ...dump, now: 4000 })).toBeNull()
+    expect(hungry.tick({ ...dump, now: 4000 })).toBeNull()
+
+    const reland = emptyView({ now: 5200, dumpT: 0.95, pellets, chompDown: { 0: false, 1: false, 2: false, 3: false } })
+    const later = emptyView({ now: 6200, dumpT: 0.95, pellets, chompDown: { 0: false, 1: false, 2: false, 3: false } })
+    const easyAgain = easy.tick(reland) ?? easy.tick(later)
+    const normalAgain = normal.tick(reland) ?? normal.tick(later)
+    const hungryAgain = hungry.tick(reland) ?? hungry.tick(later)
+    expect(easyAgain).toMatchObject({ seat: 1, down: true })
+    expect(normalAgain).toMatchObject({ seat: 2, down: true })
+    expect(hungryAgain).toMatchObject({ seat: 3, down: true })
   })
 })

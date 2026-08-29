@@ -70,7 +70,7 @@ export const CHOMP_EAT_COOLDOWN_MS = 640
 
 export const POND_REFILL_LIVE = 16
 
-export const POND_REFILL_MAX = 4
+export const POND_REFILL_MAX = 7
 
 export const POND_REFILL_MIN_TIME_LEFT = 6
 
@@ -392,6 +392,20 @@ export function livePelletCount(pellets: readonly Pellet[]): number {
   return n
 }
 
+export function anyLiveLaneEmpty(pellets: readonly Pellet[]): boolean {
+  for (const seat of SEATS) {
+    let found = false
+    for (const pellet of pellets) {
+      if (pelletInLane(pellet, seat)) {
+        found = true
+        break
+      }
+    }
+    if (!found) return true
+  }
+  return false
+}
+
 function waveRng(seed: number): () => number {
   let s = (seed >>> 0) || 1
   return () => {
@@ -442,7 +456,7 @@ export function spawnPellets(rng: () => number = Math.random, idPrefix = ''): Pe
 }
 
 export function stepArena(state: ArenaSnapshot, dt: number, now: number): StepResult {
-  const dumpT = Math.min(1, state.dumpT + dt / DUMP_SECONDS)
+  let dumpT = Math.min(1, state.dumpT + dt / DUMP_SECONDS)
   const timeLeft = Math.max(0, state.timeLeft - dt)
   const neckExtend = stepNeckExtend(state.neckExtend, state.chompDown, state.chompPulseUntil, now, dt)
 
@@ -467,9 +481,10 @@ export function stepArena(state: ArenaSnapshot, dt: number, now: number): StepRe
   const live = livePelletCount(pellets)
   const opened = dumpT >= 1 && timeLeft <= ROUND_SECONDS - 4
   const gapOk = refillCount === 0 || now - lastRefillAt >= POND_REFILL_GAP_MS
+  const hungryLanes = live <= POND_REFILL_LIVE || anyLiveLaneEmpty(pellets)
   const canRefill =
     opened &&
-    live <= POND_REFILL_LIVE &&
+    hungryLanes &&
     refillCount < POND_REFILL_MAX &&
     timeLeft > POND_REFILL_MIN_TIME_LEFT &&
     gapOk
@@ -478,6 +493,7 @@ export function stepArena(state: ArenaSnapshot, dt: number, now: number): StepRe
     lastRefillAt = now
     const wave = spawnPellets(waveRng(refillCount * 997 + Math.floor(now) + 13), `w${refillCount}-`)
     pellets = pellets.concat(wave)
+    dumpT = 0
   }
 
   const snapshot: ArenaSnapshot = {

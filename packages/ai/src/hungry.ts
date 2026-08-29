@@ -69,11 +69,13 @@ export function createHungryPolicy(seat: Seat, _options: PolicyOptions = {}): Ai
       const canWindup = world.dumpT >= WINDUP_DUMP
       let want = down
 
-      if (down) {
+      if (!canWindup) {
+        want = false
+      } else if (down) {
         const timedOut = world.now >= holdUntil
         const eaten = targetId !== undefined && !targetLive
         want = !timedOut && !eaten
-      } else if (world.now >= coolUntil && canWindup) {
+      } else if (world.now >= coolUntil) {
         want = true
       }
 

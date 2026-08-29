@@ -20,10 +20,12 @@ export function createNormalPolicy(seat: Seat, _options: PolicyOptions = {}): Ai
       const canWindup = world.dumpT >= WINDUP_DUMP
       let want = down
 
-      if (down) {
+      if (!canWindup) {
+        want = false
+      } else if (down) {
         const timedOut = world.now >= holdUntil
         want = !timedOut
-      } else if (world.now >= coolUntil && canWindup) {
+      } else if (world.now >= coolUntil) {
         want = true
       }
 
