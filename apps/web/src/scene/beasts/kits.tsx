@@ -72,7 +72,7 @@ export function RipsawChassis({ color, accent }: { color: string; accent: string
         <cylinderGeometry args={[0.2, 0.26, 0.42, 12]} />
         <meshPhysicalMaterial {...vinyl(accent, { metalness: 0.42, roughness: 0.3 })} />
       </mesh>
-      <group position={[0, 0.52, -0.28]} rotation={[0, 0, Math.PI / 2]}>
+      <group position={[0, 0.48, -0.42]} rotation={[0, 0, Math.PI / 2]}>
         <mesh castShadow>
           <cylinderGeometry args={[0.56, 0.56, 0.08, 36]} />
           <meshStandardMaterial color="#2a0a22" metalness={0.62} roughness={0.22} />

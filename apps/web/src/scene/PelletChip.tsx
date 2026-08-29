@@ -46,10 +46,14 @@ function XrpFace({ r, face, ink, map }: { r: number; face: string; ink: string; 
   )
 }
 
+function isRefillWave(id: string): boolean {
+  return id.startsWith('w')
+}
+
 export function PelletChip({ pellet }: { pellet: Pellet }) {
   const delay = useMemo(() => hashDelay(pellet.id), [pellet.id])
   const born = useRef(performance.now())
-  const grounded = useRef(useGameStore.getState().dumpT >= 0.92)
+  const grounded = useRef(!isRefillWave(pellet.id) || useGameStore.getState().dumpT >= 0.92)
   const splashed = useRef(grounded.current)
   const group = useRef<Group>(null)
   const r = pellet.golden ? 0.4 : 0.3
@@ -60,6 +64,9 @@ export function PelletChip({ pellet }: { pellet: Pellet }) {
 
   useFrame(() => {
     if (!group.current || pellet.eatenBy !== undefined) return
+    if (!grounded.current && useGameStore.getState().dumpT >= 0.92) {
+      grounded.current = true
+    }
     if (grounded.current) {
       group.current.position.set(pellet.x, restY, pellet.z)
       group.current.rotation.set(0.12, delay * 4, 0.08)

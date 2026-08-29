@@ -92,8 +92,8 @@ function RimMount() {
   )
 }
 
-/** West of the north rim so RIPSAW's saw does not sit inside the chute from the behind-BYTEBITE camera. */
-export const HOPPER_SHIFT_X = -1.12
+/** North rim, shifted slightly west of BYTEBITE so the chute is not inside RIPSAW's saw. */
+export const HOPPER_SHIFT_X = -0.42
 export const HOPPER_MOUTH = { x: HOPPER_SHIFT_X, y: 2.18, z: -6.42 }
 
 export function Hopper() {

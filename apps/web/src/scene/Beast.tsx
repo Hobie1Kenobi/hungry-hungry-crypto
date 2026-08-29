@@ -138,7 +138,7 @@ export function Beast({ seat }: { seat: Seat }) {
         <meshStandardMaterial color={spec.color} transparent opacity={0.2} />
       </mesh>
       <group ref={rig}>
-        <group ref={body} position={[0, 0.02, seat === 2 ? 0.08 : -0.18]}>
+        <group ref={body} position={[0, 0.02, seat === 2 ? 0.08 : seat === 1 ? -0.52 : -0.18]}>
           <Chassis seat={seat} />
         </group>
         <group position={[0, BEAST_NECK_LIFT, NECK_VISUAL_ORIGIN]}>
