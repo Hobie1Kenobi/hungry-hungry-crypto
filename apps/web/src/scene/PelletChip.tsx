@@ -4,11 +4,11 @@ import type { Group } from 'three'
 import type { Pellet } from '@hhc/shared'
 import { useJuiceStore } from '../game/juice'
 import { useGameStore } from '../store/gameStore'
+import { HOPPER_MOUTH } from './Hopper'
 import { makeXrpMarkTexture } from './xrpMarkTexture'
 
 const cyanMark = makeXrpMarkTexture('#e7fbff', '#0a3340')
 const goldMark = makeXrpMarkTexture('#ffe7a0', '#4a3000')
-const HOPPER = { x: 0, y: 2.18, z: -6.42 }
 
 function hashDelay(id: string): number {
   let n = 0
@@ -67,10 +67,10 @@ export function PelletChip({ pellet }: { pellet: Pellet }) {
     }
     const t = Math.max(0, Math.min(1, (performance.now() - born.current) / 1000 / 0.46 - delay))
     const k = easeOut(t)
-    const x = HOPPER.x + (pellet.x - HOPPER.x) * k
-    const z = HOPPER.z + (pellet.z - HOPPER.z) * k
+    const x = HOPPER_MOUTH.x + (pellet.x - HOPPER_MOUTH.x) * k
+    const z = HOPPER_MOUTH.z + (pellet.z - HOPPER_MOUTH.z) * k
     const arc = Math.sin(k * Math.PI) * 0.28
-    const y = HOPPER.y + (restY - HOPPER.y) * k + arc
+    const y = HOPPER_MOUTH.y + (restY - HOPPER_MOUTH.y) * k + arc
     group.current.position.set(x, y, z)
     group.current.rotation.set(0.18 * (1 - k), delay * 10 + k * 3.2, 0.1 * (1 - k))
     if (t >= 1) {
@@ -85,7 +85,7 @@ export function PelletChip({ pellet }: { pellet: Pellet }) {
   if (pellet.eatenBy !== undefined) return null
 
   return (
-    <group ref={group} position={grounded.current ? [pellet.x, restY, pellet.z] : [HOPPER.x, HOPPER.y, HOPPER.z]}>
+    <group ref={group} position={grounded.current ? [pellet.x, restY, pellet.z] : [HOPPER_MOUTH.x, HOPPER_MOUTH.y, HOPPER_MOUTH.z]}>
       <mesh castShadow>
         <sphereGeometry args={[r, 28, 22]} />
         <meshPhysicalMaterial

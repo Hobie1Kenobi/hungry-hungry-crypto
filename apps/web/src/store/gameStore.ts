@@ -3,6 +3,7 @@ import type { AiPolicy } from '@hhc/ai'
 import { createPracticePolicies } from '@hhc/ai'
 import type { Address, ChompInput, MatchResult, Pellet, Seat, SeatOccupant } from '@hhc/shared'
 import {
+  PRACTICE_GO_DUMP_T,
   ROUND_SECONDS,
   applyChompInput,
   emptyChomp,
@@ -169,7 +170,7 @@ export const useGameStore = create<GameState>((set, get) => ({
       neckExtend: emptyNecks(),
       chompDown: emptyChomp(),
       chompPulseUntil: emptyPulse(),
-      dumpT: 0,
+      dumpT: PRACTICE_GO_DUMP_T,
       timeLeft: ROUND_SECONDS,
       lastEatAt: emptyLastEat(),
       refillCount: 0,

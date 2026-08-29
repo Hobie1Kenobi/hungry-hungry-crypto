@@ -1,5 +1,10 @@
 import { describe, expect, it } from 'vitest'
 import {
+  CHOMP_HALF_WIDTH,
+  CHOMP_MOUTH_DEPTH,
+  CHOMP_MOUTH_PAD,
+  NECK_BASE,
+  NECK_EXTRA,
   ROUND_SECONDS,
   applyChompInput,
   collectEats,
@@ -12,11 +17,13 @@ import {
   livePelletCount,
   pelletInChompZone,
   pelletInLane,
+  PRACTICE_GO_DUMP_T,
   PRACTICE_MAX_STEP_DT,
   practiceWallClock,
   mouthWorldOnPond,
   spawnPellets,
   stepArena,
+  stepNeckExtend,
   visualHeadAlong,
   type ArenaSnapshot,
   type Pellet,
@@ -394,6 +401,51 @@ describe('hopper refill', () => {
     expect(Math.max(...zs) - Math.min(...zs)).toBeGreaterThan(4)
     expect(pellets.filter((p) => Math.abs(p.x) > 1.4).length).toBeGreaterThan(6)
     expect(pellets.filter((p) => Math.abs(p.z) > 1.4).length).toBeGreaterThan(6)
+  })
+
+  it('Practice GO already has dumpT landed and chips on four floor lanes', () => {
+    expect(PRACTICE_GO_DUMP_T).toBe(1)
+    const pellets = spawnPellets(seededRng(99))
+    const north = pellets.filter((p) => pelletInLane(p, 0) && p.z < -1.4)
+    const east = pellets.filter((p) => pelletInLane(p, 1) && p.x > 1.4)
+    const south = pellets.filter((p) => pelletInLane(p, 2) && p.z > 1.4)
+    const west = pellets.filter((p) => pelletInLane(p, 3) && p.x < -1.4)
+    expect(north.length).toBeGreaterThan(3)
+    expect(east.length).toBeGreaterThan(3)
+    expect(south.length).toBeGreaterThan(3)
+    expect(west.length).toBeGreaterThan(3)
+    const stepped = stepArena(
+      {
+        pellets,
+        scores: emptyScores(),
+        neckExtend: emptyNecks(),
+        chompDown: emptyChomp(),
+        chompPulseUntil: emptyPulse(),
+        lastEatAt: emptyLastEat(),
+        refillCount: 0,
+        lastRefillAt: 0,
+        dumpT: PRACTICE_GO_DUMP_T,
+        timeLeft: ROUND_SECONDS,
+      },
+      1 / 60,
+      0,
+    )
+    expect(stepped.snapshot.dumpT).toBe(1)
+    expect(livePelletCount(stepped.snapshot.pellets)).toBe(29)
+  })
+
+  it('a short hold reaches full neck extend on every seat without changing eat AABBs', () => {
+    const down = { 0: true, 1: true, 2: true, 3: true } as const
+    const next = stepNeckExtend(emptyNecks(), down, emptyPulse(), 0, 0.16)
+    expect(next[0]).toBeGreaterThan(0.95)
+    expect(next[1]).toBeCloseTo(next[0])
+    expect(next[2]).toBeCloseTo(next[0])
+    expect(next[3]).toBeCloseTo(next[0])
+    expect(CHOMP_HALF_WIDTH).toBe(1.55)
+    expect(CHOMP_MOUTH_DEPTH).toBe(4.35)
+    expect(CHOMP_MOUTH_PAD).toBe(0.28)
+    expect(NECK_BASE).toBe(0.95)
+    expect(NECK_EXTRA).toBe(5.55)
   })
 
   it('initial dump seeds a lane in front of each mouth, not one center blob', () => {

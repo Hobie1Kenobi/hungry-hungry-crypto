@@ -92,6 +92,10 @@ function RimMount() {
   )
 }
 
+/** West of the north rim so RIPSAW's saw does not sit inside the chute from the behind-BYTEBITE camera. */
+export const HOPPER_SHIFT_X = -1.12
+export const HOPPER_MOUTH = { x: HOPPER_SHIFT_X, y: 2.18, z: -6.42 }
+
 export function Hopper() {
   const dumpT = useGameStore((s) => s.dumpT)
   const ui = useGameStore((s) => s.ui)
@@ -114,7 +118,7 @@ export function Hopper() {
   const dumping = ui === 'playing' && dumpT < 0.88
 
   return (
-    <group>
+    <group position={[HOPPER_SHIFT_X, 0, 0]}>
       <RimMount />
       <group ref={bin} position={[0, 2.05, -6.55]}>
         <mesh position={[0, 0.2, 0]} castShadow>

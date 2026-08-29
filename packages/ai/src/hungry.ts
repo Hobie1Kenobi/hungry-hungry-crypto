@@ -1,11 +1,5 @@
 import type { Pellet, Seat } from '@hhc/shared'
-import {
-  BEAST_OFFSET,
-  NECK_BASE,
-  NECK_EXTEND_SPEED,
-  NECK_EXTRA,
-  pelletInLane,
-} from '@hhc/shared'
+import { BEAST_OFFSET, NECK_BASE, NECK_EXTRA, pelletInLane } from '@hhc/shared'
 import { dist2, mouthPoint } from './mouth'
 import type { AiPolicy, ArenaView, PolicyOptions } from './types'
 
@@ -33,7 +27,9 @@ function holdMsFor(pellet: Pellet, seat: Seat): number {
       break
   }
   const need = Math.max(0, Math.min(1, (along - NECK_BASE) / NECK_EXTRA))
-  return Math.max(MIN_HOLD_MS, Math.min(MAX_HOLD_MS, (need / NECK_EXTEND_SPEED) * 1000 + 120))
+  // Hold length stays on the Cycle 8 reach clock so a snappier neck is not an AI nerf.
+  const holdReachSpeed = 2.8
+  return Math.max(MIN_HOLD_MS, Math.min(MAX_HOLD_MS, (need / holdReachSpeed) * 1000 + 120))
 }
 
 export function createHungryPolicy(seat: Seat, _options: PolicyOptions = {}): AiPolicy {

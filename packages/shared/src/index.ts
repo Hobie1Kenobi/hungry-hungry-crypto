@@ -75,7 +75,10 @@ export const DUMP_SECONDS = 1.15
 
 export const EAT_DUMP_THRESHOLD = 0.72
 
-export const NECK_EXTEND_SPEED = 2.8
+/** Practice GO starts with the opening wave already on the lanes. Hopper refill still resets dumpT. */
+export const PRACTICE_GO_DUMP_T = 1
+
+export const NECK_EXTEND_SPEED = 8
 
 export const NECK_RETRACT_SPEED = 3.4
 

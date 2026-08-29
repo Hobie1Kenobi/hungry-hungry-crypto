@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
-import { BEASTS, SEATS, SCORE_GOLDEN, SCORE_NORMAL } from '@hhc/shared'
+import { BEASTS, ROUND_SECONDS, SEATS, SCORE_GOLDEN, SCORE_NORMAL } from '@hhc/shared'
 import { useGameStore } from '../store/gameStore'
-import { useViewStore } from '../store/viewStore'
+import { showPracticeDebugChrome, useViewStore } from '../store/viewStore'
 import { bindChompPointer, releaseChompPointer } from './useChompInput'
 
 interface Pop {
@@ -142,17 +142,47 @@ function LiveScores() {
   )
 }
 
-export function Hud() {
+function HintCard() {
   const dumpT = useGameStore((s) => s.dumpT)
   const localSeat = useGameStore((s) => s.localSeat)
   const playMode = useGameStore((s) => s.playMode)
   const pellets = useGameStore((s) => s.pellets)
   const refillCount = useGameStore((s) => s.refillCount)
   const chompHeld = useGameStore((s) => s.chompHeld)
-  const debugTopDown = useViewStore((s) => s.debugTopDown)
-  const toggleDebug = useViewStore((s) => s.toggleDebugTopDown)
+  const timeLeft = useGameStore((s) => s.timeLeft)
+  const [latchedOnce, setLatchedOnce] = useState(false)
   const you = BEASTS[localSeat]
   const live = pellets.filter((p) => p.eatenBy === undefined).length
+
+  useEffect(() => {
+    if (chompHeld) setLatchedOnce(true)
+  }, [chompHeld])
+
+  const hide = latchedOnce || timeLeft <= ROUND_SECONDS - 2
+  if (hide) return null
+
+  return (
+    <div className="hint">
+      <strong>CHOMP LATCHED</strong> - tap CHOMP or the pond once. Neck stays out until the next tap. Space is
+      hold-while-down.
+      <div className="hint-sub">
+        {dumpT < 0.9
+          ? 'Hopper dumping chips — tap once, neck stays in the lanes.'
+          : playMode === 'online'
+            ? `Server-authoritative. You are ${you.name} (seat ${localSeat}). Client predictions are cosmetic.`
+            : `Board live · ${live} chips${refillCount ? ` · hopper x${refillCount}` : ''}. You are ${you.name}. Tap CHOMP to latch.`}
+      </div>
+    </div>
+  )
+}
+
+export function Hud() {
+  const chompHeld = useGameStore((s) => s.chompHeld)
+  const playMode = useGameStore((s) => s.playMode)
+  const debugTopDown = useViewStore((s) => s.debugTopDown)
+  const debugQuery = useViewStore((s) => s.debugQuery)
+  const toggleDebug = useViewStore((s) => s.toggleDebugTopDown)
+  const debugChrome = showPracticeDebugChrome({ debugTopDown, debugQuery })
 
   return (
     <div className="overlay">
@@ -167,26 +197,18 @@ export function Hud() {
         <div className="hud-top">
           <LiveScores />
           <div className="hud-top-right">
-            {playMode === 'practice' ? <div className="ledger-banner">LOCAL · NO LEDGER WRITES</div> : null}
-            {playMode === 'practice' ? <HoldDebug /> : null}
+            {debugChrome && playMode === 'practice' ? <HoldDebug /> : null}
             <LiveTimer />
-            <button type="button" className={`cam-toggle${debugTopDown ? ' on' : ''}`} onClick={toggleDebug}>
-              {debugTopDown ? 'CAM DEBUG' : 'CAM TOY'}
-              <span>T</span>
-            </button>
+            {debugChrome ? (
+              <button type="button" className={`cam-toggle${debugTopDown ? ' on' : ''}`} onClick={toggleDebug}>
+                {debugTopDown ? 'CAM DEBUG' : 'CAM TOY'}
+                <span>T</span>
+              </button>
+            ) : null}
           </div>
         </div>
         <div className="hud-bottom">
-          <div className="hint">
-            <strong>CHOMP LATCHED</strong> — tap CHOMP or the pond once. Neck stays out until the next tap. Space is hold-while-down.
-            <div className="hint-sub">
-              {dumpT < 0.9
-                ? 'Hopper dumping chips — tap once, neck stays in the lanes.'
-                : playMode === 'online'
-                  ? `Server-authoritative. You are ${you.name} (seat ${localSeat}). Client predictions are cosmetic.`
-                  : `Board live · ${live} chips${refillCount ? ` · hopper x${refillCount}` : ''}. You are ${you.name}. Tap CHOMP to latch. RIPSAW Easy · GOLDGRUB Normal · BLOCKMAW Hungry.`}
-            </div>
-          </div>
+          <HintCard />
           <button
             type="button"
             tabIndex={-1}

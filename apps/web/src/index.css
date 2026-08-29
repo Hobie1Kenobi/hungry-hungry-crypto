@@ -280,6 +280,13 @@ h2,
   color: var(--cyan);
 }
 
+.practice-local {
+  margin: 8px 0 0;
+  color: var(--muted);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+}
+
 .disclaimer {
   margin: 18px 0 0;
   color: var(--gold);
@@ -407,14 +414,14 @@ h2,
   appearance: none;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 5px;
   border: 1px solid var(--line);
   background: var(--panel);
-  color: var(--text);
+  color: var(--muted);
   font-family: Orbitron, sans-serif;
-  font-size: 10px;
-  letter-spacing: 0.12em;
-  padding: 5px 8px;
+  font-size: 8px;
+  letter-spacing: 0.1em;
+  padding: 2px 5px;
   cursor: pointer;
 }
 
