@@ -9,8 +9,8 @@ import { RESULT_LOOK } from './beasts/vinyl'
 const look = new Vector3()
 const pos = new Vector3()
 
-export const TOY_POS = { x: 4.05, y: 7.85, z: -13.65 }
-export const TOY_LOOK = { x: 0.04, y: 0.88, z: -1.72 }
+export const TOY_POS = { x: 3.85, y: 7.55, z: -14.15 }
+export const TOY_LOOK = { x: 0.02, y: 0.82, z: -1.45 }
 export const TOY_FOV = 36
 const SHAKE_MS = 120
 
@@ -63,7 +63,6 @@ export function ArenaCamera() {
       return
     }
 
-    cam.clearViewOffset()
     const goAge = playBorn.current ? Math.min(1, (now - playBorn.current) / 900) : 1
     const dolly = MathUtils.lerp(1.04, 1, goAge * Math.min(1, dumpT + 0.25))
     const goldenLive = pellets.some((p) => p.golden && p.eatenBy === undefined && dumpT > 0.55)
@@ -83,10 +82,13 @@ export function ArenaCamera() {
 
     const snap = ui === 'results' || (playBorn.current && now - playBorn.current < 32) || now < shakeUntil.current
     if (ui === 'results') {
+      const pad = Math.round(width * 0.3)
+      cam.setViewOffset(width + pad, height, pad, 0, width, height)
       const swing = Math.sin(clock.elapsedTime * 0.22) * 0.08
       pos.set(RESULT_POS.x + sx + swing, RESULT_POS.y + sy, RESULT_POS.z)
       look.set(RESULT_LOOK.x, RESULT_LOOK.y, RESULT_LOOK.z)
     } else {
+      cam.clearViewOffset()
       pos.set(TOY_POS.x + sx, TOY_POS.y * Math.min(k, 1.08) + sy, TOY_POS.z)
       look.set(TOY_LOOK.x, TOY_LOOK.y, TOY_LOOK.z)
     }
