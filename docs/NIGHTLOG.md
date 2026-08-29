@@ -894,7 +894,7 @@ Play path stays locked: Practice CHOMP is a latch (tap on, tap off). Space is ho
 
 ### Five leftover notes
 
-1. Kits are in-engine primitives. They are four machines now; they are not hero sculpts.
+1. Kits are in-engine primitives. They are four machines now; they are not hero sculpts. GOLDGRUB's far-seat bloom can still kiss the tooth row; the rim bar is the read, not a second skull.
 2. BYTEBITE is still the shared in-engine CRT kit, not a GLB.
 3. Chip squash / eat trail still parked.
 4. Results is still a CSS card. Cycle 17 LOOK failed on results crash-zoom. This cycle did not touch results camera.
