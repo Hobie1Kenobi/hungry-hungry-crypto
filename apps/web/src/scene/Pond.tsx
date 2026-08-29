@@ -50,8 +50,8 @@ export function Pond() {
           depthWrite={false}
         />
       </mesh>
-      <mesh position={[0, 0.02, -wall]} castShadow receiveShadow>
-        <boxGeometry args={[POND_SIZE + rim, 0.26, rim]} />
+      <mesh position={[0, -0.02, -wall]} castShadow receiveShadow>
+        <boxGeometry args={[POND_SIZE + rim, 0.16, rim]} />
         <meshStandardMaterial color="#0a161c" metalness={0.45} roughness={0.4} />
       </mesh>
       <mesh position={[0, 0.02, wall]} castShadow receiveShadow>
