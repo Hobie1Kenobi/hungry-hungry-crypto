@@ -1,7 +1,7 @@
 import { useFrame, useThree } from '@react-three/fiber'
 import { useRef } from 'react'
 import { MathUtils, type PerspectiveCamera, Vector3 } from 'three'
-import { mouthWorldOnPond } from '@hhc/shared'
+import { beastPosition } from '@hhc/shared'
 import { useJuiceStore } from '../game/juice'
 import { useGameStore } from '../store/gameStore'
 import { useViewStore } from '../store/viewStore'
@@ -9,9 +9,9 @@ import { useViewStore } from '../store/viewStore'
 const look = new Vector3()
 const pos = new Vector3()
 
-export const TOY_POS = { x: 5.28, y: 5.72, z: -6.88 }
-export const TOY_LOOK = { x: -0.18, y: 0.34, z: 0.82 }
-export const TOY_FOV = 40
+export const TOY_POS = { x: 4.42, y: 7.12, z: -6.58 }
+export const TOY_LOOK = { x: 0.08, y: 0.02, z: 0.42 }
+export const TOY_FOV = 38
 const SHAKE_MS = 120
 
 export function toyCameraPosition(): [number, number, number] {
@@ -31,7 +31,7 @@ export function ArenaCamera() {
     const cam = camera as PerspectiveCamera
     const aspect = width / Math.max(1, height)
     const debug = useViewStore.getState().debugTopDown
-    const { ui, dumpT, lastEatAt, pellets, result, neckExtend } = useGameStore.getState()
+    const { ui, dumpT, lastEatAt, pellets, result } = useGameStore.getState()
     const shakeAt = useJuiceStore.getState().shakeAt
     const now = performance.now()
 
@@ -67,7 +67,7 @@ export function ArenaCamera() {
     const zoom = goldenLive ? 0.985 : 1
     const short = height > 0 && height < 600 ? 1.06 : 1
     const tall = height > 0 && aspect < 1.05 ? 1.06 : 1
-    const resultPull = ui === 'results' ? 1.08 : 1
+    const resultPull = ui === 'results' ? 1.06 : 1
     const k = short * tall * dolly * zoom * resultPull
 
     let sx = 0
@@ -79,22 +79,21 @@ export function ArenaCamera() {
       sy = Math.cos(age * 47) * 0.05 * t
     }
 
-    const swing = ui === 'results' ? Math.sin(clock.elapsedTime * 0.28) * 0.16 : 0
-    const track = ui === 'playing' || ui === 'results' ? neckExtend[0] : 0
-    const head = mouthWorldOnPond(0, track)
-    const x = TOY_POS.x * k + (ui === 'results' ? 0.35 : 0) + sx + swing - 0.42 * track
-    const y = TOY_POS.y * Math.min(k, 1.12) + sy + 0.06 * track
-    pos.set(x, y, Math.max(-7.2, TOY_POS.z + 0.16 * track))
+    const swing = ui === 'results' ? Math.sin(clock.elapsedTime * 0.22) * 0.08 : 0
+    const [bx, , bz] = beastPosition(result?.winner ?? 0)
+    const x = TOY_POS.x + sx + swing
+    const y = TOY_POS.y * Math.min(k, 1.08) + sy + (ui === 'results' ? 0.45 : 0)
+    pos.set(x, y, TOY_POS.z)
     if (now < shakeUntil.current || (playBorn.current && now - playBorn.current < 32)) {
       cam.position.copy(pos)
     } else {
       cam.position.lerp(pos, 1 - Math.pow(0.0004, dt))
     }
-    look.set(
-      TOY_LOOK.x + (head.x - TOY_LOOK.x) * 0.06 * track,
-      TOY_LOOK.y + 0.1 * track,
-      (result ? TOY_LOOK.z + 0.18 : TOY_LOOK.z) + (head.z - TOY_LOOK.z) * 0.08 * track,
-    )
+    if (ui === 'results') {
+      look.set(TOY_LOOK.x + bx * 0.12, 0.28, TOY_LOOK.z * 0.55 + bz * 0.12)
+    } else {
+      look.set(TOY_LOOK.x, TOY_LOOK.y, TOY_LOOK.z)
+    }
     cam.lookAt(look)
     cam.fov = aspect < 1.1 ? 46 : TOY_FOV
     cam.near = 0.45

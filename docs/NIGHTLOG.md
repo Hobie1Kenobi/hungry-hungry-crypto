@@ -296,4 +296,40 @@ Play path stays locked: Practice CHOMP is a latch (tap on, tap off). Space is ho
 
 ### Next action
 
-Cycle 10: volume pond or a real bloom pass - the film HUD, the loaded GO, and the snap CHOMP should be honest now.
+Cycle 10: composition. Camera, CHOMP pin, lanes, RIPSAW off the hopper, honest tie copy.
+
+## Cycle 10 — 2026-08-29 America/Chicago
+
+Hats used: **HAT DIRECTOR** (Cycle 9 live composition leftovers), **ATLAS** (Path B lock).
+
+Path B remains locked: `apps/web` stays Vite + React 18 + R3F + drei. No Godot, Unreal, Unity, Babylon, Rapier rewrite. No new modes, shops, quests, tokenomics, engine rewrite. No Mainnet. No Hooks. No EVM. Applications stay locked. Practice local.
+
+Cycle 9 live Practice on a 1280x800 box desktop, one tab (`321c14a`) is the incoming ground truth. Do not invent new scores.
+
+- Image 1 / first playing frame 44.1s: real 3D, no HOLD/EXT, no CAM TOY, no LOCAL banner. Chips ON the board (WIN vs Cycle 8 empty pond) but they read as a loose center blob/arcs, not four floor lanes. Tutorial card bottom-left. CHOMP bottom-right. BYTEBITE / YOU clipped off the right edge (BYTEBIT / YOU). RIPSAW intersects the dark hopper/corner box on the left.
+- Image 2 / one CHOMP tap: neck snapped long (WIN). Button says LATCHED (WIN). Hint dismissed (WIN). CHOMP jumped from bottom-right to bottom-left where the hint was. FAIL.
+- Image 3 / mid-round ~13s left: latch held, BYTEBITE scoring, chips still a scattered field. Nameplate still clipped. RIPSAW still in the hopper.
+- Image 4 / results STUCK: BYTEBITE 22 star, GOLDGRUB 22, BLOCKMAW 22, RIPSAW 16. Left-docked card. BYTEBITE wins a triple-22 because pickWinner keeps the first highest seat (seat 0). Overlay is clean. BACKGROUND FAIL: a giant cyan neck slab fills ~1/4 of the frame from the top-right. Winner body unreadable. RIPSAW still clipped. Leftover chips sparse and random.
+- Latch snap, debug chrome gone, chips at GO, hint dismiss, sticky results are WINS. Do not regress those.
+
+### What changed
+
+- Playing camera is a fixed behind-BYTEBITE toy-ad. Per-frame neck / head-track is gone so the piston cannot sit on the near plane as a cyan slab. Results camera pulls back a little and looks at the winner body / cabinet, not down the ram. All four bodies stay on 1280x800. No camera-inside-mesh. No Cycle 2 brown void. No Cycle 7 speck-land. BYTEBITE / YOU sits on the body toward the pond so the nameplate stays on screen.
+- CHOMP is pinned to the bottom-right for the whole round. Hint still dismisses after first latch or ~2s; the plunger does not teleport when the card unmounts.
+- Hopper chute sits on the north-west rim. RIPSAW kit is south of the NE corner with a smaller saw so the saw is off the hopper from this camera. RIPSAW stays on screen.
+- 28+1 pond is four obvious floor lanes radiating from each mouth plus a small mid cluster. Hopper refill uses the same field. Eat AABBs unchanged. Same reach on all four seats.
+- pickWinner is still first highest seat. A shared top score now says it is a tie and that BYTEBITE wins it, not a mystery star. Test: equal 22s returns seat 0.
+
+Play path stays locked: Practice CHOMP is a latch (tap on, tap off). Space is hold-while-down. No cooldown, fatigue, auto-unlatch, or eat-cost. Do not nerf the player. Do not nerf AI. GO on first presented frame, `PRACTICE_MAX_STEP_DT` hitch clamp, `practiceWallClock` after GO, `PRACTICE_GO_DUMP_T` landed, seat-0 hold-scores + mid-pond reach tests, 28+1 pond, hopper refill + `dumpT` reset, AI nibble after t=22s, Practice `txHashes: []`. Locked types unchanged. Eat AABBs still use sim pellet `x`/`z`. Sticky left-docked results stay inert until leftover captured pointer is up. Default Practice HUD does not ship HOLD/EXT or CAM TOY.
+
+### Five leftover notes
+
+1. Pond liquid is still a cheap hex/caustic plane, not a volume.
+2. Glow is still additive materials. No real bloom pass on visor / golden / hopper sparks.
+3. Kits are in-engine primitives. They are four machines now; they are not hero sculpts.
+4. Results is still a CSS card. The 3D lean/slump is visible beside it; the overlay no longer owns a bottom-right CHOMP collision.
+5. Online HungryRoom still uses the server tick. Only Practice waits for GO and clamps a hitch step.
+
+### Next action
+
+Cycle 11: volume pond or a real bloom pass - the composition (camera, CHOMP pin, lanes) should be honest now.

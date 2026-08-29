@@ -92,8 +92,8 @@ function RimMount() {
   )
 }
 
-/** North rim, shifted slightly west of BYTEBITE so the chute is not inside RIPSAW's saw. */
-export const HOPPER_SHIFT_X = -0.42
+/** North-west rim, toward BLOCKMAW, so RIPSAW's east kit is clear of the chute. */
+export const HOPPER_SHIFT_X = -3.15
 export const HOPPER_MOUTH = { x: HOPPER_SHIFT_X, y: 2.18, z: -6.42 }
 
 export function Hopper() {

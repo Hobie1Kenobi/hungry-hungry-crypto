@@ -50,6 +50,15 @@ export function Pond() {
           depthWrite={false}
         />
       </mesh>
+      {[
+        [0, 0, 0],
+        [0, Math.PI / 2, 0],
+      ].map((rot, i) => (
+        <mesh key={`lane-${i}`} rotation={[-Math.PI / 2, rot[1], 0]} position={[0, -0.078, 0]}>
+          <planeGeometry args={[1.15, inner * 0.92]} />
+          <meshBasicMaterial color="#13586a" transparent opacity={0.42} depthWrite={false} />
+        </mesh>
+      ))}
       <mesh position={[0, -0.02, -wall]} castShadow receiveShadow>
         <boxGeometry args={[POND_SIZE + rim, 0.16, rim]} />
         <meshStandardMaterial color="#0a161c" metalness={0.45} roughness={0.4} />
