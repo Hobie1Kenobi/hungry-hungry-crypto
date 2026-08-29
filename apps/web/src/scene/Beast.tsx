@@ -101,8 +101,8 @@ export function Beast({ seat }: { seat: Seat }) {
       head.current.rotation.x = 0.26 + visExt.current * 0.06 + squash.current * 0.1 + chewNod
     }
     if (visorMat.current) {
-      const blink = Math.sin(t * 7.5 + seat * 2.1) > 0.93 ? 0.78 : 1
-      const k = (winner ? 1.16 : down ? 1.06 : 1) * blink
+      const blink = Math.sin(t * 7.5 + seat * 2.1) > 0.93 ? 0.82 : 1
+      const k = (winner ? 0.92 : down ? 0.8 : 0.72) * blink
       visorMat.current.color.set(seat === 3 ? spec.accent : spec.color).multiplyScalar(k)
     }
     const headZ = visualLaneHeadAlong(visExt.current)

@@ -620,8 +620,8 @@ export function HeadDressing({
           <meshPhysicalMaterial {...vinyl(color)} />
         </mesh>
         <BloomSelect>
-          <mesh position={[0, 0.36, 0.34]} material={visor}>
-            <boxGeometry args={[0.82, 0.046, 0.06]} />
+          <mesh position={[0, 0.38, 0.36]} material={visor}>
+            <boxGeometry args={[0.7, 0.034, 0.046]} />
           </mesh>
         </BloomSelect>
         <group ref={antL} position={[-0.46, 0.32, -0.06]} />

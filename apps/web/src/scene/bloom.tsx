@@ -102,12 +102,12 @@ function SceneBloom() {
         lights={lights}
         selection={selection}
         selectionLayer={BLOOM_LAYER}
-        intensity={1.45}
-        luminanceThreshold={0.2}
-        luminanceSmoothing={0.28}
+        intensity={0.95}
+        luminanceThreshold={0.28}
+        luminanceSmoothing={0.32}
         mipmapBlur
-        radius={0.52}
-        levels={5}
+        radius={0.3}
+        levels={4}
       />
     </EffectComposer>
   )

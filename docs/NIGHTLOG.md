@@ -833,9 +833,9 @@ Results `RESULTS_*` not touched. Results is a later cycle. If a foot clips, stop
 ### What changed
 
 - DELETE the chassis-top BloomSelect slabs. CRT body / vinyl hull stay off BLOOM_LAYER 10. Chassis no longer takes the visor material.
-- One thin visor bar per beast, readable from the locked behind-BYTEBITE camera. BYTEBITE hero: a thin cyan strip along the top-rear edge of the head (camera-facing lip), about 1.02 x 0.044 x 0.062, not a cap. GOLDGRUB: a thin brow bar facing camera (~0.82 x 0.046 x 0.06), not a second skull. RIPSAW / BLOCKMAW: same family, thin. Vinyl paint stays visible around the bar.
-- Visor MeshBasicMaterial stays unlit / toneMapped off and still hooks `visorRef` for blink / chomp / winner. Drive is about 1x beast color (small blink, winner 1.16). No multiplyScalar 1.85-2.35 floodlight.
-- SelectiveBloom intensity 3.4 -> 1.45, luminanceThreshold 0 -> 0.2, radius 0.7 -> 0.52, levels 6 -> 5. Still catches the golden marble and the bar. Does not bloom cyan chips, CROSS, table, splash, gums, rams, HUD.
+- One thin visor bar per beast, readable from the locked behind-BYTEBITE camera. BYTEBITE hero: a thin cyan strip along the top-rear edge of the head (camera-facing lip), about 1.02 x 0.044 x 0.062, not a cap. GOLDGRUB: a thin brow bar facing camera (~0.7 x 0.034 x 0.046), not a second skull. RIPSAW / BLOCKMAW: same family, thin. Vinyl paint stays visible around the bar.
+- Visor MeshBasicMaterial stays unlit / toneMapped off and still hooks `visorRef` for blink / chomp / winner. Drive is about 0.72x beast color (small blink, winner 0.92). No multiplyScalar 1.85-2.35 floodlight. Chartreuse at 1x unlit was still a far-head floodlight.
+- SelectiveBloom intensity 3.4 -> 0.95, luminanceThreshold 0 -> 0.28, radius 0.7 -> 0.3, levels 6 -> 4. Still catches the golden marble and the bar. Does not bloom cyan chips, CROSS, table, splash, gums, rams, HUD.
 - Hopper sparks stay at the Cycle 21 linger. Golden chip BloomSelect + pointLight untouched. Composer stays cheap: no SMAA / SSAO / N8AO, no whole-framebuffer bloom.
 - Play path untouched: latch CHOMP, same `chompReach` / AABB / `BEAST_OFFSET` / `NECK_EXTEND_SPEED` on all four seats. AI not nerfed. Hitch clamp stays. `PRACTICE_GO_DUMP_T` still lands on GO. Canvas wrap / WebGL clear stay warm #eddcc6. drei `Preload all` stays. Camera constants unchanged. No GLB. No chip squash/trail. No results-camera rewrite. No HungryRoom sync. No XRPL.
 
