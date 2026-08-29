@@ -63,78 +63,89 @@ function EatTrails() {
 }
 
 const DROP_DIRS = [
-  [0.22, 0.28],
-  [-0.2, 0.24],
-  [0.08, -0.26],
-  [-0.24, -0.12],
+  [0.28, 0.34],
+  [-0.26, 0.3],
+  [0.12, -0.32],
+  [-0.3, -0.16],
 ] as const
 
+const SPLASH_POOL = 10
+const SPLASH_MS = 1100
+
 function Splashes() {
-  const splashes = useJuiceStore((s) => s.splashes)
   const group = useRef<Group>(null)
 
   useFrame(() => {
     if (!group.current) return
     const now = performance.now()
-    for (let i = 0; i < group.current.children.length; i += 1) {
+    const events = useJuiceStore.getState().splashes
+    for (let i = 0; i < SPLASH_POOL; i += 1) {
       const burst = group.current.children[i]
-      const ev = splashes[i]
+      const ev = events[events.length - 1 - i]
       if (!ev) {
         burst.visible = false
         continue
       }
-      const t = (now - ev.at) / 700
-      if (t >= 1) {
+      const t = (now - ev.at) / SPLASH_MS
+      if (t < 0 || t >= 1) {
         burst.visible = false
         continue
       }
       burst.visible = true
-      burst.position.set(ev.x, POND_LIQUID_Y + 0.04, ev.z)
+      burst.position.set(ev.x, POND_LIQUID_Y + 0.06, ev.z)
       const flash = burst.children[0] as Mesh
-      const flashS = 0.55 + t * 1.1
-      flash.scale.set(flashS, 1, flashS)
+      flash.scale.setScalar(0.9 + t * 1.4)
       const flashMat = flash.material as { opacity: number }
-      flashMat.opacity = t < 0.35 ? 0.7 * (1 - t / 0.35) : 0
+      flashMat.opacity = t < 0.45 ? 0.85 * (1 - t / 0.45) : 0
       const ring = burst.children[1] as Mesh
-      const ringS = 0.7 + t * 3.1
-      ring.scale.set(ringS, 1, ringS)
+      ring.scale.set(1 + t * 3.6, 1, 1 + t * 3.6)
       const ringMat = ring.material as { opacity: number }
       ringMat.opacity = 0.95 * (1 - t)
       const inner = burst.children[2] as Mesh
-      inner.scale.set(0.4 + t * 1.8, 1, 0.4 + t * 1.8)
+      inner.scale.set(0.55 + t * 2.2, 1, 0.55 + t * 2.2)
       const innerMat = inner.material as { opacity: number }
-      innerMat.opacity = 0.8 * (1 - t)
+      innerMat.opacity = 0.85 * (1 - t)
       for (let d = 0; d < DROP_DIRS.length; d += 1) {
         const drop = burst.children[d + 3] as Mesh
         const [dx, dz] = DROP_DIRS[d]
-        const up = Math.sin(t * Math.PI) * 0.62
-        drop.position.set(dx * t * 2.1, up, dz * t * 2.1)
-        drop.scale.setScalar(1.05 * (1 - t * 0.5))
+        drop.position.set(dx * t * 2.4, Math.sin(t * Math.PI) * 0.85, dz * t * 2.4)
+        drop.scale.setScalar(1.2 * (1 - t * 0.45))
         const dropMat = drop.material as { opacity: number }
-        dropMat.opacity = 0.95 * (1 - t)
+        dropMat.opacity = 0.98 * (1 - t)
       }
     }
   })
 
   return (
     <group ref={group}>
-      {splashes.map((ev) => (
-        <group key={ev.id} visible={false}>
+      {Array.from({ length: SPLASH_POOL }, (_, i) => (
+        <group key={i} visible={false}>
           <mesh rotation={[-Math.PI / 2, 0, 0]} renderOrder={11}>
-            <circleGeometry args={[0.55, 20]} />
+            <circleGeometry args={[0.7, 20]} />
             <meshBasicMaterial
               color="#f5ffff"
               transparent
-              opacity={0.7}
+              opacity={0.85}
               blending={AdditiveBlending}
               depthWrite={false}
               depthTest={false}
             />
           </mesh>
           <mesh rotation={[-Math.PI / 2, 0, 0]} renderOrder={12}>
-            <ringGeometry args={[0.22, 0.4, 24]} />
+            <ringGeometry args={[0.28, 0.5, 24]} />
             <meshBasicMaterial
               color="#e8ffff"
+              transparent
+              opacity={0.9}
+              blending={AdditiveBlending}
+              depthWrite={false}
+              depthTest={false}
+            />
+          </mesh>
+          <mesh rotation={[-Math.PI / 2, 0, 0]} renderOrder={12}>
+            <ringGeometry args={[0.1, 0.24, 20]} />
+            <meshBasicMaterial
+              color="#9ef2ff"
               transparent
               opacity={0.8}
               blending={AdditiveBlending}
@@ -142,24 +153,13 @@ function Splashes() {
               depthTest={false}
             />
           </mesh>
-          <mesh rotation={[-Math.PI / 2, 0, 0]} renderOrder={12}>
-            <ringGeometry args={[0.08, 0.2, 20]} />
-            <meshBasicMaterial
-              color="#9ef2ff"
-              transparent
-              opacity={0.7}
-              blending={AdditiveBlending}
-              depthWrite={false}
-              depthTest={false}
-            />
-          </mesh>
           {DROP_DIRS.map(([dx, dz]) => (
             <mesh key={`${dx}:${dz}`} renderOrder={13}>
-              <sphereGeometry args={[0.09, 8, 6]} />
+              <sphereGeometry args={[0.12, 8, 6]} />
               <meshBasicMaterial
                 color="#f4ffff"
                 transparent
-                opacity={0.95}
+                opacity={0.98}
                 blending={AdditiveBlending}
                 depthWrite={false}
                 depthTest={false}

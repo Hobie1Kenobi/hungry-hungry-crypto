@@ -1,6 +1,6 @@
 import { useMemo, useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
-import { AdditiveBlending, type Mesh } from 'three'
+import { AdditiveBlending, type Group, type Mesh } from 'three'
 import { BEASTS, POND_SIZE, type Seat } from '@hhc/shared'
 import { useJuiceStore } from '../game/juice'
 import { makeCausticTexture, makeHexTexture } from './pondTextures'
@@ -168,16 +168,15 @@ function DishLip() {
 }
 
 function LiquidRipples() {
-  const splashes = useJuiceStore((s) => s.splashes)
-  const group = useRef<Mesh[]>([])
+  const group = useRef<Group>(null)
 
   useFrame(() => {
+    if (!group.current) return
     const now = performance.now()
-    const events = splashes.slice(-8)
-    for (let i = 0; i < group.current.length; i += 1) {
-      const mesh = group.current[i]
-      if (!mesh) continue
-      const ev = events[i]
+    const events = useJuiceStore.getState().splashes
+    for (let i = 0; i < group.current.children.length; i += 1) {
+      const mesh = group.current.children[i] as Mesh
+      const ev = events[events.length - 1 - i]
       if (!ev) {
         mesh.visible = false
         continue
@@ -188,31 +187,23 @@ function LiquidRipples() {
         continue
       }
       mesh.visible = true
-      mesh.position.set(ev.x, POND_LIQUID_Y + 0.014, ev.z)
-      const s = 0.42 + t * 2.8
+      mesh.position.set(ev.x, POND_LIQUID_Y + 0.02, ev.z)
+      const s = 0.55 + t * 3.2
       mesh.scale.set(s, 1, s)
       const mat = mesh.material as { opacity: number }
-      mat.opacity = 0.55 * (1 - t)
+      mat.opacity = 0.7 * (1 - t)
     }
   })
 
   return (
-    <group>
+    <group ref={group}>
       {Array.from({ length: 8 }, (_, i) => (
-        <mesh
-          key={i}
-          ref={(el) => {
-            if (el) group.current[i] = el
-          }}
-          rotation={[-Math.PI / 2, 0, 0]}
-          renderOrder={10}
-          visible={false}
-        >
-          <ringGeometry args={[0.16, 0.42, 28]} />
+        <mesh key={i} rotation={[-Math.PI / 2, 0, 0]} renderOrder={10} visible={false}>
+          <ringGeometry args={[0.2, 0.48, 28]} />
           <meshBasicMaterial
             color="#9ef6ff"
             transparent
-            opacity={0.5}
+            opacity={0.7}
             blending={AdditiveBlending}
             depthWrite={false}
             depthTest={false}
