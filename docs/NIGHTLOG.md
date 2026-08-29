@@ -367,4 +367,40 @@ Play path stays locked: Practice CHOMP is a latch (tap on, tap off). Space is ho
 
 ### Next action
 
-Cycle 12: volume pond or a real bloom pass - the four machines should read at this camera now.
+Cycle 12: kill Html-through-HUD, park visual maws on four lanes, show BYTEBITE jaws, make the CROSS read, hero the winner body.
+
+## Cycle 12 — 2026-08-29 America/Chicago
+
+Hats used: **HAT DIRECTOR** (Cycle 11 live LOOK leftovers), **ATLAS** (Path B lock).
+
+Path B remains locked: `apps/web` stays Vite + React 18 + R3F + drei. No Godot, Unreal, Unity, Babylon, Rapier rewrite. No new modes, shops, quests, tokenomics, engine rewrite. No Mainnet. No Hooks. No EVM. Applications stay locked. Practice local.
+
+Cycle 11 live Practice on a 1280x800 box desktop, one tab (`14b2e98`) is the incoming ground truth. Do not invent new scores.
+
+- Image 1 / first playing frame 45.0s: HUD BYTEBITE / YOU left of CHOMP, first B intact (WIN). CHOMP bottom-right TAP ONCE. RIPSAW off hopper. Debug chrome gone. FAIL: pond reads as one flat slab, not four lanes. FAIL: GOLDGRUB Html world label prints over the BLOCKMAW score card as GOLDGRUBLOCKMAW.
+- Image 2 / after one tap: LATCHED, hint gone, CHOMP still right, neck out (WIN). FAIL: BYTEBITE head/jaws cropped off the bottom of the viewport. Visible teeth belong to RIPSAW. Player score stayed 0 on that frame (AIs already scoring).
+- Image 3 / mid-round 11.6s: camera fixed (WIN). HUD plate + CHOMP right (WIN). FAIL: four necks still one interpenetrating cluster at the same apparent height. Cycle 11 Y-stack (0.32 / 1.55 / 2.38 / 0.96) and weave (+/-0.48) are NOT visible from this high toy-ad camera. Jaws unreadable. GOLDGRUB Html label still over the scoreboard.
+- Image 4 / results STUCK: GOLDGRUB 13, BLOCKMAW 12, RIPSAW 8, BYTEBITE 7. Overlay sticks. Match-id short (WIN). FAIL: no 3D winner body, camera on an empty pond, RIPSAW Html label prints through the GOLDGRUB score row.
+- Cycle 11 WINS to keep: HUD you-plate, CHOMP pin, latch snap, tapered rams / open maw kits, debug chrome gone, RIPSAW off hopper.
+
+### What changed
+
+- World Html / sprite name tags are gone. Score cards name the four beasts. The you-plate still says BYTEBITE / YOU. No zIndex tweak that still loses.
+- Visual necks only. Same `chompReach` / AABB / eat math on all four seats. Visual head along is capped so each maw sits over that seat's cardinal-ray chips, not stacked on 0,0. Cycle 11 Y-stack and +/-0.48 weave are gone. Four heads are four separate toys at mid-round. Open jaws / teeth face the pond. No cooldown, fatigue, auto-unlatch, or eat-cost.
+- Playing camera is still a fixed behind-BYTEBITE toy-ad, raised and pulled back just enough that BYTEBITE head, open jaws, and teeth stay on screen at rest and latched. No per-frame neck track. No Cycle 9 cyan neck-slab. No Cycle 2 void. No Cycle 7 speck. All four bodies stay on 1280x800.
+- Four floor-lane marks are a bright CROSS on first frame. Opening chips stay on those rays. Pond is not a blank slab.
+- Results camera looks at the winner BODY (win lean) beside the left card, not an empty pond. Visual necks still park short. No Html labels through the card.
+
+Play path stays locked: Practice CHOMP is a latch (tap on, tap off). Space is hold-while-down. GO on first presented frame, `PRACTICE_MAX_STEP_DT` hitch clamp, `practiceWallClock` after GO, `PRACTICE_GO_DUMP_T` landed, seat-0 hold-scores + mid-pond reach tests, 28+1 pond, hopper refill + `dumpT` reset, AI nibble after t=22s, Practice `txHashes: []`. Locked types unchanged. Eat AABBs still use sim pellet `x`/`z`. Same reach / AABB on all four seats. Sticky left-docked results stay inert until leftover captured pointer is up. Default Practice HUD does not ship HOLD/EXT or CAM TOY. Playing camera is a fixed behind-BYTEBITE toy-ad.
+
+### Five leftover notes
+
+1. Pond liquid is still a cheap hex/caustic plane, not a volume.
+2. Glow is still additive materials. No real bloom pass on visor / golden / hopper sparks.
+3. Kits are in-engine primitives. They are four machines now; they are not hero sculpts.
+4. Results is still a CSS card. The 3D lean/slump is the readable winner; the overlay no longer owns a bottom-right CHOMP collision.
+5. Online HungryRoom still uses the server tick. Only Practice waits for GO and clamps a hitch step.
+
+### Next action
+
+Cycle 13: volume pond or a real bloom pass - the CROSS, four lane maws, and winner body should read at this camera now.

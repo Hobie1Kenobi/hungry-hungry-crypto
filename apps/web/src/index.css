@@ -709,34 +709,6 @@ h2,
   margin: 0 0 4px;
 }
 
-.beast-tag {
-  pointer-events: none;
-  font-family: Orbitron, sans-serif;
-  font-size: 12px;
-  letter-spacing: 0.1em;
-  font-weight: 700;
-  text-align: center;
-  background: rgba(4, 16, 24, 0.82);
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  padding: 3px 9px 2px;
-  line-height: 1.15;
-  text-shadow: 0 1px 0 #041018;
-  white-space: nowrap;
-}
-
-.beast-tag.you {
-  font-size: 14px;
-  padding: 4px 11px 3px;
-}
-
-.beast-tag em {
-  display: block;
-  font-style: normal;
-  font-size: 9px;
-  letter-spacing: 0.16em;
-  color: #e8f4ff;
-}
-
 .results-match {
   color: var(--muted);
   margin: 2px 0 0;
