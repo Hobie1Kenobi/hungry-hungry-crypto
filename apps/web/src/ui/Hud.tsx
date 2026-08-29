@@ -178,6 +178,7 @@ function HintCard() {
 
 export function Hud() {
   const chompHeld = useGameStore((s) => s.chompHeld)
+  const localSeat = useGameStore((s) => s.localSeat)
   const playMode = useGameStore((s) => s.playMode)
   const debugTopDown = useViewStore((s) => s.debugTopDown)
   const debugQuery = useViewStore((s) => s.debugQuery)
@@ -210,6 +211,10 @@ export function Hud() {
         <div className="hud-bottom">
           <div className="hint-slot">
             <HintCard />
+          </div>
+          <div className="you-plate">
+            <strong>{BEASTS[localSeat].name}</strong>
+            <em>YOU</em>
           </div>
           <button
             type="button"

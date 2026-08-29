@@ -503,6 +503,35 @@ h2,
   font-weight: 700;
 }
 
+.you-plate {
+  pointer-events: none;
+  position: absolute;
+  right: 196px;
+  bottom: 28px;
+  min-width: 108px;
+  padding: 5px 10px 4px;
+  background: rgba(4, 16, 24, 0.82);
+  border: 1px solid var(--cyan);
+  font-family: Orbitron, sans-serif;
+  color: var(--cyan);
+  text-align: center;
+  line-height: 1.15;
+}
+
+.you-plate strong {
+  display: block;
+  font-size: 13px;
+  letter-spacing: 0.12em;
+}
+
+.you-plate em {
+  display: block;
+  font-style: normal;
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  color: #e8f4ff;
+}
+
 .chomp-btn {
   pointer-events: auto;
   appearance: none;

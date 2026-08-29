@@ -10,7 +10,7 @@ import { Chassis, HeadDressing, MachineMouth, MachineNeck } from './beasts/kits'
 import { beastNeckLift, beastNeckWeave } from './beasts/vinyl'
 
 function labelLocal(seat: Seat, you: boolean): [number, number, number] {
-  if (you) return [-0.82, 2.95, 0.12]
+  if (you) return [-1.2, 2.35, 1.55]
   if (seat === 1) return [0.2, 2.42, 0.22]
   if (seat === 2) return [0.12, 2.08, 0.48]
   return [0.16, 2.34, 0.28]
