@@ -619,13 +619,13 @@ export function HeadDressing({
           <cylinderGeometry args={[0.2, 0.16, 0.28, 12]} />
           <meshPhysicalMaterial {...vinyl(color)} />
         </mesh>
-        <mesh position={[0, 0.58, 0.46]} rotation={[0.4, 0, 0]} castShadow>
-          <boxGeometry args={[0.98, 0.05, 0.055]} />
+        <mesh position={[0, 0.74, 0.42]} rotation={[0.3, 0, 0]} castShadow>
+          <boxGeometry args={[0.86, 0.065, 0.05]} />
           <meshStandardMaterial color="#2a3210" roughness={0.72} metalness={0.2} />
         </mesh>
         <BloomSelect>
-          <mesh position={[0, 0.63, 0.54]} rotation={[0.4, 0, 0]} material={visor}>
-            <boxGeometry args={[0.94, 0.068, 0.07]} />
+          <mesh position={[0, 0.78, 0.48]} rotation={[0.3, 0, 0]} material={visor}>
+            <boxGeometry args={[0.8, 0.06, 0.05]} />
           </mesh>
         </BloomSelect>
         <group ref={antL} position={[-0.46, 0.32, -0.06]} />

@@ -28,7 +28,7 @@ export function Beast({ seat }: { seat: Seat }) {
   const antL = useRef<Group>(null)
   const antR = useRef<Group>(null)
   const visorMat = useRef<MeshBasicMaterial>(null)
-  const visorHex = seat === 2 ? '#F2FF9A' : seat === 3 ? spec.accent : spec.color
+  const visorHex = seat === 2 ? '#D8FF58' : seat === 3 ? spec.accent : spec.color
   const visor = useVisorMaterial(visorMat, visorHex)
   const mouthLight = useRef<PointLight>(null)
   const lastDown = useRef(false)
