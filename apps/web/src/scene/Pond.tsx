@@ -10,7 +10,7 @@ export const POND_LIQUID_Y = -0.05
 
 const WELL_Y = -0.4
 const DISH_INNER = POND_SIZE - 0.22
-const RIPPLE_MS = 720
+const RIPPLE_MS = 900
 
 function LaneGutter({
   seat,
@@ -110,7 +110,9 @@ function DishWell() {
 function DishLip() {
   const rim = 0.34
   const wall = POND_SIZE / 2 + 0.02
+  const inner = POND_SIZE / 2 - 0.06
   const steel = { color: '#0a161c', metalness: 0.5, roughness: 0.36 }
+  const well = { color: '#03080c', metalness: 0.28, roughness: 0.62 }
   return (
     <group>
       <mesh position={[0, 0.08, -wall]} castShadow receiveShadow>
@@ -128,6 +130,22 @@ function DishLip() {
       <mesh position={[wall, 0.08, 0]} castShadow receiveShadow>
         <boxGeometry args={[rim, 0.28, POND_SIZE + rim]} />
         <meshStandardMaterial {...steel} />
+      </mesh>
+      <mesh position={[0, 0.06, inner]} receiveShadow>
+        <boxGeometry args={[POND_SIZE - 0.2, 0.22, 0.1]} />
+        <meshStandardMaterial {...well} />
+      </mesh>
+      <mesh position={[0, 0.06, -inner]} receiveShadow>
+        <boxGeometry args={[POND_SIZE - 0.2, 0.22, 0.1]} />
+        <meshStandardMaterial {...well} />
+      </mesh>
+      <mesh position={[inner, 0.06, 0]} receiveShadow>
+        <boxGeometry args={[0.1, 0.22, POND_SIZE - 0.2]} />
+        <meshStandardMaterial {...well} />
+      </mesh>
+      <mesh position={[-inner, 0.06, 0]} receiveShadow>
+        <boxGeometry args={[0.1, 0.22, POND_SIZE - 0.2]} />
+        <meshStandardMaterial {...well} />
       </mesh>
       <mesh position={[0, 0.2, -wall]} castShadow>
         <boxGeometry args={[POND_SIZE + rim + 0.08, 0.07, rim + 0.08]} />
@@ -170,12 +188,11 @@ function LiquidRipples() {
         continue
       }
       mesh.visible = true
-      mesh.position.set(ev.x, POND_LIQUID_Y + 0.012, ev.z)
-      const dump = ev.x === 0 && ev.z === 0
-      const s = (dump ? 0.55 : 0.28) + t * (dump ? 3.4 : 2.15)
+      mesh.position.set(ev.x, POND_LIQUID_Y + 0.014, ev.z)
+      const s = 0.42 + t * 2.8
       mesh.scale.set(s, 1, s)
       const mat = mesh.material as { opacity: number }
-      mat.opacity = (dump ? 0.42 : 0.34) * (1 - t) * (1 - t)
+      mat.opacity = 0.55 * (1 - t)
     }
   })
 
@@ -188,15 +205,17 @@ function LiquidRipples() {
             if (el) group.current[i] = el
           }}
           rotation={[-Math.PI / 2, 0, 0]}
+          renderOrder={10}
           visible={false}
         >
-          <ringGeometry args={[0.22, 0.38, 24]} />
+          <ringGeometry args={[0.16, 0.42, 28]} />
           <meshBasicMaterial
-            color="#6ec8d4"
+            color="#9ef6ff"
             transparent
-            opacity={0.3}
+            opacity={0.5}
             blending={AdditiveBlending}
             depthWrite={false}
+            depthTest={false}
           />
         </mesh>
       ))}

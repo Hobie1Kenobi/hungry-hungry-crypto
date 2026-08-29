@@ -53,9 +53,15 @@ export const useJuiceStore = create<JuiceState>((set) => ({
   },
   notifyDump: () => {
     const at = performance.now()
+    const dumps: SplashJuice[] = [
+      { id: nextId++, x: -1.85, z: -1.85, at },
+      { id: nextId++, x: 1.85, z: -1.85, at },
+      { id: nextId++, x: -1.85, z: 1.85, at },
+      { id: nextId++, x: 1.85, z: 1.85, at },
+    ]
     set((s) => ({
       dumpAt: at,
-      splashes: [...s.splashes.slice(-20), { id: nextId++, x: 0, z: 0, at }],
+      splashes: [...s.splashes.slice(-16), ...dumps],
     }))
   },
   notifySplash: (x, z) => {
