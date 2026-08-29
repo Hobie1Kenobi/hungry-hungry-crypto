@@ -12,12 +12,13 @@ const pos = new Vector3()
 export const TOY_POS = { x: -4.15, y: 8.72, z: -11.18 }
 export const TOY_LOOK = { x: 0.22, y: 0.58, z: -1.96 }
 export const TOY_FOV = 35
-const RESULTS_RADIUS = 9.2
-const RESULTS_ELEV = 3.2
-const RESULTS_LOOK_Y = 1.4
-const RESULTS_POND_BLEND = 0.5
-const RESULTS_ORBIT_TURN = -0.12
+const RESULTS_RADIUS = 9.4
+const RESULTS_ELEV = 4.35
+const RESULTS_LOOK_Y = 1.22
+const RESULTS_POND_BLEND = 0.52
+const RESULTS_ORBIT_TURN = 0.22
 const RESULTS_FOV = 35
+const RESULTS_SOUTH_CLEAR = -7.35
 const SHAKE_MS = 120
 
 export function toyCameraPosition(): [number, number, number] {
@@ -95,7 +96,8 @@ export function ArenaCamera() {
       const turn = RESULTS_ORBIT_TURN
       const bx = -wz * Math.cos(turn) + wx * Math.sin(turn)
       const bz = wx * Math.cos(turn) + wz * Math.sin(turn)
-      pos.set(bx * RESULTS_RADIUS + sx + swing, RESULTS_ELEV + sy, bz * RESULTS_RADIUS)
+      const pz = Math.max(bz * RESULTS_RADIUS, RESULTS_SOUTH_CLEAR)
+      pos.set(bx * RESULTS_RADIUS + sx + swing, RESULTS_ELEV + sy, pz)
       look.set(hx * RESULTS_POND_BLEND, RESULTS_LOOK_Y, hz * RESULTS_POND_BLEND)
     } else {
       cam.clearViewOffset()
