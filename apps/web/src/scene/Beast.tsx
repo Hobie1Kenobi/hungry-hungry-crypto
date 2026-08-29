@@ -114,7 +114,7 @@ export function Beast({ seat }: { seat: Seat }) {
         if (ring) ring.position.set(0, 0, barrel + ((i + 0.4) / RING_COUNT) * rod)
       }
     }
-    if (head.current) head.current.position.set(0, 0.02, Math.max(0.62, len - 0.42))
+    if (head.current) head.current.position.set(0, 0.02, Math.max(0.62, len - 0.18))
     if (jaws.current) {
       const open = jaw.current
       const up = jaws.current.children[1]
