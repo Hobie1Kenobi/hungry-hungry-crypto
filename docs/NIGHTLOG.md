@@ -611,5 +611,50 @@ Play path stays locked: Practice CHOMP is a latch (tap on, tap off). Space is ho
 
 ### Next action
 
-Cycle 18: volume pond or a real bloom pass - framing (results overview, pond fill, BYTEBITE feet) has to read as a toy ad on the live box first.
+Cycle 18: set-scale or FOV only. Camera locked. Stop the camera spiral.
+
+## Cycle 18 — 2026-08-29 America/Chicago
+
+Hats used: **HAT DIRECTOR** (Cycle 17 live LOOK leftovers), **ATLAS** (Path B lock).
+
+Path B remains locked: `apps/web` stays Vite + React 18 + R3F + drei. No Godot, Unreal, Unity, Babylon, Rapier rewrite. No new modes, shops, quests, tokenomics, engine rewrite. No Mainnet. No Hooks. No EVM. Applications stay locked. Practice local.
+
+Hobie lock this cycle: stop the camera spiral. Do not slide `TOY_POS` / `TOY_LOOK`. Do not rewrite results camera. Playing leftovers may be fixed by set-scale or FOV only.
+
+Cycle 17 live Practice on a 1280x800 box desktop, one Chrome tab (`c9d4a3f`) is the incoming ground truth. Do not invent new scores.
+
+- LIVE Cycle 17 scores (do not invent): RIPSAW 12 (tie win) / BLOCKMAW 12 / BYTEBITE 9 / GOLDGRUB 8.
+- LOOK FAILED on results crash-zoom. THIS CYCLE DOES NOT FIX RESULTS.
+- Image 1 / first playing frame 45.0s: warm 3D. BYTEBITE feet in with air. CROSS hub about x=655 y=390. Bottom-right empty table wedge. Left ~25% dead rail. RIPSAW jammed far upper-left.
+- Image 2 / mid-round 9.4s: same composition. RIPSAW leftover in the far corner. Empty floor can remain this cycle.
+- Cycle 17 WINS to keep: GO contract (clock frozen at 45.0s until presented warm 3D; GoOnFirstFrame drops first playing useFrame, then practiceGoReady with drawing buffer / calls 6 / triangles 800 / presents 2). BYTEBITE feet in frame with air. Raised CROSS. Visual rams 0.62/0.94. Opaque steel rams. HUD you-plate + CHOMP pin. Latch CHOMP. No Html tags. No HOLD/EXT on default HUD. Playing camera fixed behind BYTEBITE. Sticky left-docked results. pickWinner first highest seat. No setViewOffset pad.
+
+### Why this cycle is FOV, not another TOY_POS
+
+Cycles 14-17 kept sliding `TOY_POS` / `TOY_LOOK` / results pull. Hobie killed that spiral. Locked playing camera stays:
+
+- `TOY_POS` { x: -4.05, y: 9.48, z: -12.28 }
+- `TOY_LOOK` { x: 0.0, y: 0.42, z: -0.95 }
+
+`TOY_FOV` was 35. Raising it is the approved FOV path. Results `RESULTS_WEST` / `RESULTS_ELEV` / `RESULTS_NORTH` / `RESULTS_PULL` / `RESULTS_FOV` are not touched. Results is a later cycle.
+
+### What changed
+
+- Playing FOV only. `TOY_FOV` 35 -> 39 (Hobie 38-40). `TOY_POS` and `TOY_LOOK` unchanged. No set-scale group. No sim constant change. Same `chompReach` / AABB / `BEAST_OFFSET` / `NECK_EXTEND_SPEED` on all four seats. Eat AABBs still use sim pellet `x`/`z`.
+- Goal on 1280x800: all four beasts' feet in frame with air, CROSS hub not clipped, RIPSAW not a leftover jammed into the far corner. Empty floor can remain. Camera stays locked.
+- Results camera not rewritten. Volume pond, bloom, GLB, chip juice, HungryRoom sync, and XRPL stay parked.
+
+Play path stays locked: Practice CHOMP is a latch (tap on, tap off). Space is hold-while-down. No cooldown, fatigue, auto-unlatch, or eat-cost. Do not nerf the player. Do not nerf AI. GO on first presented frame, `PRACTICE_MAX_STEP_DT` hitch clamp, `practiceWallClock` after GO, `PRACTICE_GO_DUMP_T` landed, seat-0 hold-scores + mid-pond reach tests, 28+1 pond, hopper refill + `dumpT` reset, AI nibble after t=22s, Practice `txHashes: []`. Locked types unchanged. Eat AABBs still use sim pellet `x`/`z`. Same reach / AABB on all four seats. Sticky left-docked results stay inert until leftover captured pointer is up. Default Practice HUD does not ship HOLD/EXT or CAM TOY. Playing camera is a fixed behind-BYTEBITE toy-ad. pickWinner is still first highest seat.
+
+### Five leftover notes
+
+1. Pond liquid is still a cheap hex/caustic plane, not a volume.
+2. Glow is still additive materials. No real bloom pass on visor / golden / hopper sparks.
+3. Kits are in-engine primitives. They are four machines now; they are not hero sculpts.
+4. Results is still a CSS card. Cycle 17 LOOK failed on results crash-zoom. This cycle did not touch results camera.
+5. Online HungryRoom still uses the server tick. Only Practice waits for GO and clamps a hitch step.
+
+### Next action
+
+Cycle 19: volume pond + splash. Not another TOY_POS.
 
