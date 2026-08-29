@@ -9,15 +9,15 @@ import { beastVisualRoot } from './beasts/vinyl'
 const look = new Vector3()
 const pos = new Vector3()
 
-export const TOY_POS = { x: -3.72, y: 8.58, z: -11.02 }
-export const TOY_LOOK = { x: 0, y: 0.52, z: -1.66 }
+export const TOY_POS = { x: -3.6, y: 8.7, z: -11.1 }
+export const TOY_LOOK = { x: -0.2, y: 0.55, z: -1.9 }
 export const TOY_FOV = 35
-const RESULTS_RADIUS = 10.2
-const RESULTS_ELEV = 3.7
-const RESULTS_LOOK_Y = 1.1
-const RESULTS_POND_BLEND = 0.48
-const RESULTS_ORBIT_TURN = 0.1
-const RESULTS_FOV = 36
+const RESULTS_RADIUS = 9.2
+const RESULTS_ELEV = 3.2
+const RESULTS_LOOK_Y = 1.4
+const RESULTS_POND_BLEND = 0.5
+const RESULTS_ORBIT_TURN = -0.12
+const RESULTS_FOV = 35
 const SHAKE_MS = 120
 
 export function toyCameraPosition(): [number, number, number] {
