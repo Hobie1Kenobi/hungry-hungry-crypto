@@ -8,10 +8,20 @@ import { useViewStore } from '../store/viewStore'
 const look = new Vector3()
 const pos = new Vector3()
 
-const TOY_DIST = 13.2
-const TOY_ELEV = 0.5
-const TOY_AZ = 0.38
+export const TOY_DIST = 20.8
+export const TOY_ELEV = 0.6
+export const TOY_AZ = 0.46
+export const TOY_FOV = 40
+export const TOY_LOOK = { x: 0, y: 0.42, z: -0.12 }
 const SHAKE_MS = 120
+
+export function toyCameraPosition(dist = TOY_DIST, elev = TOY_ELEV, az = TOY_AZ): [number, number, number] {
+  return [
+    dist * Math.cos(elev) * Math.sin(az),
+    dist * Math.sin(elev),
+    dist * Math.cos(elev) * Math.cos(az),
+  ]
+}
 
 export function ArenaCamera() {
   const camera = useThree((s) => s.camera)
@@ -47,7 +57,7 @@ export function ArenaCamera() {
       cam.position.lerp(pos, 1 - Math.pow(0.0005, dt))
       look.set(0, 0, 0)
       cam.lookAt(look)
-      cam.near = 0.1
+      cam.near = 0.35
       cam.far = 80
       cam.updateProjectionMatrix()
       return
@@ -55,37 +65,36 @@ export function ArenaCamera() {
 
     cam.clearViewOffset()
     const goAge = playBorn.current ? Math.min(1, (now - playBorn.current) / 900) : 1
-    const dolly = MathUtils.lerp(1.04, 1, goAge * Math.min(1, dumpT + 0.25))
+    const dolly = MathUtils.lerp(1.03, 1, goAge * Math.min(1, dumpT + 0.25))
     const goldenLive = pellets.some((p) => p.golden && p.eatenBy === undefined && dumpT > 0.55)
     const zoom = goldenLive ? 0.985 : 1
     const elev = TOY_ELEV
-    const swing = ui === 'results' ? Math.sin(clock.elapsedTime * 0.28) * 0.1 : 0
+    const swing = ui === 'results' ? Math.sin(clock.elapsedTime * 0.28) * 0.08 : 0
     const az = TOY_AZ + swing
-    const tall = height > 0 && aspect < 1.2 ? 1.08 : 1
-    const dist = (ui === 'results' ? TOY_DIST + 0.8 : TOY_DIST) * tall * dolly * zoom
-    const x = dist * Math.cos(elev) * Math.sin(az)
-    const y = dist * Math.sin(elev)
-    const z = dist * Math.cos(elev) * Math.cos(az)
+    const short = height > 0 && height < 860 ? 1.06 : 1
+    const tall = height > 0 && aspect < 1.2 ? 1.1 : 1
+    const dist = (ui === 'results' ? TOY_DIST + 1.4 : TOY_DIST) * short * tall * dolly * zoom
+    const [x, y, z] = toyCameraPosition(dist, elev, az)
 
     let sx = 0
     let sy = 0
     if (now < shakeUntil.current) {
       const k = (shakeUntil.current - now) / SHAKE_MS
       const age = (now - shakeBorn.current) / 1000
-      sx = Math.sin(age * 58) * 0.12 * k
-      sy = Math.cos(age * 47) * 0.08 * k
+      sx = Math.sin(age * 58) * 0.1 * k
+      sy = Math.cos(age * 47) * 0.06 * k
     }
 
     pos.set(x + sx, y + sy, z)
-    if (now < shakeUntil.current) {
+    if (now < shakeUntil.current || (playBorn.current && now - playBorn.current < 32)) {
       cam.position.copy(pos)
     } else {
       cam.position.lerp(pos, 1 - Math.pow(0.0004, dt))
     }
-    look.set(0, 0.02, result ? 0.04 : 0.12)
+    look.set(TOY_LOOK.x, TOY_LOOK.y, result ? TOY_LOOK.z + 0.06 : TOY_LOOK.z)
     cam.lookAt(look)
-    cam.fov = aspect < 1.1 ? 38 : 34
-    cam.near = 0.1
+    cam.fov = aspect < 1.1 ? 44 : TOY_FOV
+    cam.near = 0.35
     cam.far = 90
     cam.updateProjectionMatrix()
   })

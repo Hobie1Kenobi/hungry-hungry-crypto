@@ -129,24 +129,24 @@ export function Beast({ seat }: { seat: Seat }) {
 
   return (
     <group position={[x, y, z]} rotation={[0, yaw, 0]}>
-      <mesh position={[0, 0.02, -0.18]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
-        <circleGeometry args={[1.45, 24]} />
+      <mesh position={[0, 0.02, -0.12]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
+        <circleGeometry args={[0.82, 24]} />
         <meshStandardMaterial color={spec.color} transparent opacity={0.2} />
       </mesh>
       <group ref={rig}>
-        <group ref={body} position={[0, 0.02, seat === 2 ? 0.1 : -0.06]}>
+        <group ref={body} position={[0, 0.02, seat === 2 ? 0.08 : -0.04]}>
           <Chassis seat={seat} />
         </group>
-        <group position={[0, BEAST_NECK_LIFT, 0.48]}>
+        <group position={[0, BEAST_NECK_LIFT, 0.36]}>
           <MachineNeck seat={seat} pistonRef={piston} ringsRef={ringsRef} color={spec.color} />
-          <group ref={head} position={[0, 0.02, 1]} scale={1.52}>
+          <group ref={head} position={[0, 0.02, 1]} scale={1.06}>
             <HeadDressing seat={seat} visorRef={visorMat} antL={antL} antR={antR} />
             <MachineMouth jawsRef={jaws} seat={seat} />
-            <pointLight ref={mouthLight} position={[0, 0.02, 0.62]} color="#ff6a88" intensity={2.2} distance={2.8} />
+            <pointLight ref={mouthLight} position={[0, 0.02, 0.48]} color="#ff6a88" intensity={2.2} distance={2.2} />
           </group>
         </group>
       </group>
-      <Billboard position={[0, seat === 0 ? 2.55 : 2.2, 0]}>
+      <Billboard position={[0, seat === 0 ? 1.85 : 1.62, 0]}>
         <Text fontSize={0.22} color={spec.color} anchorX="center" anchorY="middle">
           {you ? `${spec.name}  YOU` : spec.name}
         </Text>
