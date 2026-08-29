@@ -68,8 +68,8 @@ export function Beast({ seat }: { seat: Seat }) {
 
     const winner = ui === 'results' && result?.winner === seat
     const loser = ui === 'results' && result && result.winner !== seat
-    const restJaw = 0.64
-    const targetJaw = winner ? 0.86 : loser ? 0.22 : down ? Math.min(1, Math.max(extend * 1.15, 0.92)) : restJaw + extend * 0.06
+    const restJaw = 0.78
+    const targetJaw = winner ? 0.92 : loser ? 0.22 : down ? Math.min(1, Math.max(extend * 1.15, 0.94)) : restJaw + extend * 0.04
     jaw.current += (targetJaw - jaw.current) * Math.min(1, dt * (down ? 12 : 16))
 
     const punch = down ? extend + slam.current * 0.16 - anticip.current * 0.18 : extend
@@ -92,10 +92,10 @@ export function Beast({ seat }: { seat: Seat }) {
     if (antL.current) antL.current.rotation.z = Math.sin(t * 3.4 + seat) * 0.22
     if (antR.current) antR.current.rotation.z = Math.sin(t * 3.4 + seat + 1.2) * -0.22
     if (head.current) {
-      const camYaw = seat === 2 ? 0.92 : seat === 3 ? 0.58 : seat === 1 ? -0.48 : 0.22
+      const camYaw = seat === 2 ? -0.72 : seat === 3 ? 0.42 : seat === 1 ? -0.22 : 0.18
       head.current.rotation.y = camYaw + Math.sin(t * 9) * shake.current * 0.28
       head.current.rotation.z = Math.cos(t * 11) * shake.current * 0.12
-      head.current.rotation.x = -0.1 + squash.current * 0.22
+      head.current.rotation.x = -0.38 + squash.current * 0.18
     }
     if (visorMat.current) {
       const blink = Math.sin(t * 7.5 + seat * 2.1) > 0.93 ? 0.18 : 1
@@ -129,24 +129,24 @@ export function Beast({ seat }: { seat: Seat }) {
 
   return (
     <group position={[x, y, z]} rotation={[0, yaw, 0]}>
-      <mesh position={[0, 0.02, -0.18]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
-        <circleGeometry args={[1.45, 24]} />
+      <mesh position={[0, 0.02, -0.12]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
+        <circleGeometry args={[0.82, 24]} />
         <meshStandardMaterial color={spec.color} transparent opacity={0.2} />
       </mesh>
       <group ref={rig}>
-        <group ref={body} position={[0, 0.02, seat === 2 ? 0.1 : -0.06]}>
+        <group ref={body} position={[0, 0.02, seat === 2 ? 0.08 : -0.04]}>
           <Chassis seat={seat} />
         </group>
-        <group position={[0, BEAST_NECK_LIFT, 0.48]}>
+        <group position={[0, BEAST_NECK_LIFT, 0.36]}>
           <MachineNeck seat={seat} pistonRef={piston} ringsRef={ringsRef} color={spec.color} />
-          <group ref={head} position={[0, 0.02, 1]} scale={1.52}>
+          <group ref={head} position={[0, 0.02, 1]} scale={1.2}>
             <HeadDressing seat={seat} visorRef={visorMat} antL={antL} antR={antR} />
             <MachineMouth jawsRef={jaws} seat={seat} />
-            <pointLight ref={mouthLight} position={[0, 0.02, 0.62]} color="#ff6a88" intensity={2.2} distance={2.8} />
+            <pointLight ref={mouthLight} position={[0, 0.02, 0.48]} color="#ff6a88" intensity={2.2} distance={2.2} />
           </group>
         </group>
       </group>
-      <Billboard position={[0, seat === 0 ? 2.55 : 2.2, 0]}>
+      <Billboard position={[0, seat === 0 ? 2.15 : 1.72, 0]}>
         <Text fontSize={0.22} color={spec.color} anchorX="center" anchorY="middle">
           {you ? `${spec.name}  YOU` : spec.name}
         </Text>

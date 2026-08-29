@@ -4,7 +4,7 @@ import { useLayoutEffect } from 'react'
 import { SEATS } from '@hhc/shared'
 import { useGameStore } from '../store/gameStore'
 import { makeSoftEnv } from './arenaEnv'
-import { ArenaCamera } from './ArenaCamera'
+import { ArenaCamera, TOY_FOV, toyCameraPosition } from './ArenaCamera'
 import { Beast } from './Beast'
 import { Fx } from './Fx'
 import { Hopper } from './Hopper'
@@ -38,7 +38,7 @@ export function ArenaCanvas() {
       <Canvas
         shadows
         dpr={[1, 1.75]}
-        camera={{ position: [4.8, 6.4, 10.4], fov: 34, near: 0.1, far: 90 }}
+        camera={{ position: toyCameraPosition(), fov: TOY_FOV, near: 0.35, far: 90 }}
         gl={{ antialias: true }}
       >
         <ArenaCamera />
