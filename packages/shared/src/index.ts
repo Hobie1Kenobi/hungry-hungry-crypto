@@ -87,9 +87,9 @@ export const PRACTICE_GO_DUMP_T = 1
  */
 export const PRACTICE_GO_PRESENT_FRAMES = 2
 
-export const PRACTICE_GO_MIN_TRIANGLES = 2500
+export const PRACTICE_GO_MIN_TRIANGLES = 800
 
-export const PRACTICE_GO_MIN_CALLS = 12
+export const PRACTICE_GO_MIN_CALLS = 6
 
 /** True only when Practice may call markMatchGo. startPractice must not. */
 export function practiceGoReady(opts: {

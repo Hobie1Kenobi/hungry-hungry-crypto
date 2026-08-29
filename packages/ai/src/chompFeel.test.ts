@@ -362,8 +362,8 @@ describe('practice wall clock', () => {
 
   it('Practice clock does not start until presented GO', () => {
     expect(PRACTICE_GO_PRESENT_FRAMES).toBe(2)
-    expect(PRACTICE_GO_MIN_TRIANGLES).toBe(2500)
-    expect(PRACTICE_GO_MIN_CALLS).toBe(12)
+    expect(PRACTICE_GO_MIN_TRIANGLES).toBe(800)
+    expect(PRACTICE_GO_MIN_CALLS).toBe(6)
     const warm = {
       sizeW: 1280,
       sizeH: 800,

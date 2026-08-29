@@ -4,7 +4,6 @@ import { MathUtils, type PerspectiveCamera, Vector3 } from 'three'
 import { useJuiceStore } from '../game/juice'
 import { useGameStore } from '../store/gameStore'
 import { useViewStore } from '../store/viewStore'
-import { beastYaw } from '@hhc/shared'
 import { beastVisualRoot } from './beasts/vinyl'
 
 const look = new Vector3()
@@ -13,12 +12,11 @@ const pos = new Vector3()
 export const TOY_POS = { x: 1.85, y: 6.95, z: -9.35 }
 export const TOY_LOOK = { x: 0.95, y: 0.08, z: 1.72 }
 export const TOY_FOV = 33
-const RESULTS_DIST = 10.2
-const RESULTS_SIDE = 4.8
-const RESULTS_ELEV = 7.8
-const RESULTS_LOOK_Y = 0.7
-const RESULTS_POND_BLEND = 0.52
-const RESULTS_FOV = 38
+const RESULTS_RADIUS = 12.2
+const RESULTS_ELEV = 8.5
+const RESULTS_LOOK_Y = 0.52
+const RESULTS_POND_BLEND = 0.22
+const RESULTS_FOV = 40
 const SHAKE_MS = 120
 
 export function toyCameraPosition(): [number, number, number] {
@@ -89,14 +87,11 @@ export function ArenaCamera() {
       cam.clearViewOffset()
       const winner = useGameStore.getState().result?.winner ?? 0
       const [hx, , hz] = beastVisualRoot(winner)
-      const yaw = beastYaw(winner)
       const swing = Math.sin(clock.elapsedTime * 0.22) * 0.08
-      pos.set(
-        hx - Math.sin(yaw) * RESULTS_DIST + Math.cos(yaw) * RESULTS_SIDE + sx + swing,
-        RESULTS_ELEV + sy,
-        hz - Math.cos(yaw) * RESULTS_DIST - Math.sin(yaw) * RESULTS_SIDE,
-      )
-      look.set(hx * (1 - RESULTS_POND_BLEND), RESULTS_LOOK_Y, hz * (1 - RESULTS_POND_BLEND))
+      const span = Math.hypot(hx, hz) || 1
+      const orbit = RESULTS_RADIUS / span
+      pos.set(-hz * orbit + sx + swing, RESULTS_ELEV + sy, hx * orbit)
+      look.set(hx * RESULTS_POND_BLEND, RESULTS_LOOK_Y, hz * RESULTS_POND_BLEND)
     } else {
       cam.clearViewOffset()
       pos.set(TOY_POS.x + sx, TOY_POS.y * Math.min(k, 1.08) + sy, TOY_POS.z)
