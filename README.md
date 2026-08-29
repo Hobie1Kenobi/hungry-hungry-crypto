@@ -68,7 +68,7 @@ Explorer: [testnet.xrpl.org](https://testnet.xrpl.org). WebSocket: `wss://s.altn
 
 ### 8-Minute Audit
 
-Cycle 11 HUD plate / latch / CHOMP pin are proven on a 1280x800 box desktop. Cycle 12 kills Html-through-HUD and the center pileup: no 3D name tags, visual maws sit on four separate lanes, BYTEBITE jaws stay on screen, first-frame CROSS is bright, results looks at the winner body.
+Cycle 12 killed Html-through-HUD on a 1280x800 box desktop. Cycle 13 is raised CROSS, short in-lane visual rams, opaque necks, results hero. No fake TVL, no fake audit, no Mainnet.
 
 After PR #8, Practice vs AI fixed BYTEBITE's hold (cyan neck + score 0->22) and the 28+1 pond, but RIPSAW / GOLDGRUB / BLOCKMAW vacuumed early then froze (~43/43/41 from ~22s to the bell) while leftover chips sat in BYTEBITE's near-north lane and hopper waves stopped. This change:
 

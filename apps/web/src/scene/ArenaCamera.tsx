@@ -4,18 +4,18 @@ import { MathUtils, type PerspectiveCamera, Vector3 } from 'three'
 import { useJuiceStore } from '../game/juice'
 import { useGameStore } from '../store/gameStore'
 import { useViewStore } from '../store/viewStore'
-import { RESULT_HERO } from './beasts/vinyl'
+import { RESULT_LOOK } from './beasts/vinyl'
 
 const look = new Vector3()
 const pos = new Vector3()
 
-export const TOY_POS = { x: 4.72, y: 9.28, z: -10.15 }
-export const TOY_LOOK = { x: 0.06, y: 0.92, z: -2.28 }
-export const TOY_FOV = 36
+export const TOY_POS = { x: 3.62, y: 10.95, z: -12.55 }
+export const TOY_LOOK = { x: 0.02, y: 0.42, z: -0.48 }
+export const TOY_FOV = 34
 const SHAKE_MS = 120
 
-/** Winner parks on this pad so the body sits in the open pond right of the left card. */
-export const RESULT_POS = { x: 6.15, y: 5.85, z: -4.55 }
+/** Pulled back so the winner body reads in the open pond, not a crash-zoom blob. */
+export const RESULT_POS = { x: 8.35, y: 9.85, z: -10.55 }
 
 export function toyCameraPosition(): [number, number, number] {
   return [TOY_POS.x, TOY_POS.y, TOY_POS.z]
@@ -85,7 +85,7 @@ export function ArenaCamera() {
     if (ui === 'results') {
       const swing = Math.sin(clock.elapsedTime * 0.22) * 0.08
       pos.set(RESULT_POS.x + sx + swing, RESULT_POS.y + sy, RESULT_POS.z)
-      look.set(RESULT_HERO.x, RESULT_HERO.y, RESULT_HERO.z)
+      look.set(RESULT_LOOK.x, RESULT_LOOK.y, RESULT_LOOK.z)
     } else {
       pos.set(TOY_POS.x + sx, TOY_POS.y * Math.min(k, 1.08) + sy, TOY_POS.z)
       look.set(TOY_LOOK.x, TOY_LOOK.y, TOY_LOOK.z)

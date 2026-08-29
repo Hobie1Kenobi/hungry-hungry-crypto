@@ -403,4 +403,44 @@ Play path stays locked: Practice CHOMP is a latch (tap on, tap off). Space is ho
 
 ### Next action
 
-Cycle 13: volume pond or a real bloom pass - the CROSS, four lane maws, and winner body should read at this camera now.
+Cycle 13: raised CROSS, short in-lane visual rams, opaque necks, camera headroom, results hero.
+
+## Cycle 13 — 2026-08-29 America/Chicago
+
+Hats used: **HAT DIRECTOR** (Cycle 12 live LOOK leftovers), **ATLAS** (Path B lock).
+
+Path B remains locked: `apps/web` stays Vite + React 18 + R3F + drei. No Godot, Unreal, Unity, Babylon, Rapier rewrite. No new modes, shops, quests, tokenomics, engine rewrite. No Mainnet. No Hooks. No EVM. Applications stay locked. Practice local.
+
+Cycle 12 live Practice on a 1280x800 box desktop, one tab (`b38c7e9`) is the incoming ground truth. Do not invent new scores.
+
+- Image 1 / first playing frame 45.0s: HUD clean, no world labels (WIN). CHOMP TAP ONCE bottom-right. BYTEBITE jaws on screen (WIN) but base nearly clipped at the bottom. FAIL: no bright CROSS. Pond is dead grey-green. Chips are a lopsided V/X smear. Cycle 12 painted transparent cyan planes that do not read on this camera.
+- Image 2 / after one tap: LATCHED, hint gone, CHOMP still right, maw/teeth in frame (WIN). FAIL: pale cyan neck fires diagonally through the CENTER as a translucent plastic tube, not over a north lane.
+- Image 3 / mid-round 6.5s: no world labels (WIN). FAIL: all four heads are one tangled knot center/upper-left. Half the pond is empty dark floor. Not speck-land, but badly framed.
+- Image 4 / results STUCK: GOLDGRUB 13, BLOCKMAW 12, RIPSAW 8, BYTEBITE 7. Overlay sticks, no labels through card (WIN). FAIL: camera crash-zooms into a giant green sausage-and-crate blob tucked behind the left card. Not a hero in open pond.
+- LIVE Cycle 12 scores (do not invent): GOLDGRUB 13 / BLOCKMAW 12 / RIPSAW 8 / BYTEBITE 7.
+- Cycle 12 WINS to keep: no Html tags, HUD plate, CHOMP pin, latch, jaws on screen, debug chrome gone.
+
+### Why Cycle 12 visual cap failed
+
+`BEAST_OFFSET` is 5.2. `VISUAL_LANE_HEAD_LATCH` 2.28 plus `NECK_VISUAL_ORIGIN` still puts four heads ~2.5 from world origin, so they knot. A cap that leaves heads inside a ~2.5 radius is still a pileup from this camera. Cycle 13 does not ship another 2.28 cap.
+
+### What changed
+
+- CROSS is raised box gutters sitting ON TOP of the liquid, one beast-colored rail per cardinal. Opening chips stay on those rays. Flat transparent cyan planes are gone.
+- Visual rams only. Same `chompReach` / AABB / eat math on all four seats. Latched visual heads sit over the outer cardinal-ray chips (3.82 / 3.05), short of center, clearly apart. Opaque metal rams (no translucent plastic pipe). Open jaws / teeth on each head. No cooldown, fatigue, auto-unlatch, or eat-cost.
+- Playing camera is still a fixed behind-BYTEBITE toy-ad, pulled back and up so the BYTEBITE base/barrel is not on the bottom clip plane. Jaws stay on screen. All four bodies stay on 1280x800. No per-frame neck track. No Cycle 9 cyan slab. No Cycle 2 void. No Cycle 7 speck.
+- Results camera pulls BACK. Winner body is fully visible in the open pond to the right of the left card, win lean, not a crash-zoom blob. Visual necks still park short. No Html tags.
+
+Play path stays locked: Practice CHOMP is a latch (tap on, tap off). Space is hold-while-down. GO on first presented frame, `PRACTICE_MAX_STEP_DT` hitch clamp, `practiceWallClock` after GO, `PRACTICE_GO_DUMP_T` landed, seat-0 hold-scores + mid-pond reach tests, 28+1 pond, hopper refill + `dumpT` reset, AI nibble after t=22s, Practice `txHashes: []`. Locked types unchanged. Eat AABBs still use sim pellet `x`/`z`. Same reach / AABB on all four seats. Sticky left-docked results stay inert until leftover captured pointer is up. Default Practice HUD does not ship HOLD/EXT or CAM TOY. Playing camera is a fixed behind-BYTEBITE toy-ad. pickWinner is still first highest seat.
+
+### Five leftover notes
+
+1. Pond liquid is still a cheap hex/caustic plane, not a volume.
+2. Glow is still additive materials. No real bloom pass on visor / golden / hopper sparks.
+3. Kits are in-engine primitives. They are four machines now; they are not hero sculpts.
+4. Results is still a CSS card. The 3D lean/slump is the readable winner; the overlay no longer owns a bottom-right CHOMP collision.
+5. Online HungryRoom still uses the server tick. Only Practice waits for GO and clamps a hitch step.
+
+### Next action
+
+Cycle 14: volume pond or a real bloom pass - the raised CROSS, short in-lane rams, and results hero should read at this camera now.

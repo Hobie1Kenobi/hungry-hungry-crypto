@@ -200,6 +200,10 @@ export function Chassis({ seat }: { seat: Seat }) {
   return <BlockmawChassis color={color} accent={accent} />
 }
 
+function steel(color: string, metal = 0.82) {
+  return { color, metalness: metal, roughness: 0.26 }
+}
+
 export function MachineNeck({
   seat,
   pistonRef,
@@ -213,87 +217,30 @@ export function MachineNeck({
 }) {
   const gold = seat === 3
   const rings = Array.from({ length: RING_COUNT }, (_, i) => i)
-  if (seat === 0) {
-    return (
-      <group>
-        <mesh rotation={[Math.PI / 2, 0, 0]} position={[0, 0, 0.14]} castShadow>
-          <cylinderGeometry args={[0.28, 0.34, 0.32, 8]} />
-          <meshStandardMaterial color="#8fd8e6" metalness={0.5} roughness={0.26} />
-        </mesh>
-        <mesh ref={pistonRef} rotation={[Math.PI / 2, 0, 0]} position={[0, 0, 0.85]} castShadow>
-          <cylinderGeometry args={[0.13, 0.2, 1, 8]} />
-          <meshStandardMaterial color={color} metalness={0.48} roughness={0.26} />
-        </mesh>
-        <group ref={ringsRef}>
-          {rings.map((i) => (
-            <mesh key={i} rotation={[Math.PI / 2, 0, 0]} castShadow>
-              <torusGeometry args={[0.2, 0.045, 8, 14]} />
-              <meshStandardMaterial color="#d7eef4" metalness={0.62} roughness={0.18} />
-            </mesh>
-          ))}
-        </group>
-      </group>
-    )
-  }
-  if (seat === 1) {
-    return (
-      <group>
-        <mesh rotation={[Math.PI / 2, 0, 0]} position={[0, 0, 0.14]} castShadow>
-          <cylinderGeometry args={[0.26, 0.32, 0.28, 6]} />
-          <meshStandardMaterial color="#3a102e" metalness={0.55} roughness={0.28} />
-        </mesh>
-        <mesh ref={pistonRef} rotation={[Math.PI / 2, 0, 0]} position={[0, 0, 0.85]} castShadow>
-          <cylinderGeometry args={[0.11, 0.18, 1, 10]} />
-          <meshStandardMaterial color={color} metalness={0.52} roughness={0.24} />
-        </mesh>
-        <group ref={ringsRef}>
-          {rings.map((i) => (
-            <mesh key={i} rotation={[Math.PI / 2, 0, 0]} castShadow>
-              <torusGeometry args={[0.18, 0.035, 8, 12]} />
-              <meshStandardMaterial color="#f3a6e4" metalness={0.64} roughness={0.18} />
-            </mesh>
-          ))}
-        </group>
-      </group>
-    )
-  }
-  if (seat === 2) {
-    return (
-      <group>
-        <mesh rotation={[Math.PI / 2, 0, 0]} position={[0, 0, 0.12]} castShadow>
-          <cylinderGeometry args={[0.3, 0.36, 0.26, 16]} />
-          <meshStandardMaterial color="#6a7a22" metalness={0.35} roughness={0.4} />
-        </mesh>
-        <mesh ref={pistonRef} rotation={[Math.PI / 2, 0, 0]} position={[0, 0, 0.85]} castShadow>
-          <cylinderGeometry args={[0.16, 0.26, 1, 14]} />
-          <meshStandardMaterial color={color} metalness={0.3} roughness={0.36} />
-        </mesh>
-        <group ref={ringsRef}>
-          {rings.map((i) => (
-            <mesh key={i} rotation={[Math.PI / 2, 0, 0]} castShadow>
-              <torusGeometry args={[0.24, 0.04, 8, 16]} />
-              <meshStandardMaterial color="#D4AF37" metalness={0.78} roughness={0.2} />
-            </mesh>
-          ))}
-        </group>
-      </group>
-    )
-  }
+  const sleeve = seat === 0 ? '#1a3a44' : seat === 1 ? '#2a1024' : seat === 2 ? '#2a3210' : '#3a3428'
+  const rod = seat === 0 ? '#2a5560' : seat === 1 ? '#4a1838' : seat === 2 ? '#4a5a18' : '#c8c0b0'
+  const band = gold ? '#D4AF37' : color
+  const inner = seat === 2 ? 0.22 : 0.2
+  const outer = seat === 2 ? 0.3 : 0.26
   return (
     <group>
-      <mesh rotation={[Math.PI / 2, 0, 0]} position={[0, 0, 0.12]} castShadow>
-        <cylinderGeometry args={[0.2, 0.26, 0.22, 12]} />
-        <meshStandardMaterial color={gold ? '#D4AF37' : '#e8e2d4'} metalness={0.86} roughness={0.16} />
+      <mesh rotation={[Math.PI / 2, 0, 0]} position={[0, 0, 0.16]} castShadow>
+        <cylinderGeometry args={[0.3, 0.38, 0.36, 10]} />
+        <meshStandardMaterial {...steel(sleeve, 0.78)} />
       </mesh>
-      <mesh ref={pistonRef} rotation={[Math.PI / 2, 0, 0]} position={[0, 0, 0.85]} castShadow>
-        <cylinderGeometry args={[0.12, 0.18, 1, 10]} />
-        <meshStandardMaterial color="#F4F1E8" metalness={0.46} roughness={0.22} />
+      <mesh rotation={[Math.PI / 2, 0, 0]} position={[0, 0, 0.16]}>
+        <torusGeometry args={[0.34, 0.04, 8, 16]} />
+        <meshStandardMaterial color={band} metalness={0.88} roughness={0.16} />
+      </mesh>
+      <mesh ref={pistonRef} rotation={[Math.PI / 2, 0, 0]} position={[0, 0, 0.7]} castShadow>
+        <cylinderGeometry args={[inner, outer, 1, 10]} />
+        <meshStandardMaterial {...steel(rod, 0.8)} />
       </mesh>
       <group ref={ringsRef}>
         {rings.map((i) => (
           <mesh key={i} rotation={[Math.PI / 2, 0, 0]} castShadow>
-            <torusGeometry args={[0.2, 0.035, 8, 16]} />
-            <meshStandardMaterial color="#D4AF37" metalness={0.9} roughness={0.12} />
+            <torusGeometry args={[outer + 0.02, 0.05, 8, 14]} />
+            <meshStandardMaterial color={band} metalness={0.86} roughness={0.16} />
           </mesh>
         ))}
       </group>

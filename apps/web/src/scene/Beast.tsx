@@ -107,8 +107,8 @@ export function Beast({ seat }: { seat: Seat }) {
       visorMat.current.emissiveIntensity = (winner ? 4.4 : down ? 3.6 : 2.5) * blink
     }
     const headZ = visualLaneHeadAlong(visExt.current)
-    const barrel = 0.55
-    const rod = Math.max(0.34, headZ - barrel)
+    const barrel = 0.4
+    const rod = Math.max(0.28, headZ - barrel)
     if (piston.current) {
       piston.current.scale.set(1, rod, 1)
       piston.current.position.set(0, 0, barrel + rod / 2)
