@@ -4,6 +4,23 @@ import { replayOnline } from '../net/session'
 import { useGameStore } from '../store/gameStore'
 import { useWalletStore } from '../wallet/walletStore'
 
+function WinnerPortrait({ seat }: { seat: (typeof SEATS)[number] }) {
+  const b = BEASTS[seat]
+  return (
+    <div className="winner-portrait" style={{ borderColor: b.color, boxShadow: `0 0 28px ${b.color}55` }}>
+      <div className="portrait-ant" style={{ background: b.color }} />
+      <div className="portrait-ant right" style={{ background: b.color }} />
+      <div className="portrait-body" style={{ background: b.color }}>
+        <div className="portrait-visor" />
+        <div className="portrait-snout" style={{ background: b.accent }} />
+      </div>
+      <div className="portrait-name" style={{ color: b.color }}>
+        {b.name}
+      </div>
+    </div>
+  )
+}
+
 export function Results() {
   const result = useGameStore((s) => s.result)
   const playMode = useGameStore((s) => s.playMode)
@@ -20,11 +37,21 @@ export function Results() {
     <div className="overlay">
       <div className="results">
         <div className="results-card">
-          <p className="kicker">{playMode === 'online' ? 'HungryRoom result · Testnet settlement' : 'Local result · no ledger writes'}</p>
-          <h2 style={{ color: champ.color }}>{champ.name} wins</h2>
-          <p className="tag" style={{ marginTop: 0 }}>
-            Match {result.matchId}
+          <p className="kicker">
+            {playMode === 'online' ? 'HungryRoom result · Testnet settlement' : 'LOCAL RESULT · NO LEDGER WRITES'}
           </p>
+          <div className="results-hero">
+            <WinnerPortrait seat={result.winner} />
+            <div>
+              <h2 style={{ color: champ.color }}>{champ.name} wins</h2>
+              <p className="tag" style={{ marginTop: 0 }}>
+                Match {result.matchId}
+              </p>
+              <div className="score-burst" style={{ color: champ.color }}>
+                {result.scores[result.winner]}
+              </div>
+            </div>
+          </div>
           <ol>
             {ranked.map((seat) => (
               <li key={seat}>

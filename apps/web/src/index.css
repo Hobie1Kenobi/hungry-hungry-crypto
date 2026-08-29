@@ -1,7 +1,7 @@
 :root {
   color-scheme: dark;
-  --bg: #3a4e66;
-  --panel: rgba(10, 14, 24, 0.82);
+  --bg: #161018;
+  --panel: rgba(8, 10, 16, 0.72);
   --line: rgba(0, 229, 255, 0.28);
   --text: #e8f4ff;
   --muted: #8aa0b8;
@@ -290,7 +290,7 @@ h2,
 .hud {
   position: absolute;
   inset: 0;
-  padding: 10px 14px 16px;
+  padding: 8px 12px 14px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -320,10 +320,12 @@ h2,
 }
 
 .score-card {
+  position: relative;
   pointer-events: none;
   background: var(--panel);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  padding: 5px 8px;
+  padding: 4px 7px;
+  overflow: hidden;
 }
 
 .score-card.you {
@@ -345,18 +347,98 @@ h2,
 .timer {
   background: var(--panel);
   border: 1px solid var(--line);
-  padding: 6px 10px;
+  padding: 5px 9px;
   font-family: Orbitron, sans-serif;
-  min-width: 92px;
+  min-width: 88px;
   text-align: right;
+}
+
+.timer-sub {
+  font-size: 10px;
+  color: #8aa0b8;
+  margin-top: 2px;
+}
+
+.hud-top-right {
+  display: grid;
+  justify-items: end;
+  gap: 6px;
+}
+
+.ledger-banner {
+  pointer-events: none;
+  font-family: Orbitron, sans-serif;
+  font-size: 9px;
+  letter-spacing: 0.16em;
+  color: var(--gold);
+  border: 1px solid rgba(212, 175, 55, 0.45);
+  background: rgba(8, 10, 16, 0.7);
+  padding: 4px 8px;
+}
+
+.cam-toggle {
+  pointer-events: auto;
+  appearance: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid var(--line);
+  background: var(--panel);
+  color: var(--text);
+  font-family: Orbitron, sans-serif;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  padding: 5px 8px;
+  cursor: pointer;
+}
+
+.cam-toggle span {
+  border: 1px solid var(--line);
+  padding: 1px 5px;
+  color: var(--cyan);
+}
+
+.cam-toggle.on {
+  border-color: var(--gold);
+  color: var(--gold);
+}
+
+.score-pop {
+  position: absolute;
+  right: 8px;
+  top: 2px;
+  font-family: Orbitron, sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  animation: score-pop 0.7s ease-out forwards;
+  pointer-events: none;
+}
+
+@keyframes score-pop {
+  0% {
+    transform: translateY(8px);
+    opacity: 0;
+  }
+  20% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-16px);
+    opacity: 0;
+  }
 }
 
 .hint {
   background: var(--panel);
   border: 1px solid var(--line);
-  padding: 8px 10px;
-  max-width: 240px;
-  font-size: 12px;
+  padding: 7px 9px;
+  max-width: 220px;
+  font-size: 11px;
+}
+
+.hint-sub {
+  margin-top: 6px;
+  color: #8aa0b8;
 }
 
 .chomp-catcher {
@@ -389,9 +471,13 @@ h2,
   box-shadow: 0 0 24px rgba(0, 229, 255, 0.35);
 }
 
-.chomp-btn:active {
-  transform: translateY(1px);
-  filter: brightness(0.92);
+.chomp-btn:active,
+.chomp-btn.held {
+  transform: translateY(5px) scale(0.97);
+  filter: brightness(1.12);
+  box-shadow:
+    0 0 42px rgba(0, 229, 255, 0.85),
+    inset 0 5px 0 rgba(0, 0, 0, 0.22);
 }
 
 .results {
@@ -405,10 +491,98 @@ h2,
 }
 
 .results-card {
-  width: min(480px, 100%);
+  width: min(520px, 100%);
   background: var(--panel);
   border: 1px solid var(--line);
   padding: 28px 24px;
+}
+
+.results-hero {
+  display: grid;
+  grid-template-columns: 92px 1fr;
+  gap: 16px;
+  align-items: center;
+  margin: 10px 0 8px;
+}
+
+.winner-portrait {
+  position: relative;
+  width: 88px;
+  height: 96px;
+  border: 1px solid;
+  background: rgba(0, 0, 0, 0.35);
+  display: grid;
+  place-items: end center;
+  padding-bottom: 8px;
+}
+
+.portrait-ant {
+  position: absolute;
+  top: 6px;
+  left: 24px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  box-shadow: 0 10px 0 currentColor;
+}
+
+.portrait-ant.right {
+  left: auto;
+  right: 24px;
+}
+
+.portrait-body {
+  width: 54px;
+  height: 48px;
+  border-radius: 16px 16px 10px 10px;
+  position: relative;
+}
+
+.portrait-visor {
+  position: absolute;
+  left: 8px;
+  right: 8px;
+  top: 10px;
+  height: 8px;
+  background: #041016;
+  box-shadow: 0 0 8px #fff;
+}
+
+.portrait-snout {
+  position: absolute;
+  left: 10px;
+  right: 10px;
+  bottom: 6px;
+  height: 10px;
+  border-radius: 4px;
+}
+
+.portrait-name {
+  font-family: Orbitron, sans-serif;
+  font-size: 8px;
+  letter-spacing: 0.12em;
+}
+
+.score-burst {
+  font-family: Orbitron, sans-serif;
+  font-size: 42px;
+  font-weight: 800;
+  line-height: 1;
+  animation: burst 0.8s ease-out;
+}
+
+@keyframes burst {
+  0% {
+    transform: scale(0.4);
+    opacity: 0;
+  }
+  55% {
+    transform: scale(1.12);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+  }
 }
 
 .results-card h2 {

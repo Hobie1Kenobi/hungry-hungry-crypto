@@ -1,39 +1,70 @@
+import { useMemo, useRef } from 'react'
+import { useFrame } from '@react-three/fiber'
+import { AdditiveBlending, type Mesh } from 'three'
 import { POND_SIZE } from '@hhc/shared'
+import { makeCausticTexture, makeHexTexture } from './pondTextures'
 
 export function Pond() {
-  const inner = POND_SIZE - 0.4
-  const rim = 0.22
-  const wall = POND_SIZE / 2 + 0.05
+  const inner = POND_SIZE - 0.18
+  const rim = 0.28
+  const wall = POND_SIZE / 2 + 0.02
+  const hex = useMemo(() => makeHexTexture(), [])
+  const caustic = useMemo(() => makeCausticTexture(), [])
+  const shimmer = useRef<Mesh>(null)
+
+  useFrame(({ clock }) => {
+    if (!shimmer.current) return
+    const t = clock.elapsedTime
+    shimmer.current.position.x = Math.sin(t * 0.35) * 0.12
+    shimmer.current.position.z = Math.cos(t * 0.28) * 0.12
+    const mat = shimmer.current.material as { opacity: number }
+    mat.opacity = 0.16 + Math.sin(t * 1.7) * 0.05
+  })
 
   return (
     <group>
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.05, 0]} receiveShadow>
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.1, 0]} receiveShadow>
         <planeGeometry args={[inner, inner]} />
-        <meshStandardMaterial
-          color="#12586a"
-          roughness={0.26}
-          metalness={0.14}
+        <meshPhysicalMaterial
+          color="#0a3c48"
+          roughness={0.14}
+          metalness={0.22}
           transparent
           opacity={0.94}
-          emissive="#0a4a58"
-          emissiveIntensity={0.48}
+          emissive="#063038"
+          emissiveIntensity={0.35}
+          envMapIntensity={1.05}
         />
       </mesh>
-      <mesh position={[0, 0.16, -wall]} castShadow receiveShadow>
-        <boxGeometry args={[POND_SIZE + rim, 0.28, rim]} />
-        <meshStandardMaterial color="#1a2433" metalness={0.4} roughness={0.45} />
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.085, 0]}>
+        <planeGeometry args={[inner, inner]} />
+        <meshBasicMaterial map={hex} transparent opacity={0.72} />
       </mesh>
-      <mesh position={[0, 0.16, wall]} castShadow receiveShadow>
-        <boxGeometry args={[POND_SIZE + rim, 0.28, rim]} />
-        <meshStandardMaterial color="#1a2433" metalness={0.4} roughness={0.45} />
+      <mesh ref={shimmer} rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.07, 0]}>
+        <planeGeometry args={[inner * 0.92, inner * 0.92]} />
+        <meshBasicMaterial
+          map={caustic}
+          transparent
+          opacity={0.32}
+          blending={AdditiveBlending}
+          depthWrite={false}
+        />
       </mesh>
-      <mesh position={[-wall, 0.16, 0]} castShadow receiveShadow>
-        <boxGeometry args={[rim, 0.28, POND_SIZE + rim]} />
-        <meshStandardMaterial color="#1a2433" metalness={0.4} roughness={0.45} />
+      <mesh position={[0, 0.08, -wall]} castShadow receiveShadow>
+        <boxGeometry args={[POND_SIZE + rim, 0.42, rim]} />
+        <meshStandardMaterial color="#0a161c" metalness={0.45} roughness={0.4} />
       </mesh>
-      <mesh position={[wall, 0.16, 0]} castShadow receiveShadow>
-        <boxGeometry args={[rim, 0.28, POND_SIZE + rim]} />
-        <meshStandardMaterial color="#1a2433" metalness={0.4} roughness={0.45} />
+      <mesh position={[0, 0.08, wall]} castShadow receiveShadow>
+        <boxGeometry args={[POND_SIZE + rim, 0.42, rim]} />
+        <meshStandardMaterial color="#0a161c" metalness={0.45} roughness={0.4} />
+      </mesh>
+      <mesh position={[-wall, 0.08, 0]} castShadow receiveShadow>
+        <boxGeometry args={[rim, 0.42, POND_SIZE + rim]} />
+        <meshStandardMaterial color="#0a161c" metalness={0.45} roughness={0.4} />
+      </mesh>
+      <mesh position={[wall, 0.08, 0]} castShadow receiveShadow>
+        <boxGeometry args={[rim, 0.42, POND_SIZE + rim]} />
+        <meshStandardMaterial color="#0a161c" metalness={0.45} roughness={0.4} />
       </mesh>
     </group>
   )
