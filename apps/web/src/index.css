@@ -610,7 +610,7 @@ h2,
 }
 
 .results-card {
-  width: min(268px, 30vw);
+  width: min(292px, 32vw);
   background: rgba(8, 10, 16, 0.7);
   border: 1px solid var(--line);
   padding: 10px 12px 10px;
@@ -718,11 +718,31 @@ h2,
 
 .results-card h2 {
   margin: 0 0 4px;
-  font-size: 15px;
-  letter-spacing: 0.05em;
-  line-height: 1.2;
-  overflow-wrap: break-word;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  font-size: 16px;
+  letter-spacing: 0.04em;
+  line-height: 1.15;
   max-width: 100%;
+}
+
+.results-card h2 .tie-flag {
+  font-size: 10px;
+  letter-spacing: 0.16em;
+}
+
+.results-card h2 .winner-name {
+  max-width: 100%;
+  overflow-wrap: break-word;
+}
+
+.results-card h2 .winner-verb {
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text);
 }
 
 .results-match {

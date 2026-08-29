@@ -105,7 +105,9 @@ export function Results() {
             <WinnerPortrait seat={result.winner} />
             <div className="results-hero-copy">
               <h2 style={{ color: champ.color }}>
-                {isTie ? `TIE · ${champ.name} wins it` : `${champ.name} wins`}
+                {isTie ? <span className="tie-flag">TIE</span> : null}
+                <span className="winner-name">{champ.name}</span>
+                <span className="winner-verb">{isTie ? 'wins it' : 'wins'}</span>
               </h2>
               <p className="results-match">
                 {isTie

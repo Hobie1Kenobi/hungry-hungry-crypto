@@ -13,12 +13,12 @@ const pos = new Vector3()
 export const TOY_POS = { x: 1.85, y: 6.95, z: -9.35 }
 export const TOY_LOOK = { x: 0.95, y: 0.08, z: 1.72 }
 export const TOY_FOV = 33
-const RESULTS_DIST = 14.6
-const RESULTS_SIDE = 7.4
-const RESULTS_ELEV = 8.6
-const RESULTS_LOOK_Y = 0.78
-const RESULTS_POND_BLEND = 0.46
-const RESULTS_FOV = 40
+const RESULTS_DIST = 10.2
+const RESULTS_SIDE = 4.8
+const RESULTS_ELEV = 7.8
+const RESULTS_LOOK_Y = 0.7
+const RESULTS_POND_BLEND = 0.52
+const RESULTS_FOV = 38
 const SHAKE_MS = 120
 
 export function toyCameraPosition(): [number, number, number] {
@@ -86,11 +86,7 @@ export function ArenaCamera() {
 
     const snap = ui === 'results' || (playBorn.current && now - playBorn.current < 32) || now < shakeUntil.current
     if (ui === 'results') {
-      // x=0 shows the left of a wider frustum so the look target sits RIGHT of
-      // center, in open pond beside the left card. Cycle 13 used x=pad and
-      // parked the hero under the overlay.
-      const pad = Math.round(width * 0.24)
-      cam.setViewOffset(width + pad, height, 0, 0, width, height)
+      cam.clearViewOffset()
       const winner = useGameStore.getState().result?.winner ?? 0
       const [hx, , hz] = beastVisualRoot(winner)
       const yaw = beastYaw(winner)
