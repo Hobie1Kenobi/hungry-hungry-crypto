@@ -4,10 +4,10 @@ export const BEAST_NECK_LIFT = 0.92
 
 /** Visual-only Y stack so four mid-pond rams sit on separate planes. */
 export const BEAST_NECK_STACK: Record<Seat, number> = {
-  0: 0.54,
-  1: 1.16,
-  2: 1.68,
-  3: 0.88,
+  0: 0.32,
+  1: 1.55,
+  2: 2.38,
+  3: 0.96,
 }
 
 export function beastNeckLift(seat: Seat): number {

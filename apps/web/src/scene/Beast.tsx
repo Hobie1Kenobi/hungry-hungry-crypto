@@ -10,10 +10,10 @@ import { Chassis, HeadDressing, MachineMouth, MachineNeck } from './beasts/kits'
 import { beastNeckLift } from './beasts/vinyl'
 
 function labelLocal(seat: Seat, you: boolean): [number, number, number] {
-  if (you) return [0.16, 2.32, -0.78]
-  if (seat === 1) return [0.08, 2.14, -0.48]
-  if (seat === 2) return [0, 1.82, 0.62]
-  return [0, 2.12, -0.42]
+  if (you) return [-0.08, 2.72, 0.62]
+  if (seat === 1) return [0.12, 2.36, 0.18]
+  if (seat === 2) return [0, 2.02, 0.42]
+  return [0.06, 2.28, 0.22]
 }
 
 const RING_COUNT = 5
@@ -110,7 +110,7 @@ export function Beast({ seat }: { seat: Seat }) {
       const chewNod = down ? Math.sin(t * 13.5 + seat * 1.7) * 0.05 : 0
       head.current.rotation.y = camYaw + Math.sin(t * 9) * shake.current * 0.28
       head.current.rotation.z = Math.cos(t * 11) * shake.current * 0.12
-      head.current.rotation.x = -0.2 - (1 - visExt.current) * 0.1 + squash.current * 0.12 + chewNod
+      head.current.rotation.x = -0.34 - (1 - visExt.current) * 0.06 + squash.current * 0.12 + chewNod
     }
     if (visorMat.current) {
       const blink = Math.sin(t * 7.5 + seat * 2.1) > 0.93 ? 0.18 : 1
@@ -133,7 +133,7 @@ export function Beast({ seat }: { seat: Seat }) {
       const bob = down ? Math.sin(t * 9.2 + seat) * 0.04 : Math.sin(t * 2.05 + seat) * 0.012
       neck.current.position.y = beastNeckLift(seat) + bob
     }
-    if (head.current) head.current.position.set(0, 0.04, headZ)
+    if (head.current) head.current.position.set(0, 0.1, headZ)
     if (label.current) {
       const [lx, ly, lz] = labelLocal(seat, you)
       label.current.position.set(lx, ly, lz)
@@ -142,8 +142,8 @@ export function Beast({ seat }: { seat: Seat }) {
       const open = jaw.current
       const up = jaws.current.children[1]
       const low = jaws.current.children[2]
-      if (up) up.rotation.x = open * 1.08
-      if (low) low.rotation.x = -open * 1.02
+      if (up) up.rotation.x = open * 1.28
+      if (low) low.rotation.x = -open * 1.22
     }
     if (mouthLight.current) {
       mouthLight.current.intensity = (down ? 5.4 : 3.1) + gulp.current * 6
@@ -170,6 +170,10 @@ export function Beast({ seat }: { seat: Seat }) {
         </group>
       </group>
       <Billboard ref={label} position={labelLocal(seat, you)} follow>
+        <mesh position={[0, you ? 0.28 : 0.14, -0.03]} renderOrder={39}>
+          <planeGeometry args={[you ? 2.05 : 1.55, you ? 0.62 : 0.34]} />
+          <meshBasicMaterial color="#041018" transparent opacity={0.62} depthTest={false} depthWrite={false} />
+        </mesh>
         <Text
           fontSize={you ? 0.26 : 0.2}
           color={spec.color}

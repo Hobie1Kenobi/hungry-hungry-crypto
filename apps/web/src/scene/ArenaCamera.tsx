@@ -90,7 +90,7 @@ export function ArenaCamera() {
       cam.position.lerp(pos, 1 - Math.pow(0.0004, dt))
     }
     if (ui === 'results') {
-      look.set(TOY_LOOK.x + bx * 0.26, 0.78, TOY_LOOK.z * 0.42 + bz * 0.32)
+      look.set(TOY_LOOK.x + bx * 0.18, 0.88, TOY_LOOK.z * 0.5 + bz * 0.16)
     } else {
       look.set(TOY_LOOK.x, TOY_LOOK.y, TOY_LOOK.z)
     }

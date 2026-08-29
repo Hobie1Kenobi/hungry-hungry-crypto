@@ -243,13 +243,13 @@ export function MachineNeck({
           <meshStandardMaterial color="#3a102e" metalness={0.55} roughness={0.28} />
         </mesh>
         <mesh ref={pistonRef} rotation={[Math.PI / 2, 0, 0]} position={[0, 0, 0.85]} castShadow>
-          <cylinderGeometry args={[0.12, 0.2, 1, 6]} />
+          <cylinderGeometry args={[0.11, 0.18, 1, 10]} />
           <meshStandardMaterial color={color} metalness={0.52} roughness={0.24} />
         </mesh>
         <group ref={ringsRef}>
           {rings.map((i) => (
             <mesh key={i} rotation={[Math.PI / 2, 0, 0]} castShadow>
-              <cylinderGeometry args={[0.24, 0.24, 0.07, 6]} />
+              <torusGeometry args={[0.18, 0.035, 8, 12]} />
               <meshStandardMaterial color="#f3a6e4" metalness={0.64} roughness={0.18} />
             </mesh>
           ))}
@@ -281,12 +281,12 @@ export function MachineNeck({
   }
   return (
     <group>
-      <mesh position={[0, 0, 0.12]} castShadow>
-        <boxGeometry args={[0.42, 0.42, 0.22]} />
+      <mesh rotation={[Math.PI / 2, 0, 0]} position={[0, 0, 0.12]} castShadow>
+        <cylinderGeometry args={[0.2, 0.26, 0.22, 12]} />
         <meshStandardMaterial color={gold ? '#D4AF37' : '#e8e2d4'} metalness={0.86} roughness={0.16} />
       </mesh>
       <mesh ref={pistonRef} rotation={[Math.PI / 2, 0, 0]} position={[0, 0, 0.85]} castShadow>
-        <cylinderGeometry args={[0.14, 0.2, 1, 8]} />
+        <cylinderGeometry args={[0.12, 0.18, 1, 10]} />
         <meshStandardMaterial color="#F4F1E8" metalness={0.46} roughness={0.22} />
       </mesh>
       <group ref={ringsRef}>
@@ -326,8 +326,8 @@ function Teeth({
         const gilded = gold && i % 2 === 0
         return (
           <group key={i} position={[x, y, z]}>
-            <mesh castShadow rotation={[y > 0 ? 0.18 : -0.18, 0, 0]}>
-              <boxGeometry args={[saw ? 0.09 : 0.14, long, saw ? 0.16 : 0.2]} />
+            <mesh castShadow rotation={[y > 0 ? 0.28 : -0.28, 0, 0]}>
+              <boxGeometry args={[saw ? 0.1 : 0.15, long, saw ? 0.18 : 0.24]} />
               <meshPhysicalMaterial
                 color={gilded ? '#D4AF37' : '#fff6e8'}
                 metalness={gilded ? 0.8 : 0.38}
@@ -528,7 +528,7 @@ export function MachineMouth({
             y={-0.5}
             gold={gold}
             saw={saw}
-            long={seat === 1 ? 0.56 : 0.54}
+            long={seat === 1 ? 0.68 : 0.66}
             span={seat === 2 ? 1.52 : seat === 3 ? 1.08 : 1.28}
           />
         </group>
@@ -554,7 +554,7 @@ export function MachineMouth({
             y={0.5}
             gold={gold}
             saw={saw}
-            long={0.5}
+            long={0.62}
             span={seat === 2 ? 1.42 : seat === 3 ? 1.02 : 1.2}
           />
         </group>
