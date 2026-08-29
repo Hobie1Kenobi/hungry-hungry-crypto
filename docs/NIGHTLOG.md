@@ -485,4 +485,46 @@ Play path stays locked: Practice CHOMP is a latch (tap on, tap off). Space is ho
 
 ### Next action
 
-Cycle 15: volume pond or a real bloom pass - LOOK (black GO, results hero, framing) has to pass first.
+Cycle 15: camera fill + results hero - LOOK (black GO, results hero) passed; leftover crop still reads as a leftover crop.
+
+## Cycle 15 — 2026-08-29 America/Chicago
+
+Hats used: **HAT DIRECTOR** (Cycle 14 live LOOK leftovers), **ATLAS** (Path B lock).
+
+Path B remains locked: `apps/web` stays Vite + React 18 + R3F + drei. No Godot, Unreal, Unity, Babylon, Rapier rewrite. No new modes, shops, quests, tokenomics, engine rewrite. No Mainnet. No Hooks. No EVM. Applications stay locked. Practice local.
+
+Cycle 14 live Practice on a 1280x800 box desktop, one Chrome tab (`96b82d6`) is the incoming ground truth. Do not invent new scores.
+
+- LIVE Cycle 14 scores (do not invent): GOLDGRUB 13 / BLOCKMAW 12 / BYTEBITE 8 / RIPSAW 8.
+- LOOK PASSED: first playing frame is warm 3D at 45.0s (no black open). Results is an open-pond overview, not a crash-zoom. Trailer contract holds. Do not regress the GO present or the no-crash-zoom results.
+- Image 1 / first playing frame 45.0s: warm 3D, raised beast-colored CROSS, chips on four rays, four heads on four lanes short of center, opaque metal rams. KEEP. FAIL: BYTEBITE base/body is CUT OFF by the bottom viewport edge. Jaw is on screen, barrel/base is not. Left edge is a big magenta RIPSAW ram tail. Pond sits left-of-center.
+- Image 2 / after one tap: LATCHED, hint gone, neck extended over its own north lane. KEEP.
+- Image 3 / mid-round 8.8s: four lanes still readable. FAIL: bottom-right third is dark empty table/floor. Framing still off-center left.
+- Image 4 / results: GOLDGRUB 13 wins. Overlay left. Winner name stacked, no overflow. Winner body is in open pond to the RIGHT of the card (not a crash-zoom). KEEP that. FAIL: camera pitched too high, ~25% of the frame is bare beige floor/grey wall top-right, and the green winner is shoved to the far upper-right corner of the pond instead of staged center-right as a hero.
+- Cycle 14 WINS to keep: GO contract (clock frozen at 45.0s until presented warm 3D; GoOnFirstFrame drops first playing useFrame, then practiceGoReady with drawing buffer / calls 6 / triangles 800 / presents 2). Raised CROSS. Visual rams 0.62/0.94. Opaque steel rams. HUD you-plate + CHOMP pin. Latch CHOMP. No Html tags. No HOLD/EXT on default HUD. Playing camera fixed behind BYTEBITE. Sticky left-docked results. pickWinner first highest seat. No setViewOffset pad.
+
+### Why Cycle 14 framing failed
+
+Cycle 14 playing `TOY_POS` y 6.95 z -9.35 was too low/close for the north toy. Look (0.95, 0.08, 1.72) aimed past pond center toward GOLDGRUB and RIPSAW, so the pond sat left, BLOCKMAW fell off the right, and the bottom-right third became empty table. Cycle 13 (z -11.85 y 8.85 look z -2.42 fov 36) kept the base in frame but donated empty floor. Cycle 15 does not snap back to that composition.
+
+Cycle 14 results `RESULTS_ELEV` 9.4 plus `RESULTS_POND_BLEND` 0.12 looked at the pond origin from a high wide seat. GOLDGRUB (south) read as a small green toy in the far corner of a flattened overview. `setViewOffset` stays parked.
+
+### What changed
+
+- Playing camera is still a fixed behind-BYTEBITE toy-ad. Pulled back/up to y 8.52 z -11.42, look retuned to pond-north of center (0.11, 0.42, -1.22), fov 35. BYTEBITE barrel and base sit in frame on 1280x800 with air under the feet. Pond + CROSS + four beasts fill the useful middle. RIPSAW stays on the left with margin. GOLDGRUB / BLOCKMAW stay on screen. No per-frame neck-track. No Cycle 9 cyan slab. No Cycle 2 void. No Cycle 7 speck. Not Cycle 13's empty-floor look.
+- Results camera drops elevation to 6.55, radius 12.55, fov 40, look-Y 0.66, pond blend 0.44, plus a small orbit turn toward the winner. Winner is a readable hero center-right of the left card, lower pitch, still an open-pond overview. Other beasts and CROSS stay readable. No crash-zoom. No `setViewOffset` pad. Visual necks still park short (0.94 latch). Winner name stays stacked inside the card.
+- Play path untouched: latch CHOMP, same `chompReach` / AABB / `BEAST_OFFSET` / `NECK_EXTEND_SPEED` on all four seats. AI not nerfed. GO contract unchanged. Hitch clamp stays. `PRACTICE_GO_DUMP_T` still lands on GO. Canvas wrap / WebGL clear stay warm #eddcc6. drei `Preload all` stays.
+
+Play path stays locked: Practice CHOMP is a latch (tap on, tap off). Space is hold-while-down. No cooldown, fatigue, auto-unlatch, or eat-cost. Do not nerf the player. Do not nerf AI. GO on first presented frame, `PRACTICE_MAX_STEP_DT` hitch clamp, `practiceWallClock` after GO, `PRACTICE_GO_DUMP_T` landed, seat-0 hold-scores + mid-pond reach tests, 28+1 pond, hopper refill + `dumpT` reset, AI nibble after t=22s, Practice `txHashes: []`. Locked types unchanged. Eat AABBs still use sim pellet `x`/`z`. Same reach / AABB on all four seats. Sticky left-docked results stay inert until leftover captured pointer is up. Default Practice HUD does not ship HOLD/EXT or CAM TOY. Playing camera is a fixed behind-BYTEBITE toy-ad. pickWinner is still first highest seat.
+
+### Five leftover notes
+
+1. Pond liquid is still a cheap hex/caustic plane, not a volume.
+2. Glow is still additive materials. No real bloom pass on visor / golden / hopper sparks.
+3. Kits are in-engine primitives. They are four machines now; they are not hero sculpts.
+4. Results is still a CSS card. The 3D lean/slump is the readable winner; the overlay no longer owns a bottom-right CHOMP collision.
+5. Online HungryRoom still uses the server tick. Only Practice waits for GO and clamps a hitch step.
+
+### Next action
+
+Cycle 16: volume pond or a real bloom pass - framing (BYTEBITE base, pond fill, results hero) has to read as a toy ad first.

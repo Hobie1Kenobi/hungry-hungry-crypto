@@ -9,14 +9,15 @@ import { beastVisualRoot } from './beasts/vinyl'
 const look = new Vector3()
 const pos = new Vector3()
 
-export const TOY_POS = { x: 1.85, y: 6.95, z: -9.35 }
-export const TOY_LOOK = { x: 0.95, y: 0.08, z: 1.72 }
-export const TOY_FOV = 33
-const RESULTS_RADIUS = 13.6
-const RESULTS_ELEV = 9.4
-const RESULTS_LOOK_Y = 0.4
-const RESULTS_POND_BLEND = 0.12
-const RESULTS_FOV = 42
+export const TOY_POS = { x: 1.74, y: 8.52, z: -11.42 }
+export const TOY_LOOK = { x: 0.11, y: 0.42, z: -1.22 }
+export const TOY_FOV = 35
+const RESULTS_RADIUS = 12.55
+const RESULTS_ELEV = 6.55
+const RESULTS_LOOK_Y = 0.66
+const RESULTS_POND_BLEND = 0.44
+const RESULTS_ORBIT_TURN = 0.24
+const RESULTS_FOV = 40
 const SHAKE_MS = 120
 
 export function toyCameraPosition(): [number, number, number] {
@@ -89,8 +90,12 @@ export function ArenaCamera() {
       const [hx, , hz] = beastVisualRoot(winner)
       const swing = Math.sin(clock.elapsedTime * 0.22) * 0.08
       const span = Math.hypot(hx, hz) || 1
-      const orbit = RESULTS_RADIUS / span
-      pos.set(-hz * orbit + sx + swing, RESULTS_ELEV + sy, hx * orbit)
+      const wx = hx / span
+      const wz = hz / span
+      const turn = RESULTS_ORBIT_TURN
+      const bx = -wz * Math.cos(turn) + wx * Math.sin(turn)
+      const bz = wx * Math.cos(turn) + wz * Math.sin(turn)
+      pos.set(bx * RESULTS_RADIUS + sx + swing, RESULTS_ELEV + sy, bz * RESULTS_RADIUS)
       look.set(hx * RESULTS_POND_BLEND, RESULTS_LOOK_Y, hz * RESULTS_POND_BLEND)
     } else {
       cam.clearViewOffset()
