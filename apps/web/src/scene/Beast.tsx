@@ -68,8 +68,8 @@ export function Beast({ seat }: { seat: Seat }) {
 
     const winner = ui === 'results' && result?.winner === seat
     const loser = ui === 'results' && result && result.winner !== seat
-    const restJaw = 0.86
-    const targetJaw = winner ? 1 : loser ? 0.18 : down ? 1 : restJaw + extend * 0.06
+    const restJaw = 0.92
+    const targetJaw = winner ? 1 : loser ? 0.16 : down ? 1 : restJaw
     jaw.current += (targetJaw - jaw.current) * Math.min(1, dt * (down ? 12 : 16))
 
     const punch = down ? extend + slam.current * 0.22 - anticip.current * 0.2 : extend
@@ -146,8 +146,16 @@ export function Beast({ seat }: { seat: Seat }) {
           </group>
         </group>
       </group>
-      <Billboard position={[0, seat === 0 ? 2.15 : 1.72, 0]}>
-        <Text fontSize={0.22} color={spec.color} anchorX="center" anchorY="middle">
+      <Billboard position={[0, seat === 0 ? 2.45 : 2.2, -0.85]}>
+        <Text
+          fontSize={0.2}
+          color={spec.color}
+          anchorX="center"
+          anchorY="middle"
+          outlineWidth={0.018}
+          outlineColor="#041018"
+          maxWidth={5}
+        >
           {you ? `${spec.name}  YOU` : spec.name}
         </Text>
       </Billboard>

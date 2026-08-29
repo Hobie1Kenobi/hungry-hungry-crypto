@@ -83,17 +83,9 @@ export function Studio() {
         <boxGeometry args={[0.5, 16, 30]} />
         <meshStandardMaterial color="#a9c0cc" roughness={0.64} />
       </mesh>
-      <mesh position={[0, 14.6, -6]} receiveShadow>
-        <boxGeometry args={[36, 0.35, 28]} />
-        <meshStandardMaterial color="#e8d8c4" roughness={0.7} />
-      </mesh>
-      <mesh position={[-9.2, 14.35, -8.8]}>
-        <boxGeometry args={[6.4, 0.08, 1.4]} />
-        <meshStandardMaterial color="#fff6df" emissive="#fff1c8" emissiveIntensity={0.85} />
-      </mesh>
-      <mesh position={[9.2, 14.35, -8.8]}>
-        <boxGeometry args={[6.4, 0.08, 1.4]} />
-        <meshStandardMaterial color="#fff6df" emissive="#fff1c8" emissiveIntensity={0.85} />
+      <mesh position={[0, 15.2, -7]} receiveShadow>
+        <boxGeometry args={[38, 0.4, 26]} />
+        <meshStandardMaterial color="#c4b09a" roughness={0.72} />
       </mesh>
       <Cabinet />
     </group>

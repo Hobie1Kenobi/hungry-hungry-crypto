@@ -343,16 +343,16 @@ function GumCavity({ wide, deep = 0.98 }: { wide: number; deep?: number }) {
   return (
     <group>
       <mesh position={[0, 0.02, 0.42]} castShadow>
-        <boxGeometry args={[1.28 * wide, 0.86, deep]} />
-        <meshStandardMaterial color="#2a0810" emissive="#6a1020" emissiveIntensity={0.7} roughness={0.96} />
+        <boxGeometry args={[1.28 * wide, 0.98, deep]} />
+        <meshStandardMaterial color="#2a0810" emissive="#6a1020" emissiveIntensity={0.85} roughness={0.96} />
       </mesh>
-      <mesh position={[0, 0.02, 0.42 + deep * 0.28]}>
-        <boxGeometry args={[1.12 * wide, 0.62, 0.22]} />
-        <meshStandardMaterial color="#e25574" emissive="#ff4d6d" emissiveIntensity={1.1} roughness={0.9} />
+      <mesh position={[0, 0.02, 0.42 + deep * 0.22]} rotation={[0, 0, Math.PI / 2]} castShadow>
+        <torusGeometry args={[0.28 * wide, 0.16, 10, 18, Math.PI]} />
+        <meshStandardMaterial color="#e25574" emissive="#ff4d6d" emissiveIntensity={1.35} roughness={0.88} />
       </mesh>
-      <mesh position={[0, 0.02, 0.58 + deep * 0.28]}>
-        <planeGeometry args={[1.06 * wide, 0.7]} />
-        <meshBasicMaterial color="#ff4d6d" transparent opacity={0.78} />
+      <mesh position={[0, 0.02, 0.7]} castShadow>
+        <sphereGeometry args={[0.18 * wide, 12, 10]} />
+        <meshStandardMaterial color="#ff4d6d" emissive="#ff2a55" emissiveIntensity={0.9} roughness={0.7} />
       </mesh>
     </group>
   )
@@ -389,13 +389,19 @@ export function MachineMouth({
         <mesh position={[0, 0, 0.02]} visible={false}>
           <boxGeometry args={[0.1, 0.1, 0.1]} />
         </mesh>
-        <group position={[0, 0.2, 0.06]}>
+        <group position={[0, 0.22, 0.08]}>
           <mesh castShadow>
-            {seat === 1 ? <cylinderGeometry args={[0.62, 0.7, 0.16, 16]} /> : <boxGeometry args={[1.58 * wide, 0.2, 0.98]} />}
+            {seat === 1 ? (
+              <cylinderGeometry args={[0.66, 0.74, 0.14, 16]} />
+            ) : seat === 2 ? (
+              <capsuleGeometry args={[0.16, 1.62 * wide, 6, 12]} />
+            ) : (
+              <boxGeometry args={[1.62 * wide, 0.14, 0.58]} />
+            )}
             <meshPhysicalMaterial {...vinyl(color)} />
           </mesh>
-          <mesh position={[0, -0.16, 0.14]}>
-            <boxGeometry args={[1.36 * wide, 0.18, 0.72]} />
+          <mesh position={[0, -0.2, 0.1]}>
+            <boxGeometry args={[1.4 * wide, 0.14, 0.5]} />
             <meshStandardMaterial color="#e25574" roughness={0.96} />
           </mesh>
           <Teeth
@@ -407,13 +413,19 @@ export function MachineMouth({
             span={seat === 2 ? 1.42 : 1.18}
           />
         </group>
-        <group position={[0, -0.2, 0.06]}>
+        <group position={[0, -0.22, 0.08]}>
           <mesh castShadow>
-            {seat === 3 ? <boxGeometry args={[1.28 * wide, 0.22, 0.86]} /> : <boxGeometry args={[1.46 * wide, 0.18, 0.9]} />}
+            {seat === 3 ? (
+              <boxGeometry args={[1.34 * wide, 0.16, 0.52]} />
+            ) : seat === 2 ? (
+              <capsuleGeometry args={[0.14, 1.5 * wide, 6, 12]} />
+            ) : (
+              <boxGeometry args={[1.5 * wide, 0.14, 0.54]} />
+            )}
             <meshPhysicalMaterial {...vinyl(seat === 3 ? accent : color)} />
           </mesh>
-          <mesh position={[0, 0.16, 0.12]}>
-            <boxGeometry args={[1.26 * wide, 0.18, 0.66]} />
+          <mesh position={[0, 0.2, 0.1]}>
+            <boxGeometry args={[1.3 * wide, 0.14, 0.48]} />
             <meshStandardMaterial color="#c43b58" roughness={0.96} />
           </mesh>
           <Teeth
