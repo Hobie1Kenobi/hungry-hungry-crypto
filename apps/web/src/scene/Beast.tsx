@@ -92,7 +92,7 @@ export function Beast({ seat }: { seat: Seat }) {
     if (antL.current) antL.current.rotation.z = Math.sin(t * 3.4 + seat) * 0.22
     if (antR.current) antR.current.rotation.z = Math.sin(t * 3.4 + seat + 1.2) * -0.22
     if (head.current) {
-      const camYaw = seat === 2 ? 0.06 : seat === 3 ? 0.38 : seat === 1 ? -0.32 : 0.16
+      const camYaw = seat === 2 ? 0.92 : seat === 3 ? 0.58 : seat === 1 ? -0.48 : 0.22
       head.current.rotation.y = camYaw + Math.sin(t * 9) * shake.current * 0.28
       head.current.rotation.z = Math.cos(t * 11) * shake.current * 0.12
       head.current.rotation.x = -0.1 + squash.current * 0.22

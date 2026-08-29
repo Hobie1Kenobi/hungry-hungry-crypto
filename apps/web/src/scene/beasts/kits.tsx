@@ -130,6 +130,20 @@ export function GoldgrubChassis({ color, accent }: { color: string; accent: stri
           <meshStandardMaterial color="#D4AF37" metalness={0.86} roughness={0.16} />
         </mesh>
       ))}
+      <mesh position={[0, 0.42, -1.62]} castShadow>
+        <boxGeometry args={[2.05, 0.82, 0.42]} />
+        <meshStandardMaterial color="#2a0c12" roughness={0.92} />
+      </mesh>
+      <mesh position={[0, 0.42, -1.82]}>
+        <boxGeometry args={[1.82, 0.62, 0.12]} />
+        <meshStandardMaterial color="#e25574" roughness={0.9} />
+      </mesh>
+      {[-0.55, -0.18, 0.18, 0.55].map((x) => (
+        <mesh key={`scoop${x}`} position={[x, 0.18, -1.78]} castShadow>
+          <boxGeometry args={[0.16, 0.42, 0.12]} />
+          <meshPhysicalMaterial color="#fff6e8" metalness={0.4} roughness={0.08} clearcoat={1} />
+        </mesh>
+      ))}
     </group>
   )
 }

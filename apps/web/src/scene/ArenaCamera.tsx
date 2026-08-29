@@ -8,9 +8,9 @@ import { useViewStore } from '../store/viewStore'
 const look = new Vector3()
 const pos = new Vector3()
 
-const TOY_DIST = 14.4
-const TOY_ELEV = 0.44
-const TOY_AZ = 0.4
+const TOY_DIST = 13.2
+const TOY_ELEV = 0.5
+const TOY_AZ = 0.38
 const SHAKE_MS = 120
 
 export function ArenaCamera() {
@@ -82,9 +82,9 @@ export function ArenaCamera() {
     } else {
       cam.position.lerp(pos, 1 - Math.pow(0.0004, dt))
     }
-    look.set(0, 0.62, result ? 0.02 : 0.08)
+    look.set(0, 0.02, result ? 0.04 : 0.12)
     cam.lookAt(look)
-    cam.fov = aspect < 1.1 ? 40 : 36
+    cam.fov = aspect < 1.1 ? 38 : 34
     cam.near = 0.1
     cam.far = 90
     cam.updateProjectionMatrix()
