@@ -1,4 +1,18 @@
+import type { Seat } from '@hhc/shared'
+
 export const BEAST_NECK_LIFT = 0.92
+
+/** Visual-only Y stack so four mid-pond rams sit on separate planes. */
+export const BEAST_NECK_STACK: Record<Seat, number> = {
+  0: 0.54,
+  1: 1.16,
+  2: 1.68,
+  3: 0.88,
+}
+
+export function beastNeckLift(seat: Seat): number {
+  return BEAST_NECK_STACK[seat]
+}
 
 export function vinyl(
   color: string,

@@ -5,11 +5,11 @@ import { AdditiveBlending, type Group, type Mesh } from 'three'
 import { BEASTS, mouthWorldOnPond } from '@hhc/shared'
 import { useJuiceStore } from '../game/juice'
 import { useGameStore } from '../store/gameStore'
-import { BEAST_NECK_LIFT } from './beasts/vinyl'
+import { beastNeckLift } from './beasts/vinyl'
 
 function mouthWorld(seat: 0 | 1 | 2 | 3, extend: number): [number, number, number] {
   const { x, z } = mouthWorldOnPond(seat, extend)
-  return [x, BEAST_NECK_LIFT + 0.12, z]
+  return [x, beastNeckLift(seat) + 0.12, z]
 }
 
 function EatTrails() {

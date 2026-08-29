@@ -332,4 +332,39 @@ Play path stays locked: Practice CHOMP is a latch (tap on, tap off). Space is ho
 
 ### Next action
 
-Cycle 11: volume pond or a real bloom pass - the composition (camera, CHOMP pin, lanes) should be honest now.
+Cycle 11: mid-round machine read. Composition (camera, CHOMP pin, lanes) is proven. Do not regress it.
+
+## Cycle 11 — 2026-08-29 America/Chicago
+
+Hats used: **HAT DIRECTOR** (Cycle 10 live machine-read leftovers), **ATLAS** (Path B lock).
+
+Path B remains locked: `apps/web` stays Vite + React 18 + R3F + drei. No Godot, Unreal, Unity, Babylon, Rapier rewrite. No new modes, shops, quests, tokenomics, engine rewrite. No Mainnet. No Hooks. No EVM. Applications stay locked. Practice local.
+
+Cycle 10 live Practice on a 1280x800 box desktop, one tab (`025ca7f`) is the incoming ground truth. Do not invent new scores.
+
+- Image 1 / first playing frame 45.0s: real 3D. Four floor lanes as a CROSS (WIN). HOLD/EXT gone. CAM TOY gone. CHOMP bottom-RIGHT TAP ONCE. RIPSAW off the hopper (WIN). BYTEBITE nameplate on screen but the first B is eaten by its own red/cyan body slab (reads BVTEBITE / RVTEBITE). YOU line missing or late. Beasts still boxes.
+- Image 2 / one CHOMP tap: CHOMP still bottom-right LATCHED (WIN). Hint gone (WIN). Neck snapped (WIN). Scoring started.
+- Image 3 / mid-round 13.0s left: camera NEVER moved (WIN vs Cycle 9 slab). CHOMP still right. Nameplate on screen. FAIL: center is a traffic jam of overlapping red/cyan/pink/white rectangular slabs. Four necks occupy the same plane and interpenetrate. No readable jaws or teeth. Latched necks are cheap flat boxes.
+- Image 4 / results STUCK: GOLDGRUB 13 star, BLOCKMAW 12, RIPSAW 8, BYTEBITE 7. Overlay clean. Winner is a CSS icon badge, not a 3D hero, but NOT a cyan neck slab (WIN vs Cycle 9). No tie this round.
+- Composition WINS (do not regress): lanes, CHOMP pin, RIPSAW off hopper, camera stays put, no neck-slab, latch snap, debug chrome gone, sticky results.
+
+### What changed
+
+- Visual necks only. Same `chompReach` / AABB / eat math on all four seats. Mid-pond rams stagger in Y so they stack instead of occupying one slab. Each latched neck is a tapered ringed piston, not a flat box. A small idle pulse / jaw chew runs while latched. No cooldown, fatigue, auto-unlatch, or eat-cost.
+- Four open maws at this toy-ad camera: CRT / saw / grub / vault. Hollow gum cavity, wet teeth, distinct head silhouette. Do not hide heads underground. Do not pull the playing camera. Do not shrink `chompReach`.
+- BYTEBITE / YOU sits on the camera side of the CRT, above the chassis, depth-test off so the first glyph cannot be eaten by the body. Other labels stay off their own kits.
+- Results still left-docked and sticky. Match-id / hash line is short so it does not dominate. Camera still looks at the winner BODY (win lean) beside the card. Visual necks still park short. No new results mode.
+
+Play path stays locked: Practice CHOMP is a latch (tap on, tap off). Space is hold-while-down. GO on first presented frame, `PRACTICE_MAX_STEP_DT` hitch clamp, `practiceWallClock` after GO, `PRACTICE_GO_DUMP_T` landed, seat-0 hold-scores + mid-pond reach tests, 28+1 pond, hopper refill + `dumpT` reset, AI nibble after t=22s, Practice `txHashes: []`. Locked types unchanged. Eat AABBs still use sim pellet `x`/`z`. Same reach / AABB on all four seats. Sticky left-docked results stay inert until leftover captured pointer is up. Default Practice HUD does not ship HOLD/EXT or CAM TOY. Playing camera is a fixed behind-BYTEBITE toy-ad.
+
+### Five leftover notes
+
+1. Pond liquid is still a cheap hex/caustic plane, not a volume.
+2. Glow is still additive materials. No real bloom pass on visor / golden / hopper sparks.
+3. Kits are in-engine primitives. They are four machines now; they are not hero sculpts.
+4. Results is still a CSS card. The 3D lean/slump is the readable winner; the overlay no longer owns a bottom-right CHOMP collision.
+5. Online HungryRoom still uses the server tick. Only Practice waits for GO and clamps a hitch step.
+
+### Next action
+
+Cycle 12: volume pond or a real bloom pass - the four machines should read at this camera now.

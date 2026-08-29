@@ -7,7 +7,14 @@ import { BEASTS, beastPosition, beastYaw, NECK_VISUAL_ORIGIN, visualHeadAlong } 
 import { useJuiceStore } from '../game/juice'
 import { useGameStore } from '../store/gameStore'
 import { Chassis, HeadDressing, MachineMouth, MachineNeck } from './beasts/kits'
-import { BEAST_NECK_LIFT } from './beasts/vinyl'
+import { beastNeckLift } from './beasts/vinyl'
+
+function labelLocal(seat: Seat, you: boolean): [number, number, number] {
+  if (you) return [0.16, 2.32, -0.78]
+  if (seat === 1) return [0.08, 2.14, -0.48]
+  if (seat === 2) return [0, 1.82, 0.62]
+  return [0, 2.12, -0.42]
+}
 
 const RING_COUNT = 5
 
@@ -23,6 +30,7 @@ export function Beast({ seat }: { seat: Seat }) {
   const body = useRef<Group>(null)
   const piston = useRef<Mesh>(null)
   const ringsRef = useRef<Group>(null)
+  const neck = useRef<Group>(null)
   const head = useRef<Group>(null)
   const label = useRef<Group>(null)
   const jaws = useRef<Group>(null)
@@ -73,7 +81,8 @@ export function Beast({ seat }: { seat: Seat }) {
     const winner = ui === 'results' && result?.winner === seat
     const loser = ui === 'results' && result && result.winner !== seat
     const restJaw = 0.88
-    const targetJaw = winner ? 1 : loser ? 0.2 : down ? 1 : restJaw
+    const chew = down ? Math.sin(t * 13.5 + seat * 1.7) * 0.11 : 0
+    const targetJaw = winner ? 1 : loser ? 0.2 : down ? 1 + chew : restJaw
     jaw.current += (targetJaw - jaw.current) * Math.min(1, dt * (down ? 26 : 16))
 
     const punch = down ? extend + slam.current * 0.46 - anticip.current * 0.05 : extend
@@ -98,9 +107,10 @@ export function Beast({ seat }: { seat: Seat }) {
     if (antR.current) antR.current.rotation.z = Math.sin(t * 3.4 + seat + 1.2) * -0.22
     if (head.current) {
       const camYaw = seat === 2 ? -0.62 : seat === 3 ? 0.38 : seat === 1 ? -0.2 : 0.18
+      const chewNod = down ? Math.sin(t * 13.5 + seat * 1.7) * 0.05 : 0
       head.current.rotation.y = camYaw + Math.sin(t * 9) * shake.current * 0.28
       head.current.rotation.z = Math.cos(t * 11) * shake.current * 0.12
-      head.current.rotation.x = -0.08 - (1 - visExt.current) * 0.14 + squash.current * 0.12
+      head.current.rotation.x = -0.2 - (1 - visExt.current) * 0.1 + squash.current * 0.12 + chewNod
     }
     if (visorMat.current) {
       const blink = Math.sin(t * 7.5 + seat * 2.1) > 0.93 ? 0.18 : 1
@@ -119,8 +129,15 @@ export function Beast({ seat }: { seat: Seat }) {
         if (ring) ring.position.set(0, 0, barrel + ((i + 0.35) / RING_COUNT) * rod)
       }
     }
+    if (neck.current) {
+      const bob = down ? Math.sin(t * 9.2 + seat) * 0.04 : Math.sin(t * 2.05 + seat) * 0.012
+      neck.current.position.y = beastNeckLift(seat) + bob
+    }
     if (head.current) head.current.position.set(0, 0.04, headZ)
-    if (label.current) label.current.position.set(you ? -0.35 : 0, you ? 1.55 : 2.02, you ? 1.42 : seat === 1 ? 0.28 : -0.55)
+    if (label.current) {
+      const [lx, ly, lz] = labelLocal(seat, you)
+      label.current.position.set(lx, ly, lz)
+    }
     if (jaws.current) {
       const open = jaw.current
       const up = jaws.current.children[1]
@@ -143,7 +160,7 @@ export function Beast({ seat }: { seat: Seat }) {
         <group ref={body} position={[0, 0.02, seat === 2 ? 0.08 : -0.18]}>
           <Chassis seat={seat} />
         </group>
-        <group position={[0, BEAST_NECK_LIFT, NECK_VISUAL_ORIGIN]}>
+        <group ref={neck} position={[0, beastNeckLift(seat), NECK_VISUAL_ORIGIN]}>
           <MachineNeck seat={seat} pistonRef={piston} ringsRef={ringsRef} color={spec.color} />
           <group ref={head} position={[0, 0.04, 1]} scale={you ? 1.22 : 1.12}>
             <HeadDressing seat={seat} visorRef={visorMat} antL={antL} antR={antR} />
@@ -152,17 +169,20 @@ export function Beast({ seat }: { seat: Seat }) {
           </group>
         </group>
       </group>
-      <Billboard ref={label} position={[you ? -0.35 : 0, you ? 1.55 : 2.02, you ? 1.42 : seat === 1 ? 0.28 : -0.55]}>
+      <Billboard ref={label} position={labelLocal(seat, you)} follow>
         <Text
-          fontSize={you ? 0.24 : 0.2}
+          fontSize={you ? 0.26 : 0.2}
           color={spec.color}
           anchorX="center"
           anchorY="bottom"
-          outlineWidth={0.028}
+          outlineWidth={0.034}
           outlineColor="#041018"
-          maxWidth={2.8}
-          lineHeight={1.15}
-          renderOrder={12}
+          maxWidth={3.2}
+          lineHeight={1.2}
+          renderOrder={40}
+          depthOffset={-8}
+          material-depthTest={false}
+          material-depthWrite={false}
         >
           {you ? `${spec.name}\nYOU` : spec.name}
         </Text>

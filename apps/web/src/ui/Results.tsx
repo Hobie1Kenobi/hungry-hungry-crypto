@@ -5,6 +5,11 @@ import { replayOnline } from '../net/session'
 import { useGameStore } from '../store/gameStore'
 import { useWalletStore } from '../wallet/walletStore'
 
+function shortMatchId(id: string): string {
+  if (id.length <= 16) return id
+  return `${id.slice(0, 8)}...${id.slice(-4)}`
+}
+
 function WinnerPortrait({ seat }: { seat: (typeof SEATS)[number] }) {
   const b = BEASTS[seat]
   return (
@@ -102,10 +107,10 @@ export function Results() {
               <h2 style={{ color: champ.color }}>
                 {isTie ? `TIE · ${champ.name} wins it` : `${champ.name} wins`}
               </h2>
-              <p className="tag" style={{ marginTop: 0 }}>
+              <p className="results-match">
                 {isTie
-                  ? `${tiedSeats.length} beasts share ${topScore}. First highest seat keeps the star. Match ${result.matchId}`
-                  : `Match ${result.matchId}`}
+                  ? `${tiedSeats.length} beasts share ${topScore}. First highest seat keeps the star. ${shortMatchId(result.matchId)}`
+                  : shortMatchId(result.matchId)}
               </p>
               <div className="score-burst" style={{ color: champ.color }}>
                 {result.scores[result.winner]}

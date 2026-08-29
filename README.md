@@ -68,7 +68,7 @@ Explorer: [testnet.xrpl.org](https://testnet.xrpl.org). WebSocket: `wss://s.altn
 
 ### 8-Minute Audit
 
-Cycle 9 latch / snap / GO-chips are proven on a 1280x800 box desktop. Cycle 10 is composition only (camera, CHOMP pin, lanes).
+Cycle 10 composition is proven on a 1280x800 box desktop (lanes, CHOMP pin, camera stays put). Cycle 11 is mid-round machine read.
 
 After PR #8, Practice vs AI fixed BYTEBITE's hold (cyan neck + score 0->22) and the 28+1 pond, but RIPSAW / GOLDGRUB / BLOCKMAW vacuumed early then froze (~43/43/41 from ~22s to the bell) while leftover chips sat in BYTEBITE's near-north lane and hopper waves stopped. This change:
 
