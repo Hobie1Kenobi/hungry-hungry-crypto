@@ -1,5 +1,5 @@
-import { EffectComposer, EffectComposerContext, Select, SelectiveBloom, Selection } from '@react-three/postprocessing'
-import { useContext, useLayoutEffect, useState, type ReactNode } from 'react'
+import { EffectComposer, Select, SelectiveBloom, Selection } from '@react-three/postprocessing'
+import { useLayoutEffect, useState, type ReactNode } from 'react'
 import { useFrame, useThree } from '@react-three/fiber'
 import type { Light, Object3D } from 'three'
 
@@ -29,14 +29,16 @@ export function BloomSelect({ children }: { children: ReactNode }) {
   )
 }
 
-function SceneLights() {
-  const scene = useThree((s) => s.scene)
-  const { composer } = useContext(EffectComposerContext)
-  const [lights, setLights] = useState<Object3D[]>([])
-
+function BloomWarmup() {
   useFrame(() => {
-    if (composer) composerPresents += 1
+    composerPresents += 1
   })
+  return null
+}
+
+function SceneBloom() {
+  const scene = useThree((s) => s.scene)
+  const [lights, setLights] = useState<Object3D[]>([])
 
   useLayoutEffect(() => {
     const found: Object3D[] = []
@@ -50,27 +52,28 @@ function SceneLights() {
   }, [scene])
 
   return (
-    <SelectiveBloom
-      lights={lights}
-      selectionLayer={BLOOM_LAYER}
-      intensity={1.7}
-      luminanceThreshold={0.12}
-      luminanceSmoothing={0.35}
-      mipmapBlur
-      radius={0.48}
-      levels={5}
-      ignoreBackground
-    />
+    <EffectComposer multisampling={0} stencilBuffer={false} autoClear={false}>
+      <SelectiveBloom
+        lights={lights}
+        selectionLayer={BLOOM_LAYER}
+        intensity={2.2}
+        luminanceThreshold={0.08}
+        luminanceSmoothing={0.3}
+        mipmapBlur
+        radius={0.52}
+        levels={5}
+        ignoreBackground
+      />
+    </EffectComposer>
   )
 }
 
 export function ArenaBloom({ children }: { children: ReactNode }) {
   return (
     <Selection>
-      <EffectComposer multisampling={0} stencilBuffer={false} autoClear={false}>
-        <SceneLights />
-      </EffectComposer>
       {children}
+      <BloomWarmup />
+      <SceneBloom />
     </Selection>
   )
 }

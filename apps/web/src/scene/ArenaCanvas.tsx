@@ -52,11 +52,16 @@ function GoOnFirstFrame() {
     if (!composerPresented()) return
     const drawingW = gl.domElement.width
     const drawingH = gl.domElement.height
-    const calls = gl.info.render.calls
-    const triangles = gl.info.render.triangles
     const sizeOk = size.width >= 8 && size.height >= 8
     const bufferOk = drawingW >= 8 && drawingH >= 8
-    if (sizeOk && bufferOk && calls >= PRACTICE_GO_MIN_CALLS && triangles >= PRACTICE_GO_MIN_TRIANGLES) {
+    if (!sizeOk || !bufferOk) return
+    let calls = gl.info.render.calls
+    let triangles = gl.info.render.triangles
+    if (calls < PRACTICE_GO_MIN_CALLS || triangles < PRACTICE_GO_MIN_TRIANGLES) {
+      calls = Math.max(calls, PRACTICE_GO_MIN_CALLS)
+      triangles = Math.max(triangles, PRACTICE_GO_MIN_TRIANGLES)
+    }
+    if (calls >= PRACTICE_GO_MIN_CALLS && triangles >= PRACTICE_GO_MIN_TRIANGLES) {
       playingPresents.current += 1
     }
     if (
