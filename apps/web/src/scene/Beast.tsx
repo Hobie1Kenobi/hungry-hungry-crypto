@@ -5,7 +5,7 @@ import type { Seat } from '@hhc/shared'
 import { BEASTS, NECK_VISUAL_ORIGIN, beastYaw } from '@hhc/shared'
 import { useJuiceStore } from '../game/juice'
 import { useGameStore } from '../store/gameStore'
-import { Chassis, HeadDressing, MachineMouth, MachineNeck } from './beasts/kits'
+import { Chassis, HeadDressing, MachineMouth, MachineNeck, useVisorMaterial } from './beasts/kits'
 import { beastNeckLift, beastVisualRoot, visualLaneHeadAlong } from './beasts/vinyl'
 
 const RING_COUNT = 5
@@ -28,6 +28,7 @@ export function Beast({ seat }: { seat: Seat }) {
   const antL = useRef<Group>(null)
   const antR = useRef<Group>(null)
   const visorMat = useRef<MeshBasicMaterial>(null)
+  const visor = useVisorMaterial(visorMat, seat === 3 ? spec.accent : spec.color)
   const mouthLight = useRef<PointLight>(null)
   const lastDown = useRef(false)
   const lastEat = useRef(0)
@@ -143,12 +144,12 @@ export function Beast({ seat }: { seat: Seat }) {
       </mesh>
       <group ref={rig}>
         <group ref={body} position={[0, 0.02, seat === 2 ? 0.08 : -0.18]}>
-          <Chassis seat={seat} />
+          <Chassis seat={seat} visor={visor} />
         </group>
         <group ref={neck} position={[0, beastNeckLift(seat), NECK_VISUAL_ORIGIN]}>
           <MachineNeck seat={seat} pistonRef={piston} ringsRef={ringsRef} color={spec.color} />
           <group ref={head} position={[0, 0.04, 1]} scale={you ? 1.22 : 1.12}>
-            <HeadDressing seat={seat} visorRef={visorMat} antL={antL} antR={antR} />
+            <HeadDressing seat={seat} visor={visor} antL={antL} antR={antR} />
             <MachineMouth jawsRef={jaws} seat={seat} />
             <pointLight ref={mouthLight} position={[0, 0.04, 0.62]} color="#ff6a88" intensity={3.2} distance={2.8} />
           </group>
