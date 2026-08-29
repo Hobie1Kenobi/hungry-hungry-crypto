@@ -52,9 +52,10 @@ function isRefillWave(id: string): boolean {
 
 export function PelletChip({ pellet }: { pellet: Pellet }) {
   const delay = useMemo(() => hashDelay(pellet.id), [pellet.id])
+  const refill = isRefillWave(pellet.id)
   const born = useRef(performance.now())
-  const grounded = useRef(!isRefillWave(pellet.id) || useGameStore.getState().dumpT >= 0.92)
-  const splashed = useRef(grounded.current)
+  const grounded = useRef(!refill)
+  const splashed = useRef(!refill)
   const group = useRef<Group>(null)
   const r = pellet.golden ? 0.4 : 0.3
   const restY = 0.08 + r
@@ -64,10 +65,9 @@ export function PelletChip({ pellet }: { pellet: Pellet }) {
 
   useFrame(() => {
     if (!group.current || pellet.eatenBy !== undefined) return
-    if (!grounded.current && useGameStore.getState().dumpT >= 0.92) {
+    const landed = !refill || useGameStore.getState().dumpT >= 0.92 || grounded.current
+    if (landed) {
       grounded.current = true
-    }
-    if (grounded.current) {
       group.current.position.set(pellet.x, restY, pellet.z)
       group.current.rotation.set(0.12, delay * 4, 0.08)
       return
@@ -92,7 +92,7 @@ export function PelletChip({ pellet }: { pellet: Pellet }) {
   if (pellet.eatenBy !== undefined) return null
 
   return (
-    <group ref={group} position={grounded.current ? [pellet.x, restY, pellet.z] : [HOPPER_MOUTH.x, HOPPER_MOUTH.y, HOPPER_MOUTH.z]}>
+    <group ref={group} position={[pellet.x, restY, pellet.z]}>
       <mesh castShadow>
         <sphereGeometry args={[r, 28, 22]} />
         <meshPhysicalMaterial
