@@ -100,8 +100,8 @@ function LiveScores() {
         return (
           <div key={seat} className={`score-card${seat === localSeat ? ' you' : ''}`}>
             <div className="name" style={{ color: b.color }}>
-              {b.name}
-              {` · ${seatLabel(seat, localSeat, occupants)}`}
+              <span>{b.name}</span>
+              <em>{seatLabel(seat, localSeat, occupants)}</em>
             </div>
             <div className="pts">{scores[seat]}</div>
             {pops

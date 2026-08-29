@@ -49,6 +49,7 @@ h2,
 .canvas-wrap {
   position: absolute;
   inset: 0;
+  pointer-events: none;
 }
 
 .overlay {
@@ -59,21 +60,24 @@ h2,
 }
 
 .lobby {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
   min-height: 100%;
   display: grid;
   place-items: center;
   padding: 32px 20px;
   background:
-    radial-gradient(1200px 600px at 50% -10%, rgba(0, 229, 255, 0.16), transparent 55%),
-    radial-gradient(800px 500px at 100% 80%, rgba(255, 43, 214, 0.1), transparent 50%),
-    radial-gradient(700px 400px at 0% 90%, rgba(184, 255, 44, 0.08), transparent 50%),
-    var(--bg);
+    radial-gradient(1200px 600px at 50% -10%, rgba(0, 229, 255, 0.12), transparent 55%),
+    radial-gradient(800px 500px at 100% 80%, rgba(255, 43, 214, 0.08), transparent 50%),
+    radial-gradient(700px 400px at 0% 90%, rgba(184, 255, 44, 0.06), transparent 50%),
+    rgba(12, 10, 14, 0.42);
 }
 
 .lobby-card {
   width: min(720px, 100%);
   border: 1px solid var(--line);
-  background: var(--panel);
+  background: rgba(8, 10, 16, 0.88);
   backdrop-filter: blur(16px);
   padding: 36px 32px 28px;
   box-shadow: 0 0 80px rgba(0, 229, 255, 0.08);
@@ -314,9 +318,9 @@ h2,
 
 .scoreboard {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(118px, 1fr));
   gap: 6px;
-  width: min(560px, 72%);
+  width: min(640px, 78%);
 }
 
 .score-card {
@@ -324,8 +328,9 @@ h2,
   pointer-events: none;
   background: var(--panel);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  padding: 4px 7px;
-  overflow: hidden;
+  padding: 5px 8px 4px;
+  overflow: visible;
+  min-width: 0;
 }
 
 .score-card.you {
@@ -333,9 +338,21 @@ h2,
 }
 
 .score-card .name {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1px;
   font-family: Orbitron, sans-serif;
   font-size: 10px;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.08em;
+  line-height: 1.15;
+}
+
+.score-card .name em {
+  font-style: normal;
+  font-size: 8px;
+  letter-spacing: 0.14em;
+  color: var(--muted);
 }
 
 .score-card .pts {
@@ -456,9 +473,10 @@ h2,
 .chomp-btn {
   pointer-events: auto;
   appearance: none;
-  min-width: 168px;
-  min-height: 72px;
-  padding: 14px 24px;
+  position: relative;
+  min-width: 176px;
+  min-height: 78px;
+  padding: 14px 24px 18px;
   border: 2px solid #b8fbff;
   background: var(--cyan);
   color: #041016;
@@ -471,19 +489,38 @@ h2,
   border-radius: 10px;
   transform: translateY(0);
   box-shadow:
-    0 12px 0 #007a88,
-    0 12px 28px rgba(0, 229, 255, 0.45);
-  transition: transform 60ms linear, box-shadow 60ms linear, filter 60ms linear;
+    0 18px 0 #007a88,
+    0 18px 32px rgba(0, 229, 255, 0.5);
+  transition: transform 70ms linear, box-shadow 70ms linear, filter 70ms linear;
+}
+
+.chomp-btn::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: -18px;
+  width: 28px;
+  height: 22px;
+  margin-left: -14px;
+  border-radius: 6px 6px 2px 2px;
+  background: #d7fbff;
+  box-shadow: 0 -6px 0 #8fe7f2;
 }
 
 .chomp-btn:active,
 .chomp-btn.held {
-  transform: translateY(16px) scale(0.94);
-  filter: brightness(1.32);
+  transform: translateY(22px) scale(0.93);
+  filter: brightness(1.38);
   box-shadow:
     0 0 0 #007a88,
-    0 0 56px rgba(0, 229, 255, 1),
-    0 0 18px #fff inset;
+    0 0 64px rgba(0, 229, 255, 1),
+    0 0 22px #fff inset;
+}
+
+.chomp-btn.held::after {
+  top: -6px;
+  height: 10px;
+  box-shadow: 0 0 16px #fff;
 }
 
 .results {

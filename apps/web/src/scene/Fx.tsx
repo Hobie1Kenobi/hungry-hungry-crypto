@@ -32,7 +32,7 @@ function EatTrails() {
         child.visible = false
         continue
       }
-      const t = (now - ev.at) / 560 - lane * 0.07
+      const t = (now - ev.at) / 820 - lane * 0.08
       if (t <= 0 || t >= 1) {
         child.visible = false
         continue
@@ -41,7 +41,7 @@ function EatTrails() {
       const k = t * t
       child.visible = true
       child.position.set(ev.x + (mx - ev.x) * k, 0.42 + (my - 0.42) * k, ev.z + (mz - ev.z) * k)
-      child.scale.setScalar((ev.golden ? 0.42 : 0.32) * (1 - t))
+      child.scale.setScalar((ev.golden ? 0.62 : 0.48) * (1 - t * 0.85))
     }
   })
 
