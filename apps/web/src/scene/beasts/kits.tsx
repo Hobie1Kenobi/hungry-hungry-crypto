@@ -236,7 +236,7 @@ function Teeth({
         return (
           <group key={i} position={[x, y, 0.28]}>
             <mesh castShadow>
-              <boxGeometry args={[0.16, 0.34, 0.16]} />
+              <boxGeometry args={[0.2, 0.42, 0.2]} />
               <meshPhysicalMaterial
                 color={gilded ? '#D4AF37' : '#fff6e8'}
                 metalness={gilded ? 0.8 : 0.42}
@@ -271,16 +271,20 @@ export function MachineMouth({
   const wide = seat === 2 ? 1.12 : 1
   return (
     <group>
-      <RoundedBox args={[2.05 * wide, 0.62, 1.22]} radius={0.1} smoothness={4} position={[0, 0.12, -0.18]} castShadow>
+      <RoundedBox args={[2.15 * wide, 0.7, 1.35]} radius={0.1} smoothness={4} position={[0, 0.14, -0.12]} castShadow>
         <meshPhysicalMaterial {...vinyl(color, { metalness: seat === 3 ? 0.38 : 0.22 })} />
       </RoundedBox>
-      <mesh position={[0, 0.02, 0.22]}>
-        <boxGeometry args={[1.72 * wide, 0.62, 0.85]} />
+      <mesh position={[0, 0.02, 0.38]} castShadow>
+        <boxGeometry args={[1.86 * wide, 0.72, 1.05]} />
         <meshStandardMaterial color="#14080c" roughness={0.92} />
       </mesh>
-      <mesh position={[0, 0.02, 0.48]}>
-        <planeGeometry args={[1.55 * wide, 0.5]} />
-        <meshBasicMaterial color="#3a1020" transparent opacity={0.55} />
+      <mesh position={[0, 0.02, 0.72]}>
+        <boxGeometry args={[1.7 * wide, 0.42, 0.18]} />
+        <meshStandardMaterial color="#2a0c16" roughness={0.9} />
+      </mesh>
+      <mesh position={[0, 0.02, 0.62]}>
+        <planeGeometry args={[1.62 * wide, 0.55]} />
+        <meshBasicMaterial color="#ff4d6d" transparent opacity={0.35} />
       </mesh>
       <group ref={jawsRef} position={[0, 0.02, 0.32]}>
         <mesh position={[0, 0, 0.02]} visible={false}>

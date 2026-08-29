@@ -26,22 +26,22 @@ function HydraulicNeck({
   const ringColor = gold ? '#D4AF37' : '#e6edf2'
   return (
     <group>
-      <mesh rotation={[Math.PI / 2, 0, 0]} position={[0, 0, 0.18]} castShadow>
-        <cylinderGeometry args={[0.5, 0.56, 0.36, 8]} />
+      <mesh rotation={[Math.PI / 2, 0, 0]} position={[0, 0, 0.16]} castShadow>
+        <cylinderGeometry args={[0.58, 0.64, 0.4, 8]} />
         <meshStandardMaterial color={ringColor} metalness={0.9} roughness={0.14} />
       </mesh>
       <mesh rotation={[Math.PI / 2, 0, 0]} position={[0, 0, 0.52]} castShadow>
-        <cylinderGeometry args={[0.44, 0.48, 0.72, 8]} />
+        <cylinderGeometry args={[0.5, 0.54, 0.78, 8]} />
         <meshStandardMaterial color="#8b96a2" metalness={0.78} roughness={0.22} />
       </mesh>
       <mesh ref={pistonRef} rotation={[Math.PI / 2, 0, 0]} position={[0, 0, 1.2]} castShadow>
-        <cylinderGeometry args={[0.36, 0.38, 1, 10]} />
+        <cylinderGeometry args={[0.4, 0.42, 1, 10]} />
         <meshStandardMaterial color={color} metalness={0.58} roughness={0.26} />
       </mesh>
       <group ref={ringsRef}>
         {rings.map((i) => (
           <mesh key={i} rotation={[Math.PI / 2, 0, 0]} castShadow>
-            <torusGeometry args={[0.42, 0.075, 8, 16]} />
+            <torusGeometry args={[0.48, 0.1, 8, 16]} />
             <meshStandardMaterial color={ringColor} metalness={0.92} roughness={0.12} />
           </mesh>
         ))}
@@ -171,12 +171,12 @@ export function Beast({ seat }: { seat: Seat }) {
         <meshStandardMaterial color={spec.color} transparent opacity={0.18} />
       </mesh>
       <group ref={rig}>
-        <group ref={body} position={[0, 0.02, -0.12]}>
+        <group ref={body} position={[0, 0.02, seat === 2 || seat === 3 ? 0.06 : -0.08]}>
           <Chassis seat={seat} />
         </group>
         <group position={[0, BEAST_NECK_LIFT, 0.42]}>
           <HydraulicNeck pistonRef={piston} ringsRef={ringsRef} color={spec.color} gold={gold} />
-          <group ref={head} position={[0, 0.02, 1]}>
+          <group ref={head} position={[0, 0.02, 1]} scale={1.22}>
             <HeadDressing seat={seat} visorRef={visorMat} antL={antL} antR={antR} />
             <MachineMouth jawsRef={jaws} seat={seat} />
             <pointLight ref={mouthLight} position={[0, 0.02, 0.55]} color="#ff6a88" intensity={1.2} distance={2.4} />

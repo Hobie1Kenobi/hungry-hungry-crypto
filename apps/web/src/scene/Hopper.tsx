@@ -52,41 +52,41 @@ function Gantry() {
   const gold = { color: '#d4af37', metalness: 0.82, roughness: 0.22 }
   return (
     <group>
-      <mesh position={[0, 0.28, -6.52]} castShadow>
-        <boxGeometry args={[2.6, 0.22, 0.7]} />
+      <mesh position={[0, 0.32, -6.55]} castShadow>
+        <boxGeometry args={[3.1, 0.32, 0.95]} />
         <meshStandardMaterial {...steel} />
       </mesh>
-      {[-1.05, 1.05].map((x) => (
+      {[-1.15, 1.15].map((x) => (
         <group key={x}>
-          <mesh position={[x, 2.35, -6.48]} castShadow>
-            <boxGeometry args={[0.22, 4.2, 0.22]} />
+          <mesh position={[x, 2.4, -6.5]} castShadow>
+            <boxGeometry args={[0.34, 4.3, 0.34]} />
             <meshStandardMaterial {...steel} />
           </mesh>
-          <mesh position={[x, 4.48, -6.48]} castShadow>
-            <boxGeometry args={[0.38, 0.16, 0.38]} />
+          <mesh position={[x, 4.58, -6.5]} castShadow>
+            <boxGeometry args={[0.5, 0.2, 0.5]} />
             <meshStandardMaterial {...gold} />
           </mesh>
         </group>
       ))}
-      <mesh position={[0, 4.52, -6.48]} castShadow>
-        <boxGeometry args={[2.4, 0.18, 0.28]} />
+      <mesh position={[0, 4.62, -6.5]} castShadow>
+        <boxGeometry args={[2.7, 0.24, 0.4]} />
         <meshStandardMaterial {...gold} />
       </mesh>
-      <mesh position={[0, 4.42, -3.2]} castShadow>
-        <boxGeometry args={[0.28, 0.2, 6.6]} />
+      <mesh position={[0, 4.5, -3.2]} castShadow>
+        <boxGeometry args={[0.42, 0.28, 6.7]} />
         <meshStandardMaterial {...steel} />
       </mesh>
-      <mesh position={[0, 3.55, -4.55]} rotation={[0.38, 0, 0]} castShadow>
-        <boxGeometry args={[0.14, 0.14, 3.4]} />
+      <mesh position={[0, 3.5, -4.5]} rotation={[0.4, 0, 0]} castShadow>
+        <boxGeometry args={[0.2, 0.2, 3.6]} />
         <meshStandardMaterial {...steel} />
       </mesh>
-      <mesh position={[0, 4.42, -0.15]} castShadow>
-        <boxGeometry args={[1.15, 0.16, 0.7]} />
+      <mesh position={[0, 4.5, -0.1]} castShadow>
+        <boxGeometry args={[1.35, 0.22, 0.85]} />
         <meshStandardMaterial {...gold} />
       </mesh>
-      {[-0.38, 0.38].map((x) => (
-        <mesh key={x} position={[x, 4.12, 0]} castShadow>
-          <boxGeometry args={[0.08, 0.55, 0.08]} />
+      {[-0.42, 0.42].map((x) => (
+        <mesh key={x} position={[x, 4.16, 0]} castShadow>
+          <boxGeometry args={[0.12, 0.62, 0.12]} />
           <meshStandardMaterial color="#8a94a0" metalness={0.8} roughness={0.22} />
         </mesh>
       ))}

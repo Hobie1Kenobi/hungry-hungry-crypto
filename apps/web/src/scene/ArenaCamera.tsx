@@ -8,9 +8,9 @@ import { useViewStore } from '../store/viewStore'
 const look = new Vector3()
 const pos = new Vector3()
 
-const TOY_DIST = 22.6
-const TOY_ELEV = 0.73
-const TOY_AZ = 0.64
+const TOY_DIST = 27.4
+const TOY_ELEV = 0.7
+const TOY_AZ = 0.56
 const SHAKE_MS = 120
 
 export function ArenaCamera() {
@@ -57,9 +57,9 @@ export function ArenaCamera() {
     const goldenLive = pellets.some((p) => p.golden && p.eatenBy === undefined && dumpT > 0.55)
     const zoom = goldenLive ? 0.985 : 1
     const elev = TOY_ELEV
-    const swing = ui === 'results' ? Math.sin(clock.elapsedTime * 0.35) * 0.2 : 0
+    const swing = ui === 'results' ? Math.sin(clock.elapsedTime * 0.32) * 0.12 : 0
     const az = TOY_AZ + swing
-    const dist = (ui === 'results' ? TOY_DIST + 1.1 : TOY_DIST) * dolly * zoom
+    const dist = (ui === 'results' ? TOY_DIST + 1.4 : TOY_DIST) * dolly * zoom
     const x = dist * Math.cos(elev) * Math.sin(az)
     const y = dist * Math.sin(elev)
     const z = dist * Math.cos(elev) * Math.cos(az)
@@ -79,9 +79,9 @@ export function ArenaCamera() {
     } else {
       cam.position.lerp(pos, 1 - Math.pow(0.0004, dt))
     }
-    look.set(ui === 'results' ? 0 : -0.55, 0.06, result ? 0 : 0.72)
+    look.set(ui === 'results' ? -0.35 : -1.2, 0.22, result ? 0.45 : 1.45)
     cam.lookAt(look)
-    cam.fov = aspect < 1.1 ? 42 : 40
+    cam.fov = aspect < 1.1 ? 48 : 45
     cam.near = 0.1
     cam.far = 90
     cam.updateProjectionMatrix()
