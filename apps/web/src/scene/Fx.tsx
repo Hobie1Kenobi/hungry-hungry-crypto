@@ -6,6 +6,7 @@ import { BEASTS } from '@hhc/shared'
 import { useJuiceStore } from '../game/juice'
 import { useGameStore } from '../store/gameStore'
 import { visualMouthWorld } from './beasts/vinyl'
+import { POND_LIQUID_Y } from './Pond'
 
 function mouthWorld(seat: 0 | 1 | 2 | 3, extend: number): [number, number, number] {
   const { x, y, z } = visualMouthWorld(seat, extend)
@@ -61,47 +62,111 @@ function EatTrails() {
   )
 }
 
+const DROP_DIRS = [
+  [0.28, 0.34],
+  [-0.26, 0.3],
+  [0.12, -0.32],
+  [-0.3, -0.16],
+] as const
+
+const SPLASH_POOL = 10
+const SPLASH_MS = 1100
+
 function Splashes() {
-  const splashes = useJuiceStore((s) => s.splashes)
   const group = useRef<Group>(null)
 
   useFrame(() => {
     if (!group.current) return
     const now = performance.now()
-    for (let i = 0; i < group.current.children.length; i += 1) {
-      const child = group.current.children[i] as Mesh
-      const ev = splashes[i]
+    const events = useJuiceStore.getState().splashes
+    for (let i = 0; i < SPLASH_POOL; i += 1) {
+      const burst = group.current.children[i]
+      const ev = events[events.length - 1 - i]
       if (!ev) {
-        child.visible = false
+        burst.visible = false
         continue
       }
-      const t = (now - ev.at) / 420
-      if (t >= 1) {
-        child.visible = false
+      const t = (now - ev.at) / SPLASH_MS
+      if (t < 0 || t >= 1) {
+        burst.visible = false
         continue
       }
-      child.visible = true
-      child.position.set(ev.x, -0.04, ev.z)
-      const s = 0.2 + t * 1.4
-      child.scale.set(s, 1, s)
-      const mat = child.material as { opacity: number }
-      mat.opacity = 0.45 * (1 - t)
+      burst.visible = true
+      burst.position.set(ev.x, POND_LIQUID_Y + 0.06, ev.z)
+      const flash = burst.children[0] as Mesh
+      flash.scale.setScalar(0.9 + t * 1.4)
+      const flashMat = flash.material as { opacity: number }
+      flashMat.opacity = t < 0.45 ? 0.85 * (1 - t / 0.45) : 0
+      const ring = burst.children[1] as Mesh
+      ring.scale.set(1 + t * 3.6, 1, 1 + t * 3.6)
+      const ringMat = ring.material as { opacity: number }
+      ringMat.opacity = 0.95 * (1 - t)
+      const inner = burst.children[2] as Mesh
+      inner.scale.set(0.55 + t * 2.2, 1, 0.55 + t * 2.2)
+      const innerMat = inner.material as { opacity: number }
+      innerMat.opacity = 0.85 * (1 - t)
+      for (let d = 0; d < DROP_DIRS.length; d += 1) {
+        const drop = burst.children[d + 3] as Mesh
+        const [dx, dz] = DROP_DIRS[d]
+        drop.position.set(dx * t * 2.4, Math.sin(t * Math.PI) * 0.85, dz * t * 2.4)
+        drop.scale.setScalar(1.2 * (1 - t * 0.45))
+        const dropMat = drop.material as { opacity: number }
+        dropMat.opacity = 0.98 * (1 - t)
+      }
     }
   })
 
   return (
     <group ref={group}>
-      {splashes.map((ev) => (
-        <mesh key={ev.id} rotation={[-Math.PI / 2, 0, 0]} visible={false}>
-          <ringGeometry args={[0.18, 0.28, 20]} />
-          <meshBasicMaterial
-            color="#8ef2ff"
-            transparent
-            opacity={0.4}
-            blending={AdditiveBlending}
-            depthWrite={false}
-          />
-        </mesh>
+      {Array.from({ length: SPLASH_POOL }, (_, i) => (
+        <group key={i} visible={false}>
+          <mesh rotation={[-Math.PI / 2, 0, 0]} renderOrder={11}>
+            <circleGeometry args={[0.7, 20]} />
+            <meshBasicMaterial
+              color="#f5ffff"
+              transparent
+              opacity={0.85}
+              blending={AdditiveBlending}
+              depthWrite={false}
+              depthTest={false}
+            />
+          </mesh>
+          <mesh rotation={[-Math.PI / 2, 0, 0]} renderOrder={12}>
+            <ringGeometry args={[0.28, 0.5, 24]} />
+            <meshBasicMaterial
+              color="#e8ffff"
+              transparent
+              opacity={0.9}
+              blending={AdditiveBlending}
+              depthWrite={false}
+              depthTest={false}
+            />
+          </mesh>
+          <mesh rotation={[-Math.PI / 2, 0, 0]} renderOrder={12}>
+            <ringGeometry args={[0.1, 0.24, 20]} />
+            <meshBasicMaterial
+              color="#9ef2ff"
+              transparent
+              opacity={0.8}
+              blending={AdditiveBlending}
+              depthWrite={false}
+              depthTest={false}
+            />
+          </mesh>
+          {DROP_DIRS.map(([dx, dz]) => (
+            <mesh key={`${dx}:${dz}`} renderOrder={13}>
+              <sphereGeometry args={[0.12, 8, 6]} />
+              <meshBasicMaterial
+                color="#f4ffff"
+                transparent
+                opacity={0.98}
+                blending={AdditiveBlending}
+                depthWrite={false}
+                depthTest={false}
+              />
+            </mesh>
+          ))}
+        </group>
       ))}
     </group>
   )

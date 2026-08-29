@@ -658,3 +658,49 @@ Play path stays locked: Practice CHOMP is a latch (tap on, tap off). Space is ho
 
 Cycle 19: volume pond + splash. Not another TOY_POS.
 
+## Cycle 19 — 2026-08-29 America/Chicago
+
+Hats used: **HAT DIRECTOR** (Cycle 18 live LOOK leftovers), **ATLAS** (Path B lock).
+
+Path B remains locked: `apps/web` stays Vite + React 18 + R3F + drei. No Godot, Unreal, Unity, Babylon, Rapier rewrite. No new modes, shops, quests, tokenomics, engine rewrite. No Mainnet. No Hooks. No EVM. Applications stay locked. Practice local.
+
+Hobie lock this cycle: camera stays locked. This cycle is volume pond + splash only. Do not slide `TOY_POS` / `TOY_LOOK` / `TOY_FOV`. Do not rewrite results camera.
+
+Cycle 18 live Practice on a 1280x800 box desktop, one Chrome tab (`c80180c`) is the incoming ground truth. Do not invent new scores.
+
+- LIVE Cycle 18 scores (do not invent): RIPSAW 12 (tie win) / BLOCKMAW 12 / BYTEBITE 9 / GOLDGRUB 8.
+- LOOK PASSED (FOV 39 reframe). Four feet in with air. CROSS hub in frame. RIPSAW on its lane. Do not regress that.
+- Image 1 / first-45s.webp 45.0s: warm 3D. Four feet in with air. CROSS hub in frame. RIPSAW on its lane. FAIL: pond is still a cheap hex/caustic PLANE. Dark but flat. Reads as a generic board, not a dish of liquid.
+- Image 2 / mid-round.webp: same plane. No splash readable on eat/dump.
+- Cycle 18 WINS to keep: GO contract (clock frozen at 45.0s until presented warm 3D; GoOnFirstFrame drops first playing useFrame, then practiceGoReady with drawing buffer / calls 6 / triangles 800 / presents 2). BYTEBITE feet in frame with air. FOV 39. Raised CROSS. Visual rams 0.62/0.94. Opaque steel rams. HUD you-plate + CHOMP pin. Latch CHOMP. No Html tags. No HOLD/EXT on default HUD. Playing camera fixed behind BYTEBITE. Sticky left-docked results. pickWinner first highest seat. No setViewOffset pad. Camera constants locked.
+
+### Why this cycle is volume pond, not another TOY_POS
+
+Cycles 14-17 slid the camera. Cycle 18 locked FOV 39 and LOOK passed. Hobie killed the camera spiral. Locked playing camera stays:
+
+- `TOY_POS` { x: -4.05, y: 9.48, z: -12.28 }
+- `TOY_LOOK` { x: 0.0, y: 0.42, z: -0.95 }
+- `TOY_FOV` 39
+
+Results `RESULTS_*` not touched. Results is a later cycle. If a foot clips, stop and report; do not TOY_POS.
+
+### What changed
+
+- Pond is a shallow darker dish, not a flat quad on the table. Table cabinet / apron / play plate now leave a `POND_SIZE` hole. Well floor + sloped liners sit in that hole. Liquid at y=-0.05 is darker than the Cycle 18 plane. CROSS stays proud on the liquid (beds 0.04, rails 0.22, hub 0.12). Lane gutters stay. Chips still sit ON the liquid (same `restY` 0.08+r). Eat AABBs still use sim pellet `x`/`z`. `POND_SIZE` unchanged.
+- Cheap ripple on eat and hopper dump. Tiny splash sprites at eat / land / dump. Hooked the existing juice bus: `notifyEat` and `notifyDump` now push `splashes[]`. Practice dump juice fires on `markMatchGo` so the first playing frame can show it (not under the lobby card). `PelletChip` already called `notifySplash` on land. `Fx` draws a flash + rings + droplet sprites on that list. Pond draws surface ripple rings from the same list. Dump ripples sit in the four open quadrants, not under the CROSS hub. No second juice bus. No fluid sim. No postprocessing water. No Rapier. No bloom.
+- Play path untouched: latch CHOMP, same `chompReach` / AABB / `BEAST_OFFSET` / `NECK_EXTEND_SPEED` on all four seats. AI not nerfed. GO contract unchanged. Hitch clamp stays. `PRACTICE_GO_DUMP_T` still lands on GO. Canvas wrap / WebGL clear stay warm #eddcc6. drei `Preload all` stays. Dish is boxes + one liquid plane so the first frame stays warm 3D. Camera constants unchanged. No GLB. No chip squash/trail. No results-camera rewrite. No HungryRoom sync. No XRPL.
+
+Play path stays locked: Practice CHOMP is a latch (tap on, tap off). Space is hold-while-down. No cooldown, fatigue, auto-unlatch, or eat-cost. Do not nerf the player. Do not nerf AI. GO on first presented frame, `PRACTICE_MAX_STEP_DT` hitch clamp, `practiceWallClock` after GO, `PRACTICE_GO_DUMP_T` landed, seat-0 hold-scores + mid-pond reach tests, 28+1 pond, hopper refill + `dumpT` reset, AI nibble after t=22s, Practice `txHashes: []`. Locked types unchanged. Eat AABBs still use sim pellet `x`/`z`. Same reach / AABB on all four seats. Sticky left-docked results stay inert until leftover captured pointer is up. Default Practice HUD does not ship HOLD/EXT or CAM TOY. Playing camera is a fixed behind-BYTEBITE toy-ad. pickWinner is still first highest seat.
+
+### Five leftover notes
+
+1. Glow is still additive materials. No real bloom pass on visor / golden / hopper sparks.
+2. Kits are in-engine primitives. They are four machines now; they are not hero sculpts.
+3. BYTEBITE is still the shared in-engine CRT kit, not a GLB.
+4. Results is still a CSS card. Cycle 17 LOOK failed on results crash-zoom. This cycle did not touch results camera.
+5. Online HungryRoom still uses the server tick. Only Practice waits for GO and clamps a hitch step.
+
+### Next action
+
+Cycle 20: SelectiveBloom on visor / golden / hopper sparks only. Practice local. No Mainnet.
+

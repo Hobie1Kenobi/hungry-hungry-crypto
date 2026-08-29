@@ -1,5 +1,66 @@
+import { POND_SIZE } from '@hhc/shared'
+
 const TABLE = 13.4
 const APRON = 12.6
+const PLAY = 10.2
+const HOLE = POND_SIZE + 0.2
+
+function SlabMat({
+  color,
+  metalness,
+  roughness,
+  physical,
+}: {
+  color: string
+  metalness: number
+  roughness: number
+  physical?: boolean
+}) {
+  return physical ? (
+    <meshPhysicalMaterial color={color} metalness={metalness} roughness={roughness} clearcoat={0.7} clearcoatRoughness={0.24} />
+  ) : (
+    <meshStandardMaterial color={color} metalness={metalness} roughness={roughness} />
+  )
+}
+
+function CutoutSlab({
+  size,
+  hole,
+  y,
+  height,
+  color,
+  metalness,
+  roughness,
+  physical,
+}: {
+  size: number
+  hole: number
+  y: number
+  height: number
+  color: string
+  metalness: number
+  roughness: number
+  physical?: boolean
+}) {
+  const band = (size - hole) / 2
+  const mid = hole / 2 + band / 2
+  const faces: Array<[number, number, number, number, number]> = [
+    [0, mid, size, height, band],
+    [0, -mid, size, height, band],
+    [mid, 0, band, height, hole],
+    [-mid, 0, band, height, hole],
+  ]
+  return (
+    <group>
+      {faces.map(([x, z, w, h, d]) => (
+        <mesh key={`${x}:${z}`} position={[x, y, z]} receiveShadow castShadow>
+          <boxGeometry args={[w, h, d]} />
+          <SlabMat color={color} metalness={metalness} roughness={roughness} physical={physical} />
+        </mesh>
+      ))}
+    </group>
+  )
+}
 
 function Rivets() {
   const spots: Array<[number, number, number]> = []
@@ -55,30 +116,9 @@ function SideStripe({ color, pos, rot }: { color: string; pos: [number, number, 
 export function Table() {
   return (
     <group>
-      <mesh position={[0, -0.28, 0]} receiveShadow castShadow>
-        <boxGeometry args={[TABLE, 0.62, TABLE]} />
-        <meshPhysicalMaterial
-          color="#2a3d52"
-          metalness={0.3}
-          roughness={0.32}
-          clearcoat={0.7}
-          clearcoatRoughness={0.24}
-        />
-      </mesh>
-      <mesh position={[0, 0.06, 0]} receiveShadow>
-        <boxGeometry args={[APRON, 0.1, APRON]} />
-        <meshPhysicalMaterial
-          color="#145864"
-          metalness={0.38}
-          roughness={0.3}
-          clearcoat={0.75}
-          clearcoatRoughness={0.2}
-        />
-      </mesh>
-      <mesh position={[0, 0.14, 0]} receiveShadow>
-        <boxGeometry args={[10.2, 0.08, 10.2]} />
-        <meshStandardMaterial color="#102028" metalness={0.2} roughness={0.55} />
-      </mesh>
+      <CutoutSlab size={TABLE} hole={HOLE} y={-0.28} height={0.62} color="#2a3d52" metalness={0.3} roughness={0.32} physical />
+      <CutoutSlab size={APRON} hole={HOLE} y={0.06} height={0.1} color="#145864" metalness={0.38} roughness={0.3} physical />
+      <CutoutSlab size={PLAY} hole={HOLE} y={0.14} height={0.08} color="#102028" metalness={0.2} roughness={0.55} />
       <mesh position={[0, -0.12, -TABLE / 2 - 0.06]} castShadow>
         <boxGeometry args={[TABLE + 0.2, 0.85, 0.22]} />
         <meshPhysicalMaterial color="#243140" metalness={0.3} roughness={0.38} clearcoat={0.5} />

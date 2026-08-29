@@ -182,13 +182,13 @@ export const useGameStore = create<GameState>((set, get) => ({
       netLeave: null,
     })
     sfxHopperDump()
-    useJuiceStore.getState().notifyDump()
   },
 
   markMatchGo: (now = performance.now()) => {
     const state = get()
     if (state.ui !== 'playing' || state.matchClockOrigin > 0) return
     set({ matchClockOrigin: now, timeLeft: ROUND_SECONDS })
+    if (state.playMode === 'practice') useJuiceStore.getState().notifyDump()
   },
 
   tick: (dt, now = performance.now()) => {

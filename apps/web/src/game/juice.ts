@@ -43,6 +43,7 @@ export const useJuiceStore = create<JuiceState>((set) => ({
     const at = performance.now()
     set((s) => ({
       eats: [...s.eats.slice(-16), { id: nextId++, seat, x, z, golden, at }],
+      splashes: [...s.splashes.slice(-20), { id: nextId++, x, z, at }],
       shakeAt: at,
       popSeq: s.popSeq + 1,
     }))
@@ -50,7 +51,19 @@ export const useJuiceStore = create<JuiceState>((set) => ({
   notifyMiss: (seat) => {
     set((s) => ({ misses: { ...s.misses, [seat]: performance.now() } }))
   },
-  notifyDump: () => set({ dumpAt: performance.now() }),
+  notifyDump: () => {
+    const at = performance.now()
+    const dumps: SplashJuice[] = [
+      { id: nextId++, x: -1.85, z: -1.85, at },
+      { id: nextId++, x: 1.85, z: -1.85, at },
+      { id: nextId++, x: -1.85, z: 1.85, at },
+      { id: nextId++, x: 1.85, z: 1.85, at },
+    ]
+    set((s) => ({
+      dumpAt: at,
+      splashes: [...s.splashes.slice(-16), ...dumps],
+    }))
+  },
   notifySplash: (x, z) => {
     const at = performance.now()
     set((s) => ({
