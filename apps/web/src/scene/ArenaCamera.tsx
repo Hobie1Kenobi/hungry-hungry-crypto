@@ -1,36 +1,24 @@
 import { useFrame, useThree } from '@react-three/fiber'
 import { useRef } from 'react'
 import { MathUtils, type PerspectiveCamera, Vector3 } from 'three'
-import type { Seat } from '@hhc/shared'
 import { useJuiceStore } from '../game/juice'
 import { useGameStore } from '../store/gameStore'
 import { useViewStore } from '../store/viewStore'
-import { beastVisualRoot } from './beasts/vinyl'
+import { RESULT_HERO } from './beasts/vinyl'
 
 const look = new Vector3()
 const pos = new Vector3()
 
-export const TOY_POS = { x: 5.18, y: 8.85, z: -8.62 }
-export const TOY_LOOK = { x: 0.12, y: 0.52, z: -1.05 }
-export const TOY_FOV = 38
+export const TOY_POS = { x: 4.72, y: 9.28, z: -10.15 }
+export const TOY_LOOK = { x: 0.06, y: 0.92, z: -2.28 }
+export const TOY_FOV = 36
 const SHAKE_MS = 120
+
+/** Winner parks on this pad so the body sits in the open pond right of the left card. */
+export const RESULT_POS = { x: 6.15, y: 5.85, z: -4.55 }
 
 export function toyCameraPosition(): [number, number, number] {
   return [TOY_POS.x, TOY_POS.y, TOY_POS.z]
-}
-
-function resultShot(seat: Seat): { px: number; py: number; pz: number; lx: number; ly: number; lz: number } {
-  const [wx, , wz] = beastVisualRoot(seat)
-  switch (seat) {
-    case 0:
-      return { px: 5.25, py: 6.42, pz: -8.35, lx: wx + 1.55, ly: 1.2, lz: wz + 0.55 }
-    case 1:
-      return { px: 1.65, py: 6.5, pz: -5.55, lx: wx - 0.2, ly: 1.18, lz: wz }
-    case 2:
-      return { px: 5.2, py: 6.62, pz: -3.4, lx: wx + 1.7, ly: 1.22, lz: wz - 0.55 }
-    case 3:
-      return { px: 4.55, py: 6.48, pz: -5.25, lx: wx + 1.85, ly: 1.18, lz: wz + 0.45 }
-  }
 }
 
 export function ArenaCamera() {
@@ -46,7 +34,7 @@ export function ArenaCamera() {
     const cam = camera as PerspectiveCamera
     const aspect = width / Math.max(1, height)
     const debug = useViewStore.getState().debugTopDown
-    const { ui, dumpT, lastEatAt, pellets, result } = useGameStore.getState()
+    const { ui, dumpT, lastEatAt, pellets } = useGameStore.getState()
     const shakeAt = useJuiceStore.getState().shakeAt
     const now = performance.now()
 
@@ -95,10 +83,9 @@ export function ArenaCamera() {
 
     const snap = ui === 'results' || (playBorn.current && now - playBorn.current < 32) || now < shakeUntil.current
     if (ui === 'results') {
-      const shot = resultShot(result?.winner ?? 0)
       const swing = Math.sin(clock.elapsedTime * 0.22) * 0.08
-      pos.set(shot.px + sx + swing, shot.py + sy, shot.pz)
-      look.set(shot.lx, shot.ly, shot.lz)
+      pos.set(RESULT_POS.x + sx + swing, RESULT_POS.y + sy, RESULT_POS.z)
+      look.set(RESULT_HERO.x, RESULT_HERO.y, RESULT_HERO.z)
     } else {
       pos.set(TOY_POS.x + sx, TOY_POS.y * Math.min(k, 1.08) + sy, TOY_POS.z)
       look.set(TOY_LOOK.x, TOY_LOOK.y, TOY_LOOK.z)

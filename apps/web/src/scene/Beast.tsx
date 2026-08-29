@@ -6,7 +6,7 @@ import { BEASTS, NECK_VISUAL_ORIGIN, beastYaw } from '@hhc/shared'
 import { useJuiceStore } from '../game/juice'
 import { useGameStore } from '../store/gameStore'
 import { Chassis, HeadDressing, MachineMouth, MachineNeck } from './beasts/kits'
-import { beastNeckLift, beastVisualRoot, visualLaneHeadAlong } from './beasts/vinyl'
+import { RESULT_HERO, beastNeckLift, beastVisualRoot, visualLaneHeadAlong } from './beasts/vinyl'
 
 const RING_COUNT = 5
 
@@ -39,7 +39,10 @@ export function Beast({ seat }: { seat: Seat }) {
   const visExt = useRef(0)
   const slam = useRef(0)
 
-  const [visX, y, visZ] = beastVisualRoot(seat)
+  const [rootX, y, rootZ] = beastVisualRoot(seat)
+  const winnerPark = ui === 'results' && result?.winner === seat
+  const visX = winnerPark ? RESULT_HERO.x : rootX
+  const visZ = winnerPark ? RESULT_HERO.z : rootZ
 
   useFrame((_, dt) => {
     const snap = useGameStore.getState()

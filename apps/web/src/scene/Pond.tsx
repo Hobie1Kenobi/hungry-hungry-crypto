@@ -51,38 +51,20 @@ export function Pond() {
         />
       </mesh>
       {[0, Math.PI / 2].map((yaw, i) => (
-        <mesh key={`lane-glow-${i}`} rotation={[-Math.PI / 2, yaw, 0]} position={[0, -0.076, 0]}>
-          <planeGeometry args={[1.78, inner * 0.94]} />
-          <meshBasicMaterial
-            color="#1ee0f2"
-            transparent
-            opacity={0.38}
-            depthWrite={false}
-            blending={AdditiveBlending}
-          />
+        <mesh key={`lane-paint-${i}`} rotation={[-Math.PI / 2, yaw, 0]} position={[0, -0.05, 0]}>
+          <planeGeometry args={[2.05, inner * 0.95]} />
+          <meshBasicMaterial color="#2ee9ff" transparent opacity={0.88} depthWrite={false} />
         </mesh>
       ))}
       {[0, Math.PI / 2].map((yaw, i) => (
-        <mesh key={`lane-core-${i}`} rotation={[-Math.PI / 2, yaw, 0]} position={[0, -0.072, 0]}>
-          <planeGeometry args={[0.58, inner * 0.94]} />
-          <meshBasicMaterial
-            color="#8cfff8"
-            transparent
-            opacity={0.7}
-            depthWrite={false}
-            blending={AdditiveBlending}
-          />
+        <mesh key={`lane-core-${i}`} rotation={[-Math.PI / 2, yaw, 0]} position={[0, -0.045, 0]}>
+          <planeGeometry args={[0.72, inner * 0.95]} />
+          <meshBasicMaterial color="#d7fffb" transparent opacity={0.95} depthWrite={false} />
         </mesh>
       ))}
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.07, 0]}>
-        <circleGeometry args={[0.62, 28]} />
-        <meshBasicMaterial
-          color="#b8fff6"
-          transparent
-          opacity={0.46}
-          depthWrite={false}
-          blending={AdditiveBlending}
-        />
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.04, 0]}>
+        <circleGeometry args={[0.78, 28]} />
+        <meshBasicMaterial color="#fff6c8" transparent opacity={0.9} depthWrite={false} />
       </mesh>
       <mesh position={[0, -0.02, -wall]} castShadow receiveShadow>
         <boxGeometry args={[POND_SIZE + rim, 0.16, rim]} />
