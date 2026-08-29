@@ -503,6 +503,35 @@ h2,
   font-weight: 700;
 }
 
+.you-plate {
+  pointer-events: none;
+  position: absolute;
+  right: 196px;
+  bottom: 28px;
+  min-width: 108px;
+  padding: 5px 10px 4px;
+  background: rgba(4, 16, 24, 0.82);
+  border: 1px solid var(--cyan);
+  font-family: Orbitron, sans-serif;
+  color: var(--cyan);
+  text-align: center;
+  line-height: 1.15;
+}
+
+.you-plate strong {
+  display: block;
+  font-size: 13px;
+  letter-spacing: 0.12em;
+}
+
+.you-plate em {
+  display: block;
+  font-style: normal;
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  color: #e8f4ff;
+}
+
 .chomp-btn {
   pointer-events: auto;
   appearance: none;
@@ -575,10 +604,10 @@ h2,
 }
 
 .results-card {
-  width: min(320px, 38vw);
+  width: min(268px, 30vw);
   background: rgba(8, 10, 16, 0.7);
   border: 1px solid var(--line);
-  padding: 12px 14px 12px;
+  padding: 10px 12px 10px;
   backdrop-filter: blur(8px);
   pointer-events: auto;
 }
@@ -590,16 +619,16 @@ h2,
 
 .results-hero {
   display: grid;
-  grid-template-columns: 92px 1fr;
-  gap: 16px;
+  grid-template-columns: 72px 1fr;
+  gap: 10px;
   align-items: center;
-  margin: 10px 0 8px;
+  margin: 8px 0 6px;
 }
 
 .winner-portrait {
   position: relative;
-  width: 88px;
-  height: 96px;
+  width: 68px;
+  height: 74px;
   border: 1px solid;
   background: rgba(0, 0, 0, 0.35);
   display: grid;
@@ -623,8 +652,8 @@ h2,
 }
 
 .portrait-body {
-  width: 54px;
-  height: 48px;
+  width: 42px;
+  height: 38px;
   border-radius: 16px 16px 10px 10px;
   position: relative;
 }
@@ -677,11 +706,48 @@ h2,
 }
 
 .results-card h2 {
-  margin: 0 0 8px;
+  margin: 0 0 4px;
+}
+
+.beast-tag {
+  pointer-events: none;
+  font-family: Orbitron, sans-serif;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  font-weight: 700;
+  text-align: center;
+  background: rgba(4, 16, 24, 0.82);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  padding: 3px 9px 2px;
+  line-height: 1.15;
+  text-shadow: 0 1px 0 #041018;
+  white-space: nowrap;
+}
+
+.beast-tag.you {
+  font-size: 14px;
+  padding: 4px 11px 3px;
+}
+
+.beast-tag em {
+  display: block;
+  font-style: normal;
+  font-size: 9px;
+  letter-spacing: 0.16em;
+  color: #e8f4ff;
+}
+
+.results-match {
+  color: var(--muted);
+  margin: 2px 0 0;
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  line-height: 1.25;
+  max-width: 28ch;
 }
 
 .results-card ol {
-  margin: 16px 0 20px;
+  margin: 10px 0 12px;
   padding: 0;
   list-style: none;
 }
@@ -695,7 +761,9 @@ h2,
 
 .receipts {
   color: var(--muted);
-  font-size: 12px;
+  font-size: 10px;
+  line-height: 1.35;
+  max-width: 36ch;
 }
 
 @media (max-width: 720px) {

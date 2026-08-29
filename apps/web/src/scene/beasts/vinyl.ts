@@ -1,4 +1,23 @@
+import type { Seat } from '@hhc/shared'
+
 export const BEAST_NECK_LIFT = 0.92
+
+/** Visual-only Y stack so four mid-pond rams sit on separate planes. */
+export const BEAST_NECK_STACK: Record<Seat, number> = {
+  0: 0.32,
+  1: 1.55,
+  2: 2.38,
+  3: 0.96,
+}
+
+export function beastNeckLift(seat: Seat): number {
+  return BEAST_NECK_STACK[seat]
+}
+
+/** Visual-only local-X weave so four rams do not share one mid-pond volume. */
+export function beastNeckWeave(seat: Seat): number {
+  return seat === 0 || seat === 2 ? 0.48 : -0.48
+}
 
 export function vinyl(
   color: string,

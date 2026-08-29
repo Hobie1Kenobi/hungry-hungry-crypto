@@ -31,10 +31,20 @@ export function BytebiteChassis({ color, accent }: { color: string; accent: stri
           <meshStandardMaterial color="#041018" />
         </mesh>
       ))}
-      <mesh position={[0, 0.82, -0.68]} rotation={[Math.PI / 2, 0, 0]} castShadow>
-        <cylinderGeometry args={[0.26, 0.32, 0.5, 16]} />
+      <mesh position={[0, 0.82, -0.72]} rotation={[Math.PI / 2, 0, 0]} castShadow>
+        <cylinderGeometry args={[0.3, 0.38, 0.62, 18]} />
         <meshStandardMaterial color="#0b2430" metalness={0.45} roughness={0.32} />
       </mesh>
+      <mesh position={[0, 0.82, -1.02]} castShadow>
+        <cylinderGeometry args={[0.22, 0.22, 0.16, 16]} />
+        <meshStandardMaterial color="#8fd8e6" metalness={0.5} roughness={0.24} />
+      </mesh>
+      {[-0.38, 0.38].map((x) => (
+        <mesh key={`vent${x}`} position={[x, 0.88, -0.22]} castShadow>
+          <boxGeometry args={[0.08, 0.7, 0.42]} />
+          <meshStandardMaterial color="#0a1c26" metalness={0.4} roughness={0.4} />
+        </mesh>
+      ))}
       <mesh position={[0, 0.2, 0.12]} castShadow>
         <boxGeometry args={[1.22, 0.16, 0.78]} />
         <meshStandardMaterial {...plate(accent, 0.4)} />
@@ -206,19 +216,19 @@ export function MachineNeck({
   if (seat === 0) {
     return (
       <group>
-        <mesh rotation={[Math.PI / 2, 0, 0]} position={[0, 0, 0.16]} castShadow>
-          <boxGeometry args={[0.7, 0.36, 0.7]} />
-          <meshStandardMaterial color="#8fd8e6" metalness={0.45} roughness={0.28} />
+        <mesh rotation={[Math.PI / 2, 0, 0]} position={[0, 0, 0.14]} castShadow>
+          <cylinderGeometry args={[0.28, 0.34, 0.32, 8]} />
+          <meshStandardMaterial color="#8fd8e6" metalness={0.5} roughness={0.26} />
         </mesh>
         <mesh ref={pistonRef} rotation={[Math.PI / 2, 0, 0]} position={[0, 0, 0.85]} castShadow>
-          <boxGeometry args={[0.36, 1, 0.36]} />
-          <meshStandardMaterial color={color} metalness={0.4} roughness={0.3} />
+          <cylinderGeometry args={[0.13, 0.2, 1, 8]} />
+          <meshStandardMaterial color={color} metalness={0.48} roughness={0.26} />
         </mesh>
         <group ref={ringsRef}>
           {rings.map((i) => (
-            <mesh key={i} castShadow>
-              <boxGeometry args={[0.48, 0.48, 0.1]} />
-              <meshStandardMaterial color="#d7eef4" metalness={0.55} roughness={0.22} />
+            <mesh key={i} rotation={[Math.PI / 2, 0, 0]} castShadow>
+              <torusGeometry args={[0.2, 0.045, 8, 14]} />
+              <meshStandardMaterial color="#d7eef4" metalness={0.62} roughness={0.18} />
             </mesh>
           ))}
         </group>
@@ -229,18 +239,18 @@ export function MachineNeck({
     return (
       <group>
         <mesh rotation={[Math.PI / 2, 0, 0]} position={[0, 0, 0.14]} castShadow>
-          <cylinderGeometry args={[0.36, 0.4, 0.3, 6]} />
+          <cylinderGeometry args={[0.26, 0.32, 0.28, 6]} />
           <meshStandardMaterial color="#3a102e" metalness={0.55} roughness={0.28} />
         </mesh>
         <mesh ref={pistonRef} rotation={[Math.PI / 2, 0, 0]} position={[0, 0, 0.85]} castShadow>
-          <cylinderGeometry args={[0.28, 0.32, 1, 6]} />
-          <meshStandardMaterial color={color} metalness={0.5} roughness={0.26} />
+          <cylinderGeometry args={[0.11, 0.18, 1, 10]} />
+          <meshStandardMaterial color={color} metalness={0.52} roughness={0.24} />
         </mesh>
         <group ref={ringsRef}>
           {rings.map((i) => (
             <mesh key={i} rotation={[Math.PI / 2, 0, 0]} castShadow>
-              <cylinderGeometry args={[0.36, 0.36, 0.1, 6]} />
-              <meshStandardMaterial color="#f3a6e4" metalness={0.6} roughness={0.2} />
+              <torusGeometry args={[0.18, 0.035, 8, 12]} />
+              <meshStandardMaterial color="#f3a6e4" metalness={0.64} roughness={0.18} />
             </mesh>
           ))}
         </group>
@@ -250,19 +260,19 @@ export function MachineNeck({
   if (seat === 2) {
     return (
       <group>
-        <mesh position={[0, 0, 0.12]} castShadow>
-          <boxGeometry args={[0.72, 0.4, 0.24]} />
+        <mesh rotation={[Math.PI / 2, 0, 0]} position={[0, 0, 0.12]} castShadow>
+          <cylinderGeometry args={[0.3, 0.36, 0.26, 16]} />
           <meshStandardMaterial color="#6a7a22" metalness={0.35} roughness={0.4} />
         </mesh>
         <mesh ref={pistonRef} rotation={[Math.PI / 2, 0, 0]} position={[0, 0, 0.85]} castShadow>
-          <boxGeometry args={[0.56, 1, 0.34]} />
-          <meshStandardMaterial color={color} metalness={0.28} roughness={0.38} />
+          <cylinderGeometry args={[0.16, 0.26, 1, 14]} />
+          <meshStandardMaterial color={color} metalness={0.3} roughness={0.36} />
         </mesh>
         <group ref={ringsRef}>
           {rings.map((i) => (
-            <mesh key={i} castShadow>
-              <boxGeometry args={[0.7, 0.4, 0.11]} />
-              <meshStandardMaterial color="#D4AF37" metalness={0.7} roughness={0.24} />
+            <mesh key={i} rotation={[Math.PI / 2, 0, 0]} castShadow>
+              <torusGeometry args={[0.24, 0.04, 8, 16]} />
+              <meshStandardMaterial color="#D4AF37" metalness={0.78} roughness={0.2} />
             </mesh>
           ))}
         </group>
@@ -271,19 +281,19 @@ export function MachineNeck({
   }
   return (
     <group>
-      <mesh position={[0, 0, 0.14]} castShadow>
-        <boxGeometry args={[0.56, 0.56, 0.28]} />
+      <mesh rotation={[Math.PI / 2, 0, 0]} position={[0, 0, 0.12]} castShadow>
+        <cylinderGeometry args={[0.2, 0.26, 0.22, 12]} />
         <meshStandardMaterial color={gold ? '#D4AF37' : '#e8e2d4'} metalness={0.86} roughness={0.16} />
       </mesh>
       <mesh ref={pistonRef} rotation={[Math.PI / 2, 0, 0]} position={[0, 0, 0.85]} castShadow>
-        <boxGeometry args={[0.42, 1, 0.42]} />
-        <meshStandardMaterial color="#F4F1E8" metalness={0.4} roughness={0.24} />
+        <cylinderGeometry args={[0.12, 0.18, 1, 10]} />
+        <meshStandardMaterial color="#F4F1E8" metalness={0.46} roughness={0.22} />
       </mesh>
       <group ref={ringsRef}>
         {rings.map((i) => (
-          <mesh key={i} castShadow>
-            <boxGeometry args={[0.54, 0.54, 0.1]} />
-            <meshStandardMaterial color="#D4AF37" metalness={0.9} roughness={0.14} />
+          <mesh key={i} rotation={[Math.PI / 2, 0, 0]} castShadow>
+            <torusGeometry args={[0.2, 0.035, 8, 16]} />
+            <meshStandardMaterial color="#D4AF37" metalness={0.9} roughness={0.12} />
           </mesh>
         ))}
       </group>
@@ -298,7 +308,7 @@ function Teeth({
   saw,
   long,
   span,
-  z = 0.28,
+  z = 0.42,
 }: {
   count: number
   y: number
@@ -316,8 +326,8 @@ function Teeth({
         const gilded = gold && i % 2 === 0
         return (
           <group key={i} position={[x, y, z]}>
-            <mesh castShadow>
-              <boxGeometry args={[saw ? 0.1 : 0.16, long, saw ? 0.2 : 0.18]} />
+            <mesh castShadow rotation={[y > 0 ? 0.28 : -0.28, 0, 0]}>
+              <boxGeometry args={[saw ? 0.1 : 0.15, long, saw ? 0.18 : 0.24]} />
               <meshPhysicalMaterial
                 color={gilded ? '#D4AF37' : '#fff6e8'}
                 metalness={gilded ? 0.8 : 0.38}
@@ -326,12 +336,20 @@ function Teeth({
                 clearcoatRoughness={0.04}
               />
             </mesh>
-            {saw ? (
-              <mesh position={[0, y > 0 ? 0.2 : -0.2, 0.1]} rotation={[y > 0 ? -0.55 : 0.55, 0, 0]} castShadow>
-                <coneGeometry args={[0.11, 0.34, 5]} />
-                <meshStandardMaterial color="#1a0614" metalness={0.7} roughness={0.18} />
-              </mesh>
-            ) : null}
+            <mesh
+              position={[0, y > 0 ? long * 0.42 : -long * 0.42, 0.04]}
+              rotation={[y > 0 ? -0.35 : 0.35, 0, 0]}
+              castShadow
+            >
+              <coneGeometry args={[saw ? 0.1 : 0.08, saw ? 0.36 : 0.28, 5]} />
+              <meshPhysicalMaterial
+                color={gilded ? '#D4AF37' : saw ? '#1a0614' : '#fff1d6'}
+                metalness={gilded || saw ? 0.72 : 0.42}
+                roughness={0.08}
+                clearcoat={1}
+                clearcoatRoughness={0.05}
+              />
+            </mesh>
           </group>
         )
       })}
@@ -339,41 +357,87 @@ function Teeth({
   )
 }
 
-function GumCavity({
+function HollowMaw({
   wide,
-  deep = 1.12,
   kind,
 }: {
   wide: number
-  deep?: number
-  kind: 'crt' | 'grub' | 'vault'
+  kind: 'crt' | 'saw' | 'grub' | 'vault'
 }) {
-  const cavity =
-    kind === 'crt' ? (
-      <mesh position={[0, 0.02, 0.5]} castShadow>
-        <boxGeometry args={[1.42 * wide, 1.12, deep]} />
-        <meshStandardMaterial color="#2a0810" emissive="#7a1428" emissiveIntensity={1.05} roughness={0.96} />
-      </mesh>
-    ) : kind === 'grub' ? (
-      <mesh position={[0, 0.02, 0.52]} rotation={[Math.PI / 2, 0, 0]} castShadow>
-        <capsuleGeometry args={[0.52 * wide, deep * 0.55, 8, 16]} />
-        <meshStandardMaterial color="#2a0810" emissive="#7a1428" emissiveIntensity={1.05} roughness={0.96} />
-      </mesh>
-    ) : (
-      <mesh position={[0, 0.02, 0.5]} castShadow>
-        <boxGeometry args={[1.18 * wide, 1.18, deep]} />
-        <meshStandardMaterial color="#2a0810" emissive="#6a1020" emissiveIntensity={1.05} roughness={0.96} />
-      </mesh>
+  const gum = { color: '#e25574', emissive: '#ff4d6d', emissiveIntensity: 1.65, roughness: 0.88 }
+  const wet = { color: '#2a0810', emissive: '#7a1428', emissiveIntensity: 1.05, roughness: 0.96 }
+  if (kind === 'saw') {
+    return (
+      <group>
+        <mesh position={[0, 0.04, 0.18]} rotation={[Math.PI / 2, 0, 0]} castShadow>
+          <cylinderGeometry args={[0.58, 0.66, 0.18, 22]} />
+          <meshStandardMaterial {...wet} />
+        </mesh>
+        <mesh position={[0, 0.04, 0.28]} rotation={[Math.PI / 2, 0, 0]}>
+          <torusGeometry args={[0.48, 0.12, 10, 22]} />
+          <meshStandardMaterial {...gum} />
+        </mesh>
+        <mesh position={[0, -0.02, 0.34]} castShadow>
+          <sphereGeometry args={[0.16, 12, 10]} />
+          <meshStandardMaterial color="#ff4d6d" emissive="#ff2a55" emissiveIntensity={1.15} roughness={0.7} />
+        </mesh>
+      </group>
     )
+  }
+  if (kind === 'grub') {
+    return (
+      <group>
+        <mesh position={[0, 0.02, 0.08]} rotation={[Math.PI / 2, 0, 0]} castShadow>
+          <cylinderGeometry args={[0.28 * wide, 0.34 * wide, 0.16, 16]} />
+          <meshStandardMaterial {...wet} />
+        </mesh>
+        <mesh position={[0, 0.02, 0.34]} rotation={[Math.PI / 2, 0, 0]}>
+          <torusGeometry args={[0.42 * wide, 0.14, 10, 20]} />
+          <meshStandardMaterial {...gum} />
+        </mesh>
+        <mesh position={[0, -0.04, 0.4]} castShadow>
+          <sphereGeometry args={[0.24 * wide, 12, 10]} />
+          <meshStandardMaterial color="#ff4d6d" emissive="#ff2a55" emissiveIntensity={1.15} roughness={0.7} />
+        </mesh>
+      </group>
+    )
+  }
+  if (kind === 'vault') {
+    return (
+      <group>
+        <mesh position={[0, 0.02, 0.06]} rotation={[Math.PI / 2, 0, 0]} castShadow>
+          <cylinderGeometry args={[0.46, 0.5, 0.14, 24]} />
+          <meshStandardMaterial {...wet} />
+        </mesh>
+        <mesh position={[0, 0.02, 0.22]} rotation={[Math.PI / 2, 0, 0]}>
+          <torusGeometry args={[0.44, 0.11, 10, 22]} />
+          <meshStandardMaterial {...gum} />
+        </mesh>
+        <mesh position={[0, -0.06, 0.32]} castShadow>
+          <sphereGeometry args={[0.18, 12, 10]} />
+          <meshStandardMaterial color="#ff4d6d" emissive="#ff2a55" emissiveIntensity={1.1} roughness={0.7} />
+        </mesh>
+      </group>
+    )
+  }
   return (
     <group>
-      {cavity}
-      <mesh position={[0, 0.02, 0.48 + deep * 0.18]} rotation={[0, 0, Math.PI / 2]} castShadow>
-        <torusGeometry args={[0.34 * wide, 0.2, 10, 18, Math.PI]} />
-        <meshStandardMaterial color="#e25574" emissive="#ff4d6d" emissiveIntensity={1.7} roughness={0.88} />
+      <mesh position={[0, 0.02, 0.02]} castShadow>
+        <boxGeometry args={[1.18 * wide, 0.72, 0.12]} />
+        <meshStandardMaterial {...wet} />
       </mesh>
-      <mesh position={[0, kind === 'vault' ? -0.08 : 0.02, 0.82]} castShadow>
-        <sphereGeometry args={[kind === 'grub' ? 0.26 * wide : 0.22 * wide, 12, 10]} />
+      {[-0.58 * wide, 0.58 * wide].map((x) => (
+        <mesh key={x} position={[x, 0.02, 0.22]} castShadow>
+          <boxGeometry args={[0.1, 0.72, 0.4]} />
+          <meshStandardMaterial {...wet} />
+        </mesh>
+      ))}
+      <mesh position={[0, 0.02, 0.36]} rotation={[0, 0, Math.PI / 2]} castShadow>
+        <torusGeometry args={[0.3 * wide, 0.16, 10, 16, Math.PI]} />
+        <meshStandardMaterial {...gum} />
+      </mesh>
+      <mesh position={[0, -0.04, 0.4]} castShadow>
+        <sphereGeometry args={[0.2 * wide, 12, 10]} />
         <meshStandardMaterial color="#ff4d6d" emissive="#ff2a55" emissiveIntensity={1.15} roughness={0.7} />
       </mesh>
     </group>
@@ -390,91 +454,108 @@ export function MachineMouth({
   const { color, accent } = BEASTS[seat]
   const saw = seat === 1
   const gold = seat === 3 || seat === 2
-  const wide = seat === 2 ? 1.28 : seat === 0 ? 1.12 : seat === 1 ? 1 : 1.04
-  const shell =
-    seat === 0 ? [1.68, 0.28, 0.62] : seat === 1 ? [1.22, 0.42, 0.55] : seat === 2 ? [1.88, 0.26, 0.7] : [1.42, 0.36, 0.58]
+  const wide = seat === 2 ? 1.22 : seat === 0 ? 1.08 : seat === 1 ? 1 : 1.02
+  const kind = seat === 0 ? 'crt' : seat === 1 ? 'saw' : seat === 2 ? 'grub' : 'vault'
   return (
     <group>
-      <mesh position={[0, 0.08, -0.16]} castShadow>
+      <mesh position={[0, 0.06, -0.22]} castShadow>
         {seat === 1 ? (
-          <cylinderGeometry args={[0.62, 0.7, 0.42, 20]} />
+          <cylinderGeometry args={[0.52, 0.6, 0.32, 20]} />
+        ) : seat === 2 ? (
+          <capsuleGeometry args={[0.28, 0.9 * wide, 6, 12]} />
+        ) : seat === 3 ? (
+          <cylinderGeometry args={[0.48, 0.52, 0.3, 20]} />
         ) : (
-          <boxGeometry args={[shell[0], shell[1], shell[2]]} />
+          <boxGeometry args={[1.28, 0.22, 0.42]} />
         )}
         <meshPhysicalMaterial {...vinyl(color, { metalness: seat === 3 ? 0.4 : 0.22 })} />
       </mesh>
       {seat === 1 ? (
-        <group>
-          <mesh position={[0, 0.06, 0.28]} rotation={[Math.PI / 2, 0, 0]} castShadow>
-            <cylinderGeometry args={[0.62, 0.7, 0.48, 22]} />
-            <meshStandardMaterial color="#2a0810" emissive="#8a1830" emissiveIntensity={0.85} roughness={0.95} />
+        <group position={[0, 0.06, 0.12]} rotation={[Math.PI / 2, 0, 0]}>
+          <mesh castShadow>
+            <cylinderGeometry args={[0.72, 0.72, 0.07, 28]} />
+            <meshStandardMaterial color="#2a0a22" metalness={0.62} roughness={0.2} />
           </mesh>
-          <mesh position={[0, 0.06, 0.42]} rotation={[Math.PI / 2, 0, 0]}>
-            <torusGeometry args={[0.42, 0.14, 10, 20]} />
-            <meshStandardMaterial color="#e25574" emissive="#ff4d6d" emissiveIntensity={1.6} roughness={0.88} />
+          {Array.from({ length: 14 }, (_, i) => (
+            <mesh
+              key={i}
+              position={[Math.sin((i / 14) * Math.PI * 2) * 0.7, 0, Math.cos((i / 14) * Math.PI * 2) * 0.7]}
+              rotation={[0, (i / 14) * Math.PI * 2, 0]}
+              castShadow
+            >
+              <coneGeometry args={[0.05, 0.16, 5]} />
+              <meshStandardMaterial color={color} metalness={0.64} roughness={0.16} />
+            </mesh>
+          ))}
+        </group>
+      ) : null}
+      {seat === 3 ? (
+        <group position={[0.62, 0.08, -0.04]} rotation={[0, 0, Math.PI / 2]}>
+          <mesh castShadow>
+            <cylinderGeometry args={[0.22, 0.22, 0.08, 20]} />
+            <meshStandardMaterial color={accent} metalness={0.9} roughness={0.14} />
+          </mesh>
+          <mesh>
+            <torusGeometry args={[0.22, 0.035, 8, 18]} />
+            <meshStandardMaterial color={accent} metalness={0.92} roughness={0.12} />
           </mesh>
         </group>
-      ) : (
-        <GumCavity
-          wide={wide}
-          deep={seat === 2 ? 1.28 : seat === 3 ? 1.18 : 1.14}
-          kind={seat === 0 ? 'crt' : seat === 2 ? 'grub' : 'vault'}
-        />
-      )}
-      <group ref={jawsRef} position={[0, 0.02, 0.4]}>
+      ) : null}
+      <HollowMaw wide={wide} kind={kind} />
+      <group ref={jawsRef} position={[0, 0.02, 0.32]}>
         <mesh position={[0, 0, 0.02]} visible={false}>
           <boxGeometry args={[0.1, 0.1, 0.1]} />
         </mesh>
-        <group position={[0, 0.28, 0.1]}>
+        <group position={[0, 0.3, 0.12]}>
           <mesh castShadow>
             {seat === 1 ? (
-              <cylinderGeometry args={[0.74, 0.84, 0.16, 16]} />
+              <torusGeometry args={[0.62, 0.08, 8, 18, Math.PI]} />
             ) : seat === 2 ? (
-              <capsuleGeometry args={[0.2, 1.72 * wide, 6, 12]} />
+              <capsuleGeometry args={[0.16, 1.48 * wide, 6, 12]} />
             ) : seat === 3 ? (
-              <boxGeometry args={[1.48 * wide, 0.2, 0.64]} />
+              <torusGeometry args={[0.5, 0.07, 8, 16, Math.PI]} />
             ) : (
-              <boxGeometry args={[1.72 * wide, 0.18, 0.64]} />
+              <boxGeometry args={[1.36 * wide, 0.12, 0.42]} />
             )}
             <meshPhysicalMaterial {...vinyl(color)} />
           </mesh>
-          <mesh position={[0, -0.24, 0.12]}>
-            <boxGeometry args={[1.48 * wide, 0.18, 0.56]} />
-            <meshStandardMaterial color="#e25574" emissive="#ff4d6d" emissiveIntensity={0.55} roughness={0.96} />
+          <mesh position={[0, -0.16, 0.1]}>
+            <boxGeometry args={[1.18 * wide, 0.12, 0.36]} />
+            <meshStandardMaterial color="#e25574" emissive="#ff4d6d" emissiveIntensity={0.7} roughness={0.94} />
           </mesh>
           <Teeth
-            count={seat === 1 ? 10 : seat === 2 ? 9 : seat === 3 ? 6 : 8}
-            y={-0.44}
+            count={seat === 1 ? 10 : seat === 2 ? 9 : seat === 3 ? 7 : 8}
+            y={-0.5}
             gold={gold}
             saw={saw}
-            long={seat === 1 ? 0.5 : 0.48}
-            span={seat === 2 ? 1.58 : seat === 3 ? 1.12 : 1.32}
+            long={seat === 1 ? 0.68 : 0.66}
+            span={seat === 2 ? 1.52 : seat === 3 ? 1.08 : 1.28}
           />
         </group>
-        <group position={[0, -0.28, 0.1]}>
+        <group position={[0, -0.3, 0.12]}>
           <mesh castShadow>
-            {seat === 3 ? (
-              <boxGeometry args={[1.42 * wide, 0.2, 0.58]} />
+            {seat === 1 ? (
+              <torusGeometry args={[0.58, 0.08, 8, 18, Math.PI]} />
             ) : seat === 2 ? (
-              <capsuleGeometry args={[0.18, 1.6 * wide, 6, 12]} />
-            ) : seat === 1 ? (
-              <cylinderGeometry args={[0.7, 0.78, 0.16, 16]} />
+              <capsuleGeometry args={[0.14, 1.36 * wide, 6, 12]} />
+            ) : seat === 3 ? (
+              <torusGeometry args={[0.46, 0.07, 8, 16, Math.PI]} />
             ) : (
-              <boxGeometry args={[1.6 * wide, 0.18, 0.6]} />
+              <boxGeometry args={[1.28 * wide, 0.12, 0.4]} />
             )}
             <meshPhysicalMaterial {...vinyl(seat === 3 ? accent : color)} />
           </mesh>
-          <mesh position={[0, 0.24, 0.12]}>
-            <boxGeometry args={[1.38 * wide, 0.18, 0.52]} />
-            <meshStandardMaterial color="#c43b58" emissive="#e03a58" emissiveIntensity={0.45} roughness={0.96} />
+          <mesh position={[0, 0.16, 0.1]}>
+            <boxGeometry args={[1.12 * wide, 0.12, 0.34]} />
+            <meshStandardMaterial color="#c43b58" emissive="#e03a58" emissiveIntensity={0.55} roughness={0.94} />
           </mesh>
           <Teeth
-            count={seat === 1 ? 10 : seat === 2 ? 9 : seat === 3 ? 6 : 8}
-            y={0.44}
+            count={seat === 1 ? 10 : seat === 2 ? 9 : seat === 3 ? 7 : 8}
+            y={0.5}
             gold={gold}
             saw={saw}
-            long={0.46}
-            span={seat === 2 ? 1.5 : seat === 3 ? 1.06 : 1.24}
+            long={0.62}
+            span={seat === 2 ? 1.42 : seat === 3 ? 1.02 : 1.2}
           />
         </group>
       </group>
