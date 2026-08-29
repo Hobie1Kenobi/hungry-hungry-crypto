@@ -600,7 +600,7 @@ export function HeadDressing({
       <group>
         <BloomSelect>
           <mesh position={[0, 0.48, 0.12]} material={visor}>
-            <boxGeometry args={[0.68, 0.042, 0.06]} />
+            <boxGeometry args={[0.6, 0.034, 0.048]} />
           </mesh>
         </BloomSelect>
         <group ref={antL} position={[-0.26, 0.42, -0.04]} />
@@ -637,7 +637,7 @@ export function HeadDressing({
       </mesh>
       <BloomSelect>
         <mesh position={[0, 0.4, 0.3]} material={visor}>
-          <boxGeometry args={[0.86, 0.044, 0.058]} />
+          <boxGeometry args={[0.78, 0.034, 0.048]} />
         </mesh>
       </BloomSelect>
       <group ref={antL} position={[-0.36, 0.44, -0.08]}>
