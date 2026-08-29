@@ -12,11 +12,11 @@ const pos = new Vector3()
 export const TOY_POS = { x: 1.85, y: 6.95, z: -9.35 }
 export const TOY_LOOK = { x: 0.95, y: 0.08, z: 1.72 }
 export const TOY_FOV = 33
-const RESULTS_RADIUS = 12.2
-const RESULTS_ELEV = 8.5
-const RESULTS_LOOK_Y = 0.52
-const RESULTS_POND_BLEND = 0.22
-const RESULTS_FOV = 40
+const RESULTS_RADIUS = 13.6
+const RESULTS_ELEV = 9.4
+const RESULTS_LOOK_Y = 0.4
+const RESULTS_POND_BLEND = 0.12
+const RESULTS_FOV = 42
 const SHAKE_MS = 120
 
 export function toyCameraPosition(): [number, number, number] {
