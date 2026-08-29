@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState, type MouseEvent as ReactMouseEvent, type PointerEvent as ReactPointerEvent } from 'react'
 import { BEASTS, SEATS } from '@hhc/shared'
 import { explorerTxUrl } from '@hhc/xrpl'
 import { replayOnline } from '../net/session'
@@ -21,20 +22,72 @@ function WinnerPortrait({ seat }: { seat: (typeof SEATS)[number] }) {
   )
 }
 
+function useResultsArmed(): boolean {
+  const [armed, setArmed] = useState(false)
+
+  useEffect(() => {
+    let live = true
+    const arm = () => {
+      if (live) setArmed(true)
+    }
+    const fallback = window.setTimeout(arm, 180)
+    const onUp = () => {
+      window.clearTimeout(fallback)
+      arm()
+    }
+    window.addEventListener('pointerup', onUp, true)
+    window.addEventListener('pointercancel', onUp, true)
+    return () => {
+      live = false
+      window.clearTimeout(fallback)
+      window.removeEventListener('pointerup', onUp, true)
+      window.removeEventListener('pointercancel', onUp, true)
+    }
+  }, [])
+
+  return armed
+}
+
 export function Results() {
   const result = useGameStore((s) => s.result)
   const playMode = useGameStore((s) => s.playMode)
   const startPractice = useGameStore((s) => s.startPractice)
   const backToLobby = useGameStore((s) => s.backToLobby)
   const explorer = useWalletStore((s) => s.config?.explorerUrl)
+  const armed = useResultsArmed()
+  const consumed = useRef(false)
 
   if (!result) return null
   const champ = BEASTS[result.winner]
   const ranked = [...SEATS].sort((a, b) => result.scores[b] - result.scores[a])
   const hashes = result.txHashes
 
+  const guard = (event: ReactPointerEvent<HTMLButtonElement> | ReactMouseEvent<HTMLButtonElement>) => {
+    if (!armed) {
+      event.preventDefault()
+      event.stopPropagation()
+      return false
+    }
+    event.preventDefault()
+    event.stopPropagation()
+    return true
+  }
+
+  const goLobby = (event: ReactPointerEvent<HTMLButtonElement> | ReactMouseEvent<HTMLButtonElement>) => {
+    if (!guard(event) || consumed.current) return
+    consumed.current = true
+    backToLobby()
+  }
+
+  const goReplay = (event: ReactPointerEvent<HTMLButtonElement> | ReactMouseEvent<HTMLButtonElement>) => {
+    if (!guard(event) || consumed.current) return
+    consumed.current = true
+    if (playMode === 'online') replayOnline()
+    else startPractice()
+  }
+
   return (
-    <div className="overlay">
+    <div className="overlay results-overlay">
       <div className="results">
         <div className="results-card">
           <p className="kicker">
@@ -88,19 +141,26 @@ export function Results() {
             )}{' '}
             CRUMB on Testnet has no value.
           </p>
-          <div className="actions" style={{ marginTop: 18 }}>
+          <div className="actions results-actions" style={{ marginTop: 14 }}>
             <button
               className="btn primary"
               type="button"
-              onClick={() => {
-                if (playMode === 'online') replayOnline()
-                else startPractice()
-              }}
+              aria-label="Replay"
+              disabled={!armed}
+              onPointerDown={goReplay}
+              onClick={goReplay}
             >
-              Play again
+              Replay
             </button>
-            <button className="btn" type="button" onClick={backToLobby}>
-              Back to lobby
+            <button
+              className="btn"
+              type="button"
+              aria-label="Lobby"
+              disabled={!armed}
+              onPointerDown={goLobby}
+              onClick={goLobby}
+            >
+              Lobby
             </button>
           </div>
         </div>
