@@ -354,9 +354,9 @@ h2,
 .hint {
   background: var(--panel);
   border: 1px solid var(--line);
-  padding: 10px 12px;
-  max-width: 280px;
-  font-size: 13px;
+  padding: 8px 10px;
+  max-width: 240px;
+  font-size: 12px;
 }
 
 .chomp-catcher {

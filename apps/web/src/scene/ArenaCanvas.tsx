@@ -24,16 +24,17 @@ function ArenaCamera() {
     const aspect = width / Math.max(1, height)
     const halfW = 6.85
     const halfD = 7.55
-    const hudFrac = 0.12
+    const topHud = 0.12
+    const botHud = 0.2
     cam.fov = aspect < 1.1 ? 42 : 36
     const vFov = (cam.fov * Math.PI) / 180
-    const distH = (2 * halfD * (1 + hudFrac)) / (2 * Math.tan(vFov / 2))
+    const distH = (2 * halfD * (1 + topHud + botHud)) / (2 * Math.tan(vFov / 2))
     const hFov = 2 * Math.atan(Math.tan(vFov / 2) * aspect)
     const distW = (2 * halfW) / (2 * Math.tan(hFov / 2))
-    const dist = Math.max(distH, distW) * 1.1
-    const elev = 0.9
+    const dist = Math.max(distH, distW) * 1.08
+    const elev = 0.91
     cam.position.set(0, dist * elev, -dist * Math.sqrt(Math.max(0.0001, 1 - elev * elev)))
-    cam.lookAt(0, 0.25, 0)
+    cam.lookAt(0, 0.28, 0.05)
     cam.near = 0.1
     cam.far = 70
     cam.updateProjectionMatrix()
