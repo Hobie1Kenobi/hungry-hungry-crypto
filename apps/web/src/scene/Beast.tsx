@@ -1,6 +1,6 @@
 import { useFrame } from '@react-three/fiber'
 import { useRef } from 'react'
-import type { Group, Mesh, MeshStandardMaterial, PointLight } from 'three'
+import type { Group, Mesh, MeshBasicMaterial, PointLight } from 'three'
 import type { Seat } from '@hhc/shared'
 import { BEASTS, NECK_VISUAL_ORIGIN, beastYaw } from '@hhc/shared'
 import { useJuiceStore } from '../game/juice'
@@ -27,7 +27,7 @@ export function Beast({ seat }: { seat: Seat }) {
   const jaws = useRef<Group>(null)
   const antL = useRef<Group>(null)
   const antR = useRef<Group>(null)
-  const visorMat = useRef<MeshStandardMaterial>(null)
+  const visorMat = useRef<MeshBasicMaterial>(null)
   const mouthLight = useRef<PointLight>(null)
   const lastDown = useRef(false)
   const lastEat = useRef(0)
@@ -100,8 +100,9 @@ export function Beast({ seat }: { seat: Seat }) {
       head.current.rotation.x = 0.26 + visExt.current * 0.06 + squash.current * 0.1 + chewNod
     }
     if (visorMat.current) {
-      const blink = Math.sin(t * 7.5 + seat * 2.1) > 0.93 ? 0.42 : 1
-      visorMat.current.emissiveIntensity = (winner ? 8.8 : down ? 7.4 : 6.6) * blink
+      const blink = Math.sin(t * 7.5 + seat * 2.1) > 0.93 ? 0.45 : 1
+      const k = (winner ? 2.35 : down ? 2.05 : 1.85) * blink
+      visorMat.current.color.set(seat === 3 ? spec.accent : spec.color).multiplyScalar(k)
     }
     const headZ = visualLaneHeadAlong(visExt.current)
     const barrel = 0.4

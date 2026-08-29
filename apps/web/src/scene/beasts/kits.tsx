@@ -1,7 +1,7 @@
 import { useLayoutEffect, useMemo, type Ref } from 'react'
 import type { Seat } from '@hhc/shared'
 import { BEASTS } from '@hhc/shared'
-import { MeshStandardMaterial, type Group, type Mesh } from 'three'
+import { MeshBasicMaterial, type Group, type Mesh } from 'three'
 import { BloomSelect } from '../bloom'
 import { vinyl } from './vinyl'
 
@@ -511,25 +511,21 @@ export function MachineMouth({
   )
 }
 
-function useVisorMaterial(visorRef: Ref<MeshStandardMaterial>, color: string) {
+function useVisorMaterial(visorRef: Ref<MeshBasicMaterial>, color: string) {
   const mat = useMemo(
     () =>
-      new MeshStandardMaterial({
+      new MeshBasicMaterial({
         color,
-        emissive: color,
-        emissiveIntensity: 6.6,
-        metalness: 0.04,
-        roughness: 0.08,
         toneMapped: false,
       }),
     [color],
   )
   useLayoutEffect(() => {
     if (typeof visorRef === 'function') visorRef(mat)
-    else if (visorRef) (visorRef as { current: MeshStandardMaterial | null }).current = mat
+    else if (visorRef) (visorRef as { current: MeshBasicMaterial | null }).current = mat
     return () => {
       if (typeof visorRef === 'function') visorRef(null)
-      else if (visorRef) (visorRef as { current: MeshStandardMaterial | null }).current = null
+      else if (visorRef) (visorRef as { current: MeshBasicMaterial | null }).current = null
     }
   }, [mat, visorRef])
   useLayoutEffect(() => () => mat.dispose(), [mat])
@@ -543,7 +539,7 @@ export function HeadDressing({
   antR,
 }: {
   seat: Seat
-  visorRef: Ref<MeshStandardMaterial>
+  visorRef: Ref<MeshBasicMaterial>
   antL: Ref<Group>
   antR: Ref<Group>
 }) {
@@ -557,18 +553,18 @@ export function HeadDressing({
           <meshStandardMaterial color="#061018" metalness={0.4} roughness={0.3} />
         </mesh>
         <BloomSelect>
-          <mesh position={[0, 0.52, 0.02]} material={visor}>
-            <boxGeometry args={[1.1, 0.14, 0.56]} />
+          <mesh position={[0, 0.62, 0.0]} material={visor}>
+            <boxGeometry args={[1.18, 0.26, 0.72]} />
           </mesh>
-          <mesh position={[0, 0.44, -0.28]} material={visor}>
-            <boxGeometry args={[1.06, 0.16, 0.12]} />
+          <mesh position={[0, 0.5, -0.34]} material={visor}>
+            <boxGeometry args={[1.14, 0.22, 0.16]} />
           </mesh>
-          <mesh position={[0, 0.38, 0.32]} material={visor}>
-            <boxGeometry args={[1.02, 0.16, 0.12]} />
+          <mesh position={[0, 0.4, 0.34]} material={visor}>
+            <boxGeometry args={[1.08, 0.2, 0.14]} />
           </mesh>
-          {[-0.56, 0.56].map((x) => (
-            <mesh key={x} position={[x, 0.44, 0.02]} material={visor}>
-              <boxGeometry args={[0.1, 0.16, 0.4]} />
+          {[-0.6, 0.6].map((x) => (
+            <mesh key={x} position={[x, 0.5, 0.0]} material={visor}>
+              <boxGeometry args={[0.12, 0.2, 0.5]} />
             </mesh>
           ))}
         </BloomSelect>
@@ -618,11 +614,11 @@ export function HeadDressing({
           <meshPhysicalMaterial {...vinyl(color)} />
         </mesh>
         <BloomSelect>
-          <mesh position={[0, 0.32, 0.3]} material={visor}>
-            <boxGeometry args={[1.12, 0.28, 0.16]} />
+          <mesh position={[0, 0.34, 0.32]} material={visor}>
+            <boxGeometry args={[1.2, 0.34, 0.2]} />
           </mesh>
-          <mesh position={[0, 0.46, 0.04]} material={visor}>
-            <boxGeometry args={[0.98, 0.14, 0.44]} />
+          <mesh position={[0, 0.5, 0.04]} material={visor}>
+            <boxGeometry args={[1.08, 0.18, 0.5]} />
           </mesh>
         </BloomSelect>
         <group ref={antL} position={[-0.46, 0.32, -0.06]} />
