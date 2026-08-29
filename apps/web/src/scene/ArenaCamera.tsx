@@ -15,7 +15,7 @@ export const TOY_FOV = 36
 const SHAKE_MS = 120
 
 /** Pulled back so the winner body reads in the open pond, not a crash-zoom blob. */
-export const RESULT_POS = { x: 9.45, y: 7.55, z: -11.85 }
+export const RESULT_POS = { x: 10.55, y: 8.15, z: -12.65 }
 
 export function toyCameraPosition(): [number, number, number] {
   return [TOY_POS.x, TOY_POS.y, TOY_POS.z]
@@ -82,7 +82,7 @@ export function ArenaCamera() {
 
     const snap = ui === 'results' || (playBorn.current && now - playBorn.current < 32) || now < shakeUntil.current
     if (ui === 'results') {
-      const pad = Math.round(width * 0.3)
+      const pad = Math.round(width * 0.36)
       cam.setViewOffset(width + pad, height, pad, 0, width, height)
       const swing = Math.sin(clock.elapsedTime * 0.22) * 0.08
       pos.set(RESULT_POS.x + sx + swing, RESULT_POS.y + sy, RESULT_POS.z)
