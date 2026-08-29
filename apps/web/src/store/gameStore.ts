@@ -1,4 +1,6 @@
 import { create } from 'zustand'
+import type { AiPolicy } from '@hhc/ai'
+import { createPracticePolicies } from '@hhc/ai'
 import type { Address, ChompInput, MatchResult, Pellet, Seat, SeatOccupant } from '@hhc/shared'
 import {
   ROUND_SECONDS,
@@ -16,6 +18,8 @@ import {
 } from '@hhc/shared'
 import { sfxChomp, sfxEat, sfxEnd } from '../game/sfx'
 import { useWalletStore } from '../wallet/walletStore'
+
+let practicePolicies: AiPolicy[] = []
 
 export type UiPhase = 'lobby' | 'waiting' | 'playing' | 'results'
 export type PlayMode = 'practice' | 'online'
@@ -141,6 +145,7 @@ export const useGameStore = create<GameState>((set, get) => ({
 
   startPractice: () => {
     get().netLeave?.()
+    practicePolicies = createPracticePolicies()
     set({
       ui: 'playing',
       playMode: 'practice',
@@ -194,6 +199,26 @@ export const useGameStore = create<GameState>((set, get) => ({
       if (held.started) sfxChomp()
     }
 
+    const world = {
+      now: clock,
+      dumpT: state.dumpT,
+      timeLeft: state.timeLeft,
+      pellets: state.pellets,
+      neckExtend: state.neckExtend,
+      chompDown,
+      scores: state.scores,
+    }
+    for (const policy of practicePolicies) {
+      const input = policy.tick(world)
+      if (!input) continue
+      const applied = applyChompInput(chompDown, chompPulseUntil, { ...input, clientTime: clock }, clock)
+      if (!applied) continue
+      chompDown = applied.chompDown
+      chompPulseUntil = applied.chompPulseUntil
+      world.chompDown = chompDown
+      if (applied.started) sfxChomp()
+    }
+
     const stepped = stepArena(
       {
         pellets: state.pellets,
@@ -223,6 +248,7 @@ export const useGameStore = create<GameState>((set, get) => ({
 
   backToLobby: () => {
     get().netLeave?.()
+    practicePolicies = []
     set({
       ui: 'lobby',
       playMode: 'practice',
@@ -278,6 +304,7 @@ export const useGameStore = create<GameState>((set, get) => ({
   },
 
   applyMatchStart: (matchId, seats, localSeat) => {
+    practicePolicies = []
     set({
       ui: 'playing',
       playMode: 'online',

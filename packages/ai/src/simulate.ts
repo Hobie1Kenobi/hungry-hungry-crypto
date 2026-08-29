@@ -28,6 +28,7 @@ export interface SimulateResult {
   maxNeckExtend: Record<Seat, number>
   refillCount: number
   chompFlips: Record<Seat, number>
+  chompFlipsAfter22: Record<Seat, number>
   scoresAt: Record<number, Record<Seat, number>>
 }
 
@@ -66,8 +67,9 @@ export function simulateRound(options: SimulateOptions): SimulateResult {
   let now = nowOffset
   const maxNeckExtend = emptyNecks()
   const chompFlips: Record<Seat, number> = { 0: 0, 1: 0, 2: 0, 3: 0 }
+  const chompFlipsAfter22: Record<Seat, number> = { 0: 0, 1: 0, 2: 0, 3: 0 }
   const scoresAt: Record<number, Record<Seat, number>> = {}
-  const sampleMarks = [8, 12, 20, 30, 40]
+  const sampleMarks = [8, 12, 20, 22, 30, 35, 40]
   let sampleIdx = 0
 
   const steps = Math.ceil(seconds / dt)
@@ -88,6 +90,7 @@ export function simulateRound(options: SimulateOptions): SimulateResult {
       const applied = applyChompInput(snapshot.chompDown, snapshot.chompPulseUntil, input, now)
       if (!applied) continue
       chompFlips[input.seat] += 1
+      if (elapsed / 1000 >= 22) chompFlipsAfter22[input.seat] += 1
       snapshot = {
         ...snapshot,
         chompDown: applied.chompDown,
@@ -116,6 +119,7 @@ export function simulateRound(options: SimulateOptions): SimulateResult {
     maxNeckExtend,
     refillCount: snapshot.refillCount,
     chompFlips,
+    chompFlipsAfter22,
     scoresAt,
   }
 }

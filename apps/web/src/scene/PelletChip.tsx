@@ -1,6 +1,4 @@
-import { useFrame } from '@react-three/fiber'
 import { useMemo, useRef } from 'react'
-import type { Group } from 'three'
 import type { Pellet } from '@hhc/shared'
 import { useGameStore } from '../store/gameStore'
 
@@ -17,27 +15,20 @@ function easeOut(t: number): number {
 export function PelletChip({ pellet }: { pellet: Pellet }) {
   const dumpT = useGameStore((s) => s.dumpT)
   const delay = useMemo(() => hashDelay(pellet.id), [pellet.id])
-  const refill = pellet.id.startsWith('w')
-  const born = useRef(performance.now())
-  const group = useRef<Group>(null)
+  const grounded = useRef(false)
   const scale = pellet.eatenBy !== undefined ? 0 : pellet.golden ? 1.4 : 1
   const r = pellet.golden ? 0.44 : 0.36
   const color = pellet.golden ? '#f0c14b' : '#7ad4ff'
   const rim = pellet.golden ? '#fff3c4' : '#e9fbff'
   const spin = dumpT * 8 + delay * 20
   const land = Math.max(0, Math.min(1, (dumpT - delay) / 0.32))
-  const y = refill ? 4.1 : 4.1 + (0.18 - 4.1) * easeOut(land)
-
-  useFrame(() => {
-    if (!group.current || pellet.eatenBy !== undefined || !refill) return
-    const t = Math.max(0, Math.min(1, (performance.now() - born.current) / 420))
-    group.current.position.set(pellet.x, 4.1 + (0.18 - 4.1) * easeOut(t), pellet.z)
-  })
+  if (land >= 1) grounded.current = true
+  const y = 4.1 + (0.18 - 4.1) * easeOut(grounded.current ? 1 : land)
 
   if (pellet.eatenBy !== undefined) return null
 
   return (
-    <group ref={group} position={[pellet.x, y, pellet.z]} rotation={[0, spin, 0]} scale={scale}>
+    <group position={[pellet.x, y, pellet.z]} rotation={[0, spin, 0]} scale={scale}>
       <mesh castShadow receiveShadow>
         <cylinderGeometry args={[r, r, 0.1, 6]} />
         <meshStandardMaterial

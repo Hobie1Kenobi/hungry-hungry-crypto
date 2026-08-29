@@ -68,12 +68,13 @@ Explorer: [testnet.xrpl.org](https://testnet.xrpl.org). WebSocket: `wss://s.altn
 
 ### 8-Minute Audit
 
-Practice vs AI on `main` left BYTEBITE at 0 with a stub neck, a thin center strip of chips, and AI scores frozen after the opening. This change:
+After PR #8, Practice vs AI fixed BYTEBITE’s hold (cyan neck + score 0→22) and the 28+1 pond, but RIPSAW / GOLDGRUB / BLOCKMAW vacuumed early then froze (~43/43/41 from ~22s to the bell) while leftover chips sat in BYTEBITE’s near-north lane and hopper waves stopped. This change:
 
-- Latches seat 0 `ChompInput` from a held Space / CHOMP pointer (polled every tick) so a tap or hold actually extends BYTEBITE’s neck and can score.
-- Spreads the hopper dump into a 28+1 field across the pond (not a thin cross), refills when live chips drop to 16, and keeps Easy / Normal / Hungry on a nibble/release rhythm through the 45s.
+- Keeps seat 0 `chompHeld` + pointer capture. BYTEBITE still extends from behind-camera and can score.
+- Hopper refill resets `dumpT` so the new wave must land. Easy / Normal / Hungry release and re-arm after that dump instead of staying stuck past `WINDUP_DUMP`.
+- Practice `tick` applies AI `ChompInput` on the same match-elapsed clock as `stepArena`. Hopper still dumps when live chips drop to 16, and also when any lane is empty, through the back half of the 45s (nibble/release + eat cooldown — not an endless vacuum).
 
-**Verify (local, no XRPL):** `pnpm --filter web dev` → Practice vs AI → hold Space or CHOMP. Cyan neck must reach into the pond and BYTEBITE’s score must leave 0. Pond should look busy at dump; hopper shakes and drops another wave when chips thin. RIPSAW / GOLDGRUB / BLOCKMAW scores should keep moving after the first 10s. HUD still reads `LOCAL RESULT · NO LEDGER WRITES`.
+**Verify (local, no XRPL):** `pnpm --filter web dev` → Practice vs AI → hold Space or CHOMP. Cyan neck must reach into the pond and BYTEBITE’s score must leave 0. Hopper shakes and dumps again when a lane empties. RIPSAW / GOLDGRUB / BLOCKMAW scores must still move after ~22s. HUD still reads `LOCAL RESULT · NO LEDGER WRITES`.
 
 ### Quick Match (local Colyseus)
 
