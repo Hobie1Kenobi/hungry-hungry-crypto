@@ -61,56 +61,56 @@ function Gantry() {
   const gold = { color: '#d4af37', metalness: 0.82, roughness: 0.22 }
   return (
     <group>
-      <mesh position={[0, 0.28, -6.52]} castShadow>
-        <boxGeometry args={[3.6, 0.2, 1.28]} />
+      <mesh position={[0, 0.32, -6.55]} castShadow>
+        <boxGeometry args={[3.9, 0.26, 1.45]} />
         <meshStandardMaterial {...steel} />
       </mesh>
-      <mesh position={[0, -0.08, -6.98]} castShadow>
-        <boxGeometry args={[3.6, 0.72, 0.22]} />
+      <mesh position={[0, -0.12, -7.08]} castShadow>
+        <boxGeometry args={[3.9, 0.86, 0.28]} />
         <meshStandardMaterial {...steel} />
       </mesh>
-      <mesh position={[0, -0.08, -6.18]} castShadow>
-        <boxGeometry args={[3.6, 0.72, 0.18]} />
+      <mesh position={[0, -0.12, -6.12]} castShadow>
+        <boxGeometry args={[3.9, 0.86, 0.22]} />
         <meshStandardMaterial {...steel} />
       </mesh>
-      {[-1.45, -0.48, 0.48, 1.45].map((x) => (
-        <Bolt key={`t${x}`} x={x} y={0.4} z={-6.52} />
+      {[-1.55, -0.52, 0.52, 1.55].map((x) => (
+        <Bolt key={`t${x}`} x={x} y={0.48} z={-6.55} />
       ))}
-      {[-1.45, 1.45].map((x) => (
-        <Bolt key={`o${x}`} x={x} y={0.12} z={-7.02} />
+      {[-1.55, -0.52, 0.52, 1.55].map((x) => (
+        <Bolt key={`o${x}`} x={x} y={0.18} z={-7.14} />
       ))}
-      {[-1.2, 1.2].map((x) => (
+      {[-1.28, 1.28].map((x) => (
         <group key={x}>
-          <mesh position={[x, 2.45, -6.52]} castShadow>
-            <boxGeometry args={[0.38, 4.2, 0.38]} />
+          <mesh position={[x, 2.55, -6.55]} castShadow>
+            <boxGeometry args={[0.42, 4.35, 0.42]} />
             <meshStandardMaterial {...steel} />
           </mesh>
-          <mesh position={[x, 4.58, -6.52]} castShadow>
-            <boxGeometry args={[0.56, 0.2, 0.56]} />
+          <mesh position={[x, 4.78, -6.55]} castShadow>
+            <boxGeometry args={[0.62, 0.22, 0.62]} />
             <meshStandardMaterial {...gold} />
           </mesh>
-          <Bolt x={x} y={0.42} z={-6.28} />
+          <Bolt x={x} y={0.5} z={-6.22} />
         </group>
       ))}
-      <mesh position={[0, 4.62, -6.52]} castShadow>
-        <boxGeometry args={[2.8, 0.26, 0.44]} />
+      <mesh position={[0, 4.82, -6.55]} castShadow>
+        <boxGeometry args={[3.0, 0.28, 0.48]} />
         <meshStandardMaterial {...gold} />
       </mesh>
-      <mesh position={[0, 4.52, -3.15]} castShadow>
-        <boxGeometry args={[0.48, 0.3, 6.8]} />
+      <mesh position={[0, 5.05, -3.2]} castShadow>
+        <boxGeometry args={[0.4, 0.26, 6.7]} />
         <meshStandardMaterial {...steel} />
       </mesh>
       <mesh position={[0, 3.55, -4.55]} rotation={[0.38, 0, 0]} castShadow>
         <boxGeometry args={[0.22, 0.22, 3.7]} />
         <meshStandardMaterial {...steel} />
       </mesh>
-      <mesh position={[0, 4.5, -0.08]} castShadow>
+      <mesh position={[0, 5.02, -0.08]} castShadow>
         <boxGeometry args={[1.4, 0.24, 0.9]} />
         <meshStandardMaterial {...gold} />
       </mesh>
       {[-0.42, 0.42].map((x) => (
-        <mesh key={x} position={[x, 4.16, 0]} castShadow>
-          <boxGeometry args={[0.14, 0.62, 0.14]} />
+        <mesh key={x} position={[x, 4.55, 0]} castShadow>
+          <boxGeometry args={[0.14, 0.86, 0.14]} />
           <meshStandardMaterial color="#8a94a0" metalness={0.8} roughness={0.22} />
         </mesh>
       ))}

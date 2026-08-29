@@ -9,8 +9,8 @@ export function Lights() {
 
   return (
     <>
-      <ambientLight intensity={0.62} color="#f0e4d4" />
-      <hemisphereLight args={['#fff4e6', '#8a6a52', 0.7]} />
+      <ambientLight intensity={0.78} color="#f6ead8" />
+      <hemisphereLight args={['#fff7ea', '#b08968', 0.85]} />
       <directionalLight
         castShadow
         position={[-3.2, 14, 8.5]}

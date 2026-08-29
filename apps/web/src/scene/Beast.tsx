@@ -68,8 +68,8 @@ export function Beast({ seat }: { seat: Seat }) {
 
     const winner = ui === 'results' && result?.winner === seat
     const loser = ui === 'results' && result && result.winner !== seat
-    const restJaw = 0.48
-    const targetJaw = winner ? 0.78 : loser ? 0.16 : down ? Math.min(1, Math.max(extend * 1.15, 0.88)) : restJaw + extend * 0.08
+    const restJaw = 0.64
+    const targetJaw = winner ? 0.86 : loser ? 0.22 : down ? Math.min(1, Math.max(extend * 1.15, 0.92)) : restJaw + extend * 0.06
     jaw.current += (targetJaw - jaw.current) * Math.min(1, dt * (down ? 12 : 16))
 
     const punch = down ? extend + slam.current * 0.16 - anticip.current * 0.18 : extend
@@ -92,7 +92,7 @@ export function Beast({ seat }: { seat: Seat }) {
     if (antL.current) antL.current.rotation.z = Math.sin(t * 3.4 + seat) * 0.22
     if (antR.current) antR.current.rotation.z = Math.sin(t * 3.4 + seat + 1.2) * -0.22
     if (head.current) {
-      const camYaw = seat === 2 ? 0.12 : seat === 3 ? 0.22 : seat === 1 ? -0.18 : 0.08
+      const camYaw = seat === 2 ? 0.06 : seat === 3 ? 0.38 : seat === 1 ? -0.32 : 0.16
       head.current.rotation.y = camYaw + Math.sin(t * 9) * shake.current * 0.28
       head.current.rotation.z = Math.cos(t * 11) * shake.current * 0.12
       head.current.rotation.x = -0.1 + squash.current * 0.22
@@ -139,7 +139,7 @@ export function Beast({ seat }: { seat: Seat }) {
         </group>
         <group position={[0, BEAST_NECK_LIFT, 0.48]}>
           <MachineNeck seat={seat} pistonRef={piston} ringsRef={ringsRef} color={spec.color} />
-          <group ref={head} position={[0, 0.02, 1]} scale={1.38}>
+          <group ref={head} position={[0, 0.02, 1]} scale={1.52}>
             <HeadDressing seat={seat} visorRef={visorMat} antL={antL} antR={antR} />
             <MachineMouth jawsRef={jaws} seat={seat} />
             <pointLight ref={mouthLight} position={[0, 0.02, 0.62]} color="#ff6a88" intensity={2.2} distance={2.8} />

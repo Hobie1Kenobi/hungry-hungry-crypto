@@ -149,15 +149,15 @@ export function BlockmawChassis({ color, accent }: { color: string; accent: stri
           </mesh>
         )),
       )}
-      <mesh position={[0, 0.82, -1.02]} castShadow>
-        <cylinderGeometry args={[0.52, 0.52, 0.12, 28]} />
+      <mesh position={[-0.9, 0.82, -0.12]} rotation={[0, 0, Math.PI / 2]} castShadow>
+        <cylinderGeometry args={[0.58, 0.58, 0.12, 28]} />
         <meshStandardMaterial color={accent} metalness={0.9} roughness={0.14} />
       </mesh>
-      <mesh position={[0, 0.82, -1.08]} rotation={[Math.PI / 2, 0, 0]} castShadow>
-        <torusGeometry args={[0.52, 0.07, 10, 24]} />
+      <mesh position={[-0.96, 0.82, -0.12]} rotation={[0, Math.PI / 2, 0]} castShadow>
+        <torusGeometry args={[0.58, 0.08, 10, 24]} />
         <meshStandardMaterial color={accent} metalness={0.92} roughness={0.12} />
       </mesh>
-      <mesh position={[0, 0.82, -0.96]} castShadow>
+      <mesh position={[-0.86, 0.82, -0.12]} castShadow>
         <cylinderGeometry args={[0.1, 0.1, 0.1, 10]} />
         <meshStandardMaterial color="#2a2414" />
       </mesh>
@@ -346,17 +346,17 @@ export function MachineMouth({
         <boxGeometry args={[2.05 * wide, 0.62, 0.85]} />
         <meshPhysicalMaterial {...vinyl(color, { metalness: seat === 3 ? 0.38 : 0.22 })} />
       </mesh>
-      <mesh position={[0, 0.02, 0.42]} castShadow>
-        <boxGeometry args={[1.92 * wide, 0.92, 1.15]} />
-        <meshStandardMaterial color="#2a0a12" roughness={0.95} />
+      <mesh position={[0, 0.02, 0.48]} castShadow>
+        <boxGeometry args={[1.98 * wide, 1.05, 1.22]} />
+        <meshStandardMaterial color="#3a0c16" roughness={0.95} />
       </mesh>
-      <mesh position={[0, 0.02, 0.78]}>
-        <boxGeometry args={[1.72 * wide, 0.62, 0.22]} />
-        <meshStandardMaterial color="#d44562" roughness={0.92} />
+      <mesh position={[0, 0.02, 0.88]}>
+        <boxGeometry args={[1.78 * wide, 0.78, 0.28]} />
+        <meshStandardMaterial color="#e25574" roughness={0.9} />
       </mesh>
-      <mesh position={[0, 0.02, 0.92]}>
-        <planeGeometry args={[1.62 * wide, 0.7]} />
-        <meshBasicMaterial color="#ff4d6d" transparent opacity={0.42} />
+      <mesh position={[0, 0.02, 1.05]}>
+        <planeGeometry args={[1.7 * wide, 0.86]} />
+        <meshBasicMaterial color="#ff4d6d" transparent opacity={0.55} />
       </mesh>
       <group ref={jawsRef} position={[0, 0.02, 0.38]}>
         <mesh position={[0, 0, 0.02]} visible={false}>
