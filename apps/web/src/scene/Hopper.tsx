@@ -74,17 +74,17 @@ function RimMount() {
       ))}
       {[-0.32, 0.32].map((x) => (
         <group key={x}>
-          <mesh position={[x, 0.82, -6.78]} castShadow>
-            <cylinderGeometry args={[0.055, 0.06, 0.98, 8]} />
+          <mesh position={[x, 1.12, -6.78]} castShadow>
+            <cylinderGeometry args={[0.055, 0.06, 1.58, 8]} />
             <meshStandardMaterial {...steel} />
           </mesh>
-          <mesh position={[x, 1.32, -6.78]} castShadow>
+          <mesh position={[x, 1.92, -6.78]} castShadow>
             <boxGeometry args={[0.14, 0.08, 0.14]} />
             <meshStandardMaterial {...gold} />
           </mesh>
         </group>
       ))}
-      <mesh position={[0, 1.34, -6.72]} castShadow>
+      <mesh position={[0, 1.94, -6.72]} castShadow>
         <boxGeometry args={[0.78, 0.08, 0.16]} />
         <meshStandardMaterial {...gold} />
       </mesh>
@@ -116,7 +116,7 @@ export function Hopper() {
   return (
     <group>
       <RimMount />
-      <group ref={bin} position={[0, 1.58, -6.42]}>
+      <group ref={bin} position={[0, 2.05, -6.55]}>
         <mesh position={[0, 0.2, 0]} castShadow>
           <boxGeometry args={[0.58, 0.36, 0.46]} />
           <meshPhysicalMaterial color="#5a6d7c" metalness={0.58} roughness={0.3} clearcoat={0.4} />

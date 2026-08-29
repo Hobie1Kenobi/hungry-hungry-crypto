@@ -355,15 +355,15 @@ export function MachineMouth({
       </mesh>
       <mesh position={[0, 0.02, 0.34]} castShadow>
         <boxGeometry args={[1.22 * wide, 0.72, 0.78]} />
-        <meshStandardMaterial color="#3a0c16" roughness={0.95} />
+        <meshStandardMaterial color="#3a0c16" emissive="#7a1024" emissiveIntensity={0.55} roughness={0.95} />
       </mesh>
       <mesh position={[0, 0.02, 0.62]}>
         <boxGeometry args={[1.08 * wide, 0.52, 0.2]} />
-        <meshStandardMaterial color="#e25574" roughness={0.9} />
+        <meshStandardMaterial color="#e25574" emissive="#ff4d6d" emissiveIntensity={0.85} roughness={0.9} />
       </mesh>
       <mesh position={[0, 0.02, 0.74]}>
         <planeGeometry args={[1.02 * wide, 0.58]} />
-        <meshBasicMaterial color="#ff4d6d" transparent opacity={0.55} />
+        <meshBasicMaterial color="#ff4d6d" transparent opacity={0.7} />
       </mesh>
       <group ref={jawsRef} position={[0, 0.02, 0.28]}>
         <mesh position={[0, 0, 0.02]} visible={false}>
