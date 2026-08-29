@@ -92,7 +92,7 @@ export function ArenaCanvas() {
         shadows
         dpr={[1, 1.75]}
         camera={{ position: toyCameraPosition(), fov: TOY_FOV, near: 0.45, far: 90 }}
-        gl={{ antialias: true, alpha: false }}
+        gl={{ antialias: false, alpha: false }}
         onCreated={({ gl }) => {
           gl.setClearColor(BG, 1)
         }}
