@@ -18,6 +18,7 @@ export function Lights() {
         shadow-mapSize-width={1024}
         shadow-mapSize-height={1024}
       />
+      <pointLight position={[0, 12, -8]} intensity={1.35} distance={28} color="#e8f4ff" />
       <pointLight position={[0, 5.2, 0]} intensity={2.2} distance={16} color="#c8eeff" />
       <pointLight position={[0, 1.4, -6.2]} intensity={1.7} distance={10} color={cyan} />
       <pointLight position={[6.2, 1.4, 0]} intensity={1.7} distance={10} color={magenta} />

@@ -23,8 +23,8 @@ function ArenaCamera() {
     cam.fov = aspect < 1.05 ? 40 : 34
     cam.near = 0.1
     cam.far = 80
-    cam.position.set(0, 26.8, -6.4)
-    cam.lookAt(0, 0.28, 0.12)
+    cam.position.set(0, 28.2, -4.6)
+    cam.lookAt(0, 0.2, 0.85)
     cam.updateProjectionMatrix()
   }, [camera, width, height])
 
@@ -53,7 +53,7 @@ export function ArenaCanvas() {
       <Canvas
         shadows
         dpr={[1, 1.75]}
-        camera={{ position: [0, 26.8, -6.4], fov: 34, near: 0.1, far: 80 }}
+        camera={{ position: [0, 28.2, -4.6], fov: 34, near: 0.1, far: 80 }}
         gl={{ antialias: true }}
       >
         <ArenaCamera />
