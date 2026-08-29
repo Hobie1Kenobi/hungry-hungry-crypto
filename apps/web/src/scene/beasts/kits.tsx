@@ -599,8 +599,8 @@ export function HeadDressing({
     return (
       <group>
         <BloomSelect>
-          <mesh position={[0, 0.48, 0.12]} material={visor}>
-            <boxGeometry args={[0.6, 0.034, 0.048]} />
+          <mesh position={[0, 0.58, 0.22]} material={visor}>
+            <boxGeometry args={[0.68, 0.05, 0.06]} />
           </mesh>
         </BloomSelect>
         <group ref={antL} position={[-0.26, 0.42, -0.04]} />
@@ -619,9 +619,13 @@ export function HeadDressing({
           <cylinderGeometry args={[0.2, 0.16, 0.28, 12]} />
           <meshPhysicalMaterial {...vinyl(color)} />
         </mesh>
+        <mesh position={[0, 0.74, 0.42]} rotation={[0.3, 0, 0]} castShadow>
+          <boxGeometry args={[0.86, 0.065, 0.05]} />
+          <meshStandardMaterial color="#2a3210" roughness={0.72} metalness={0.2} />
+        </mesh>
         <BloomSelect>
-          <mesh position={[0, 0.38, 0.36]} material={visor}>
-            <boxGeometry args={[0.7, 0.034, 0.046]} />
+          <mesh position={[0, 0.78, 0.48]} rotation={[0.3, 0, 0]} material={visor}>
+            <boxGeometry args={[0.8, 0.06, 0.05]} />
           </mesh>
         </BloomSelect>
         <group ref={antL} position={[-0.46, 0.32, -0.06]} />
@@ -636,8 +640,8 @@ export function HeadDressing({
         <meshStandardMaterial color={accent} metalness={0.9} roughness={0.12} />
       </mesh>
       <BloomSelect>
-        <mesh position={[0, 0.4, 0.3]} material={visor}>
-          <boxGeometry args={[0.78, 0.034, 0.048]} />
+        <mesh position={[0, 0.52, 0.4]} material={visor}>
+          <boxGeometry args={[0.86, 0.05, 0.064]} />
         </mesh>
       </BloomSelect>
       <group ref={antL} position={[-0.36, 0.44, -0.08]}>

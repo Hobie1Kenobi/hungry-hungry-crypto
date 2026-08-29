@@ -28,7 +28,8 @@ export function Beast({ seat }: { seat: Seat }) {
   const antL = useRef<Group>(null)
   const antR = useRef<Group>(null)
   const visorMat = useRef<MeshBasicMaterial>(null)
-  const visor = useVisorMaterial(visorMat, seat === 3 ? spec.accent : spec.color)
+  const visorHex = seat === 2 ? '#D8FF58' : seat === 3 ? spec.accent : spec.color
+  const visor = useVisorMaterial(visorMat, visorHex)
   const mouthLight = useRef<PointLight>(null)
   const lastDown = useRef(false)
   const lastEat = useRef(0)
@@ -102,8 +103,11 @@ export function Beast({ seat }: { seat: Seat }) {
     }
     if (visorMat.current) {
       const blink = Math.sin(t * 7.5 + seat * 2.1) > 0.93 ? 0.82 : 1
-      const k = (winner ? 0.92 : down ? 0.8 : 0.72) * blink
-      visorMat.current.color.set(seat === 3 ? spec.accent : spec.color).multiplyScalar(k)
+      const idle = seat === 2 ? 1 : 0.72
+      const chomp = seat === 2 ? 1 : 0.8
+      const win = seat === 2 ? 1 : 0.92
+      const k = (winner ? win : down ? chomp : idle) * blink
+      visorMat.current.color.set(visorHex).multiplyScalar(k)
     }
     const headZ = visualLaneHeadAlong(visExt.current)
     const barrel = 0.4
