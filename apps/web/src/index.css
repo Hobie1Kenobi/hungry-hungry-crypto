@@ -431,9 +431,9 @@ h2,
 .hint {
   background: var(--panel);
   border: 1px solid var(--line);
-  padding: 7px 9px;
-  max-width: 220px;
-  font-size: 11px;
+  padding: 6px 8px;
+  max-width: 200px;
+  font-size: 10px;
 }
 
 .hint-sub {

@@ -56,7 +56,7 @@ Cycle 1 playtest (PR #11, `f26a079`) was the ground truth: glossy egg + soda-str
 2. Glow is still additive materials. No real bloom pass on visor / golden / hopper sparks.
 3. Kits are in-engine primitives. They read as four machines now; they are not hero sculpts.
 4. Results still uses a CSS card. The 3D lean/slump is there, but the overlay still owns the win announcement.
-5. Camera was framed for the desktop three-quarter. Portrait and ultrawide were not the playtest crop that failed Cycle 1; they still need a live pass.
+5. Smaller browser chrome still wants more south/west margin than a 1440×900 film. The toy camera now reserves HUD space and scales distance with viewport height; portrait still needs a live pass.
 
 ### Next action
 

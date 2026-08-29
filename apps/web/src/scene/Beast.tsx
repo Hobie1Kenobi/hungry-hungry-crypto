@@ -35,15 +35,21 @@ function HydraulicNeck({
         <meshStandardMaterial color="#8b96a2" metalness={0.78} roughness={0.22} />
       </mesh>
       <mesh ref={pistonRef} rotation={[Math.PI / 2, 0, 0]} position={[0, 0, 1.2]} castShadow>
-        <cylinderGeometry args={[0.4, 0.42, 1, 10]} />
+        <cylinderGeometry args={[0.42, 0.46, 1, 10]} />
         <meshStandardMaterial color={color} metalness={0.58} roughness={0.26} />
       </mesh>
       <group ref={ringsRef}>
         {rings.map((i) => (
-          <mesh key={i} rotation={[Math.PI / 2, 0, 0]} castShadow>
-            <torusGeometry args={[0.48, 0.1, 8, 16]} />
-            <meshStandardMaterial color={ringColor} metalness={0.92} roughness={0.12} />
-          </mesh>
+          <group key={i}>
+            <mesh rotation={[Math.PI / 2, 0, 0]} castShadow>
+              <torusGeometry args={[0.56, 0.14, 8, 16]} />
+              <meshStandardMaterial color="#f3f7fb" metalness={0.95} roughness={0.08} />
+            </mesh>
+            <mesh rotation={[Math.PI / 2, 0, 0]} position={[0, 0, 0.18]} castShadow>
+              <torusGeometry args={[0.5, 0.1, 8, 12]} />
+              <meshStandardMaterial color="#1a1e22" roughness={0.75} />
+            </mesh>
+          </group>
         ))}
       </group>
     </group>
@@ -130,9 +136,10 @@ export function Beast({ seat }: { seat: Seat }) {
     if (antL.current) antL.current.rotation.z = Math.sin(t * 3.4 + seat) * 0.22
     if (antR.current) antR.current.rotation.z = Math.sin(t * 3.4 + seat + 1.2) * -0.22
     if (head.current) {
-      head.current.rotation.y = Math.sin(t * 9) * shake.current * 0.28
+      const camYaw = seat === 2 ? 0.58 : seat === 3 ? 0.3 : seat === 1 ? -0.24 : 0.1
+      head.current.rotation.y = camYaw + Math.sin(t * 9) * shake.current * 0.28
       head.current.rotation.z = Math.cos(t * 11) * shake.current * 0.12
-      head.current.rotation.x = -0.12 + squash.current * 0.18
+      head.current.rotation.x = -0.16 + squash.current * 0.2
     }
     if (visorMat.current) {
       const blink = Math.sin(t * 7.5 + seat * 2.1) > 0.93 ? 0.18 : 1
@@ -176,7 +183,7 @@ export function Beast({ seat }: { seat: Seat }) {
         </group>
         <group position={[0, BEAST_NECK_LIFT, 0.42]}>
           <HydraulicNeck pistonRef={piston} ringsRef={ringsRef} color={spec.color} gold={gold} />
-          <group ref={head} position={[0, 0.02, 1]} scale={1.22}>
+          <group ref={head} position={[0, 0.02, 1]} scale={1.42}>
             <HeadDressing seat={seat} visorRef={visorMat} antL={antL} antR={antR} />
             <MachineMouth jawsRef={jaws} seat={seat} />
             <pointLight ref={mouthLight} position={[0, 0.02, 0.55]} color="#ff6a88" intensity={1.2} distance={2.4} />

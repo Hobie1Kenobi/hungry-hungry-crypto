@@ -8,9 +8,9 @@ import { useViewStore } from '../store/viewStore'
 const look = new Vector3()
 const pos = new Vector3()
 
-const TOY_DIST = 27.4
-const TOY_ELEV = 0.7
-const TOY_AZ = 0.56
+const TOY_DIST = 28.8
+const TOY_ELEV = 0.68
+const TOY_AZ = 0.54
 const SHAKE_MS = 120
 
 export function ArenaCamera() {
@@ -41,8 +41,9 @@ export function ArenaCamera() {
     }
 
     if (debug) {
-      cam.fov = 40
-      pos.set(0, 21.5, 0.02)
+      cam.clearViewOffset()
+      cam.fov = 42
+      pos.set(0, 23.2, 0.02)
       cam.position.lerp(pos, 1 - Math.pow(0.0005, dt))
       look.set(0, 0, 0)
       cam.lookAt(look)
@@ -59,7 +60,8 @@ export function ArenaCamera() {
     const elev = TOY_ELEV
     const swing = ui === 'results' ? Math.sin(clock.elapsedTime * 0.32) * 0.12 : 0
     const az = TOY_AZ + swing
-    const dist = (ui === 'results' ? TOY_DIST + 1.4 : TOY_DIST) * dolly * zoom
+    const frameK = Math.max(1, 920 / Math.max(640, height)) * (aspect < 1.25 ? 1.08 : 1)
+    const dist = (ui === 'results' ? TOY_DIST + 1.6 : TOY_DIST) * frameK * dolly * zoom
     const x = dist * Math.cos(elev) * Math.sin(az)
     const y = dist * Math.sin(elev)
     const z = dist * Math.cos(elev) * Math.cos(az)
@@ -79,11 +81,15 @@ export function ArenaCamera() {
     } else {
       cam.position.lerp(pos, 1 - Math.pow(0.0004, dt))
     }
-    look.set(ui === 'results' ? -0.35 : -1.2, 0.22, result ? 0.45 : 1.45)
+    look.set(ui === 'results' ? -0.4 : -1.35, 0.18, result ? 0.55 : 1.7)
     cam.lookAt(look)
-    cam.fov = aspect < 1.1 ? 48 : 45
+    cam.fov = aspect < 1.1 ? 50 : 46
     cam.near = 0.1
     cam.far = 90
+    const padX = Math.round(width * 0.14)
+    const padTop = Math.round(height * 0.02)
+    const padBot = Math.round(height * 0.26)
+    cam.setViewOffset(width + padX, height + padTop + padBot, padX, padTop, width, height)
     cam.updateProjectionMatrix()
   })
 
