@@ -101,8 +101,8 @@ export function Beast({ seat }: { seat: Seat }) {
       head.current.rotation.x = 0.26 + visExt.current * 0.06 + squash.current * 0.1 + chewNod
     }
     if (visorMat.current) {
-      const blink = Math.sin(t * 7.5 + seat * 2.1) > 0.93 ? 0.45 : 1
-      const k = (winner ? 2.35 : down ? 2.05 : 1.85) * blink
+      const blink = Math.sin(t * 7.5 + seat * 2.1) > 0.93 ? 0.78 : 1
+      const k = (winner ? 1.16 : down ? 1.06 : 1) * blink
       visorMat.current.color.set(seat === 3 ? spec.accent : spec.color).multiplyScalar(k)
     }
     const headZ = visualLaneHeadAlong(visExt.current)
@@ -144,7 +144,7 @@ export function Beast({ seat }: { seat: Seat }) {
       </mesh>
       <group ref={rig}>
         <group ref={body} position={[0, 0.02, seat === 2 ? 0.08 : -0.18]}>
-          <Chassis seat={seat} visor={visor} />
+          <Chassis seat={seat} />
         </group>
         <group ref={neck} position={[0, beastNeckLift(seat), NECK_VISUAL_ORIGIN]}>
           <MachineNeck seat={seat} pistonRef={piston} ringsRef={ringsRef} color={spec.color} />
