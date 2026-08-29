@@ -68,8 +68,8 @@ export function Beast({ seat }: { seat: Seat }) {
 
     const winner = ui === 'results' && result?.winner === seat
     const loser = ui === 'results' && result && result.winner !== seat
-    const restJaw = 0.64
-    const targetJaw = winner ? 0.86 : loser ? 0.22 : down ? Math.min(1, Math.max(extend * 1.15, 0.92)) : restJaw + extend * 0.06
+    const restJaw = 0.78
+    const targetJaw = winner ? 0.92 : loser ? 0.22 : down ? Math.min(1, Math.max(extend * 1.15, 0.94)) : restJaw + extend * 0.04
     jaw.current += (targetJaw - jaw.current) * Math.min(1, dt * (down ? 12 : 16))
 
     const punch = down ? extend + slam.current * 0.16 - anticip.current * 0.18 : extend
@@ -92,10 +92,10 @@ export function Beast({ seat }: { seat: Seat }) {
     if (antL.current) antL.current.rotation.z = Math.sin(t * 3.4 + seat) * 0.22
     if (antR.current) antR.current.rotation.z = Math.sin(t * 3.4 + seat + 1.2) * -0.22
     if (head.current) {
-      const camYaw = seat === 2 ? 0.92 : seat === 3 ? 0.58 : seat === 1 ? -0.48 : 0.22
+      const camYaw = seat === 2 ? -0.72 : seat === 3 ? 0.42 : seat === 1 ? -0.22 : 0.18
       head.current.rotation.y = camYaw + Math.sin(t * 9) * shake.current * 0.28
       head.current.rotation.z = Math.cos(t * 11) * shake.current * 0.12
-      head.current.rotation.x = -0.1 + squash.current * 0.22
+      head.current.rotation.x = -0.38 + squash.current * 0.18
     }
     if (visorMat.current) {
       const blink = Math.sin(t * 7.5 + seat * 2.1) > 0.93 ? 0.18 : 1
@@ -146,7 +146,7 @@ export function Beast({ seat }: { seat: Seat }) {
           </group>
         </group>
       </group>
-      <Billboard position={[0, seat === 0 ? 1.85 : 1.62, 0]}>
+      <Billboard position={[0, seat === 0 ? 2.15 : 1.72, 0]}>
         <Text fontSize={0.22} color={spec.color} anchorX="center" anchorY="middle">
           {you ? `${spec.name}  YOU` : spec.name}
         </Text>

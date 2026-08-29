@@ -13,46 +13,46 @@ function plate(color: string, metal = 0.55) {
 export function BytebiteChassis({ color, accent }: { color: string; accent: string }) {
   return (
     <group>
-      <mesh position={[0, 0.72, -0.22]} castShadow>
-        <boxGeometry args={[0.98, 0.92, 0.62]} />
+      <mesh position={[0, 0.82, -0.06]} castShadow>
+        <boxGeometry args={[1.12, 1.08, 0.7]} />
         <meshPhysicalMaterial {...vinyl(color)} />
       </mesh>
-      <mesh position={[0, 0.78, 0.12]} castShadow>
-        <boxGeometry args={[0.78, 0.62, 0.08]} />
+      <mesh position={[0, 0.88, 0.32]} castShadow>
+        <boxGeometry args={[0.92, 0.78, 0.08]} />
         <meshStandardMaterial color="#031018" metalness={0.35} roughness={0.32} />
       </mesh>
-      <mesh position={[0, 0.78, 0.17]} castShadow>
-        <boxGeometry args={[0.68, 0.52, 0.04]} />
-        <meshStandardMaterial color={color} emissive={color} emissiveIntensity={2.1} metalness={0.08} roughness={0.16} />
+      <mesh position={[0, 0.88, 0.38]} castShadow>
+        <boxGeometry args={[0.8, 0.64, 0.05]} />
+        <meshStandardMaterial color={color} emissive={color} emissiveIntensity={2.4} metalness={0.08} roughness={0.16} />
       </mesh>
-      {[-0.16, -0.04, 0.08, 0.2].map((y) => (
-        <mesh key={y} position={[0, 0.78 + y, 0.2]}>
-          <boxGeometry args={[0.64, 0.02, 0.015]} />
+      {[-0.2, -0.06, 0.08, 0.22].map((y) => (
+        <mesh key={y} position={[0, 0.88 + y, 0.42]}>
+          <boxGeometry args={[0.76, 0.025, 0.015]} />
           <meshStandardMaterial color="#041018" />
         </mesh>
       ))}
-      <mesh position={[0, 0.78, -0.58]} rotation={[Math.PI / 2, 0, 0]} castShadow>
-        <cylinderGeometry args={[0.22, 0.28, 0.42, 16]} />
+      <mesh position={[0, 0.82, -0.52]} rotation={[Math.PI / 2, 0, 0]} castShadow>
+        <cylinderGeometry args={[0.26, 0.32, 0.5, 16]} />
         <meshStandardMaterial color="#0b2430" metalness={0.45} roughness={0.32} />
       </mesh>
-      <mesh position={[0, 0.22, 0.06]} castShadow>
-        <boxGeometry args={[1.12, 0.16, 0.72]} />
+      <mesh position={[0, 0.2, 0.12]} castShadow>
+        <boxGeometry args={[1.22, 0.16, 0.78]} />
         <meshStandardMaterial {...plate(accent, 0.4)} />
       </mesh>
-      {[-0.36, -0.12, 0.12, 0.36].map((x) => (
-        <mesh key={x} position={[x, 0.32, 0.18]} castShadow>
-          <cylinderGeometry args={[0.05, 0.05, 0.05, 8]} />
+      {[-0.4, -0.14, 0.14, 0.4].map((x) => (
+        <mesh key={x} position={[x, 0.3, 0.28]} castShadow>
+          <cylinderGeometry args={[0.055, 0.055, 0.05, 8]} />
           <meshStandardMaterial color="#0b1c24" roughness={0.7} />
         </mesh>
       ))}
-      {[-0.42, 0.42].map((x) => (
-        <group key={x} position={[x, 1.22, -0.12]}>
+      {[-0.48, 0.48].map((x) => (
+        <group key={x} position={[x, 1.42, -0.02]}>
           <mesh castShadow>
-            <cylinderGeometry args={[0.03, 0.03, 0.38, 8]} />
+            <cylinderGeometry args={[0.035, 0.035, 0.46, 8]} />
             <meshStandardMaterial color={accent} metalness={0.5} roughness={0.28} />
           </mesh>
-          <mesh position={[0, 0.24, 0]} rotation={[0.6, 0, 0]} castShadow>
-            <sphereGeometry args={[0.09, 12, 10]} />
+          <mesh position={[0, 0.28, 0]} rotation={[0.6, 0, 0]} castShadow>
+            <sphereGeometry args={[0.1, 12, 10]} />
             <meshStandardMaterial color={color} metalness={0.35} roughness={0.22} />
           </mesh>
         </group>
@@ -107,32 +107,33 @@ export function GoldgrubChassis({ color, accent }: { color: string; accent: stri
   return (
     <group>
       {[
-        [0.42, 0.08],
-        [0.34, -0.42],
-        [0.26, -0.86],
+        [0.38, 0.12],
+        [0.32, -0.28],
+        [0.26, -0.64],
+        [0.2, -0.96],
       ].map(([r, z], i) => (
         <group key={i}>
-          <mesh position={[0, 0.34, z]} rotation={[0, 0, Math.PI / 2]} castShadow>
-            <cylinderGeometry args={[r, r * 0.92, 0.72 - i * 0.1, 20]} />
+          <mesh position={[0, 0.3, z]} rotation={[Math.PI / 2, 0, 0]} castShadow>
+            <cylinderGeometry args={[r, r * 0.88, 0.34, 22]} />
             <meshPhysicalMaterial {...vinyl(color)} />
           </mesh>
-          <mesh position={[0, 0.34, z]} rotation={[Math.PI / 2, 0, 0]}>
-            <torusGeometry args={[r * 0.92, 0.035, 8, 20]} />
+          <mesh position={[0, 0.3, z]} rotation={[Math.PI / 2, 0, 0]}>
+            <torusGeometry args={[r * 0.9, 0.03, 8, 20]} />
             <meshStandardMaterial color={accent} metalness={0.62} roughness={0.22} />
           </mesh>
         </group>
       ))}
-      {[-0.32, 0.32].map((x) =>
-        [0.08, -0.42, -0.86].map((z) => (
-          <mesh key={`${x}${z}`} position={[x, 0.1, z]} rotation={[0, 0, Math.PI / 2]} castShadow>
-            <cylinderGeometry args={[0.08, 0.08, 0.12, 10]} />
+      {[-0.22, 0.22].map((x) =>
+        [0.12, -0.28, -0.64, -0.96].map((z) => (
+          <mesh key={`${x}${z}`} position={[x, 0.08, z]} rotation={[0, 0, Math.PI / 2]} castShadow>
+            <cylinderGeometry args={[0.07, 0.07, 0.1, 10]} />
             <meshStandardMaterial color="#2a320c" roughness={0.72} />
           </mesh>
         )),
       )}
-      {[-0.28, 0.28].map((x) => (
-        <mesh key={x} position={[x, 0.52, 0.16]} castShadow>
-          <sphereGeometry args={[0.08, 10, 8]} />
+      {[-0.2, 0.2].map((x) => (
+        <mesh key={x} position={[x, 0.48, 0.22]} castShadow>
+          <sphereGeometry args={[0.07, 10, 8]} />
           <meshStandardMaterial color="#D4AF37" metalness={0.86} roughness={0.16} />
         </mesh>
       ))}
@@ -155,15 +156,15 @@ export function BlockmawChassis({ color, accent }: { color: string; accent: stri
           </mesh>
         )),
       )}
-      <mesh position={[-0.54, 0.52, -0.08]} rotation={[0, 0, Math.PI / 2]} castShadow>
+      <mesh position={[0.56, 0.52, -0.04]} rotation={[0, 0, Math.PI / 2]} castShadow>
         <cylinderGeometry args={[0.32, 0.32, 0.08, 28]} />
         <meshStandardMaterial color={accent} metalness={0.9} roughness={0.14} />
       </mesh>
-      <mesh position={[-0.58, 0.52, -0.08]} rotation={[0, Math.PI / 2, 0]} castShadow>
+      <mesh position={[0.6, 0.52, -0.04]} rotation={[0, Math.PI / 2, 0]} castShadow>
         <torusGeometry args={[0.32, 0.05, 10, 24]} />
         <meshStandardMaterial color={accent} metalness={0.92} roughness={0.12} />
       </mesh>
-      <mesh position={[-0.52, 0.52, -0.08]} castShadow>
+      <mesh position={[0.54, 0.52, -0.04]} castShadow>
         <cylinderGeometry args={[0.06, 0.06, 0.08, 10]} />
         <meshStandardMaterial color="#2a2414" />
       </mesh>

@@ -61,31 +61,31 @@ function RimMount() {
   const gold = { color: '#d4af37', metalness: 0.82, roughness: 0.22 }
   return (
     <group>
-      <mesh position={[0, 0.26, -6.62]} castShadow>
-        <boxGeometry args={[1.48, 0.14, 0.48]} />
+      <mesh position={[0, 0.26, -6.78]} castShadow>
+        <boxGeometry args={[1.15, 0.12, 0.36]} />
         <meshStandardMaterial {...steel} />
       </mesh>
-      <mesh position={[0, -0.06, -6.88]} castShadow>
-        <boxGeometry args={[1.48, 0.5, 0.14]} />
+      <mesh position={[0, -0.04, -6.98]} castShadow>
+        <boxGeometry args={[1.15, 0.42, 0.12]} />
         <meshStandardMaterial {...steel} />
       </mesh>
-      {[-0.48, 0.48].map((x) => (
-        <Bolt key={`rim${x}`} x={x} y={0.35} z={-6.62} />
+      {[-0.36, 0.36].map((x) => (
+        <Bolt key={`rim${x}`} x={x} y={0.34} z={-6.78} />
       ))}
-      {[-0.42, 0.42].map((x) => (
+      {[-0.32, 0.32].map((x) => (
         <group key={x}>
-          <mesh position={[x, 1.08, -6.58]} castShadow>
-            <cylinderGeometry args={[0.07, 0.08, 1.48, 8]} />
+          <mesh position={[x, 0.82, -6.78]} castShadow>
+            <cylinderGeometry args={[0.055, 0.06, 0.98, 8]} />
             <meshStandardMaterial {...steel} />
           </mesh>
-          <mesh position={[x, 1.84, -6.58]} castShadow>
-            <boxGeometry args={[0.18, 0.1, 0.18]} />
+          <mesh position={[x, 1.32, -6.78]} castShadow>
+            <boxGeometry args={[0.14, 0.08, 0.14]} />
             <meshStandardMaterial {...gold} />
           </mesh>
         </group>
       ))}
-      <mesh position={[0, 1.86, -6.5]} castShadow>
-        <boxGeometry args={[1.02, 0.1, 0.2]} />
+      <mesh position={[0, 1.34, -6.72]} castShadow>
+        <boxGeometry args={[0.78, 0.08, 0.16]} />
         <meshStandardMaterial {...gold} />
       </mesh>
     </group>
@@ -116,17 +116,17 @@ export function Hopper() {
   return (
     <group>
       <RimMount />
-      <group ref={bin} position={[0, 2.05, -6.05]}>
-        <mesh position={[0, 0.28, 0]} castShadow>
-          <boxGeometry args={[0.72, 0.48, 0.58]} />
+      <group ref={bin} position={[0, 1.58, -6.42]}>
+        <mesh position={[0, 0.2, 0]} castShadow>
+          <boxGeometry args={[0.58, 0.36, 0.46]} />
           <meshPhysicalMaterial color="#5a6d7c" metalness={0.58} roughness={0.3} clearcoat={0.4} />
         </mesh>
-        <mesh position={[0, 0.54, 0]} castShadow>
-          <boxGeometry args={[0.8, 0.07, 0.64]} />
+        <mesh position={[0, 0.4, 0]} castShadow>
+          <boxGeometry args={[0.64, 0.06, 0.5]} />
           <meshStandardMaterial color="#d4af37" metalness={0.7} roughness={0.28} />
         </mesh>
-        <mesh position={[0, 0.3, 0.28]} castShadow>
-          <boxGeometry args={[0.38, 0.22, 0.05]} />
+        <mesh position={[0, 0.22, 0.22]} castShadow>
+          <boxGeometry args={[0.3, 0.16, 0.04]} />
           <meshPhysicalMaterial
             color="#7fe9ff"
             emissive="#2ad4e8"
@@ -137,16 +137,16 @@ export function Hopper() {
             opacity={0.55}
           />
         </mesh>
-        <mesh position={[0, -0.08, 0.08]} rotation={[0.62, 0, 0]} castShadow>
-          <cylinderGeometry args={[0.11, 0.16, 0.62, 8]} />
+        <mesh position={[0, -0.06, 0.1]} rotation={[0.7, 0, 0]} castShadow>
+          <cylinderGeometry args={[0.08, 0.12, 0.48, 8]} />
           <meshStandardMaterial color="#8a96a4" metalness={0.72} roughness={0.26} />
         </mesh>
-        <mesh position={[0, -0.38, 0.38]} rotation={[0.95, 0, 0]} castShadow>
-          <boxGeometry args={[0.28, 0.06, 0.55]} />
+        <mesh position={[0, -0.28, 0.32]} rotation={[1.05, 0, 0]} castShadow>
+          <boxGeometry args={[0.22, 0.05, 0.4]} />
           <meshStandardMaterial color="#c5ced6" metalness={0.82} roughness={0.2} />
         </mesh>
-        <mesh position={[0, -0.52, 0.58]} castShadow>
-          <boxGeometry args={[0.16, 0.14, 0.16]} />
+        <mesh position={[0, -0.38, 0.46]} castShadow>
+          <boxGeometry args={[0.12, 0.1, 0.12]} />
           <meshStandardMaterial
             color="#00e5ff"
             emissive="#00e5ff"
