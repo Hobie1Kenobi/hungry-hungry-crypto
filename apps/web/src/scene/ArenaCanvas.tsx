@@ -38,7 +38,7 @@ export function ArenaCanvas() {
       <Canvas
         shadows
         dpr={[1, 1.75]}
-        camera={{ position: [8.8, 11.4, 10.6], fov: 33, near: 0.1, far: 80 }}
+        camera={{ position: [10.1, 15.0, 13.5], fov: 40, near: 0.1, far: 90 }}
         gl={{ antialias: true }}
       >
         <ArenaCamera />
