@@ -9,13 +9,13 @@ import { RESULT_LOOK } from './beasts/vinyl'
 const look = new Vector3()
 const pos = new Vector3()
 
-export const TOY_POS = { x: 3.62, y: 10.95, z: -12.55 }
-export const TOY_LOOK = { x: 0.02, y: 0.42, z: -0.48 }
-export const TOY_FOV = 34
+export const TOY_POS = { x: 4.05, y: 7.85, z: -13.65 }
+export const TOY_LOOK = { x: 0.04, y: 0.88, z: -1.72 }
+export const TOY_FOV = 36
 const SHAKE_MS = 120
 
 /** Pulled back so the winner body reads in the open pond, not a crash-zoom blob. */
-export const RESULT_POS = { x: 8.35, y: 9.85, z: -10.55 }
+export const RESULT_POS = { x: 9.45, y: 7.55, z: -11.85 }
 
 export function toyCameraPosition(): [number, number, number] {
   return [TOY_POS.x, TOY_POS.y, TOY_POS.z]

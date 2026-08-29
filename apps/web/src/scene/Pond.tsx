@@ -15,25 +15,31 @@ function LaneGutter({
 }) {
   const spec = BEASTS[seat]
   const yaw = seat === 0 ? 0 : seat === 1 ? -Math.PI / 2 : seat === 2 ? Math.PI : Math.PI / 2
-  const rail = { color: spec.color, emissive: spec.color, emissiveIntensity: 1.15, metalness: 0.42, roughness: 0.28 }
-  const bed = { color: spec.accent, emissive: spec.color, emissiveIntensity: 0.35, metalness: 0.28, roughness: 0.4 }
-  const lip = 0.62
+  const rail = { color: spec.color, emissive: spec.color, emissiveIntensity: 2.15, metalness: 0.38, roughness: 0.24 }
+  const bed = { color: spec.accent, emissive: spec.color, emissiveIntensity: 0.55, metalness: 0.22, roughness: 0.38 }
+  const lip = 0.7
   return (
     <group rotation={[0, yaw, 0]}>
-      <mesh position={[0, 0.03, mid]} castShadow receiveShadow>
-        <boxGeometry args={[1.28, 0.08, length]} />
+      <mesh position={[0, 0.04, mid]} castShadow receiveShadow>
+        <boxGeometry args={[1.42, 0.1, length]} />
         <meshStandardMaterial {...bed} />
       </mesh>
       {[-lip, lip].map((x) => (
-        <mesh key={x} position={[x, 0.1, mid]} castShadow>
-          <boxGeometry args={[0.2, 0.16, length]} />
-          <meshStandardMaterial {...rail} />
-        </mesh>
+        <group key={x}>
+          <mesh position={[x, 0.22, mid]} castShadow>
+            <boxGeometry args={[0.24, 0.4, length]} />
+            <meshStandardMaterial {...rail} />
+          </mesh>
+          <mesh position={[x, 0.44, mid]} castShadow>
+            <boxGeometry args={[0.3, 0.08, length]} />
+            <meshStandardMaterial color="#f4fff8" emissive={spec.color} emissiveIntensity={1.6} metalness={0.55} roughness={0.18} />
+          </mesh>
+        </group>
       ))}
-      {[-1.28, -0.42, 0.42, 1.28].map((z) => (
-        <mesh key={z} position={[0, 0.08, mid + z]} castShadow>
-          <boxGeometry args={[1.18, 0.07, 0.14]} />
-          <meshStandardMaterial color={spec.color} emissive={spec.color} emissiveIntensity={0.85} metalness={0.5} roughness={0.24} />
+      {[-1.2, -0.4, 0.4, 1.2].map((z) => (
+        <mesh key={z} position={[0, 0.14, mid + z]} castShadow>
+          <boxGeometry args={[1.28, 0.12, 0.18]} />
+          <meshStandardMaterial color={spec.color} emissive={spec.color} emissiveIntensity={1.35} metalness={0.48} roughness={0.22} />
         </mesh>
       ))}
     </group>
@@ -49,13 +55,13 @@ function RaisedCross() {
       <LaneGutter seat={1} length={run} mid={mid} />
       <LaneGutter seat={2} length={run} mid={mid} />
       <LaneGutter seat={3} length={run} mid={mid} />
-      <mesh position={[0, 0.07, 0]} castShadow>
-        <cylinderGeometry args={[0.62, 0.62, 0.1, 16]} />
-        <meshStandardMaterial color="#d7e8c8" emissive="#8a9a40" emissiveIntensity={0.45} metalness={0.55} roughness={0.28} />
+      <mesh position={[0, 0.12, 0]} castShadow>
+        <cylinderGeometry args={[0.72, 0.72, 0.18, 16]} />
+        <meshStandardMaterial color="#d7e8c8" emissive="#8a9a40" emissiveIntensity={0.7} metalness={0.55} roughness={0.28} />
       </mesh>
-      <mesh position={[0, 0.13, 0]} castShadow>
-        <cylinderGeometry args={[0.28, 0.28, 0.08, 14]} />
-        <meshStandardMaterial color="#fff6c8" emissive="#ffe27a" emissiveIntensity={0.7} metalness={0.4} roughness={0.22} />
+      <mesh position={[0, 0.24, 0]} castShadow>
+        <cylinderGeometry args={[0.32, 0.32, 0.12, 14]} />
+        <meshStandardMaterial color="#fff6c8" emissive="#ffe27a" emissiveIntensity={1.1} metalness={0.4} roughness={0.22} />
       </mesh>
     </group>
   )
