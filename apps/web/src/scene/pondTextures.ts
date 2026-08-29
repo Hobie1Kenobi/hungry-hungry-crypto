@@ -7,11 +7,11 @@ export function makeHexTexture(): CanvasTexture {
   canvas.height = size
   const ctx = canvas.getContext('2d')
   if (ctx) {
-    ctx.fillStyle = '#03141a'
+    ctx.fillStyle = '#01060a'
     ctx.fillRect(0, 0, size, size)
     const r = 18
     const h = r * Math.sqrt(3)
-    ctx.strokeStyle = 'rgba(90, 230, 235, 0.42)'
+    ctx.strokeStyle = 'rgba(48, 140, 150, 0.28)'
     ctx.lineWidth = 1.2
     for (let row = -1; row < size / h + 2; row += 1) {
       for (let col = -1; col < size / (r * 1.5) + 2; col += 1) {

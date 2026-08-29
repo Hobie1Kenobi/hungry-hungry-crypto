@@ -2,7 +2,15 @@ import { useMemo, useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import { AdditiveBlending, type Mesh } from 'three'
 import { BEASTS, POND_SIZE, type Seat } from '@hhc/shared'
+import { useJuiceStore } from '../game/juice'
 import { makeCausticTexture, makeHexTexture } from './pondTextures'
+
+/** Liquid surface height. CROSS beds sit at 0.04, proud of this. */
+export const POND_LIQUID_Y = -0.05
+
+const WELL_Y = -0.4
+const DISH_INNER = POND_SIZE - 0.22
+const RIPPLE_MS = 720
 
 function LaneGutter({
   seat,
@@ -67,13 +75,140 @@ function RaisedCross() {
   )
 }
 
-export function Pond() {
-  const inner = POND_SIZE - 0.18
-  const rim = 0.28
+function DishWell() {
+  const wallH = POND_LIQUID_Y - WELL_Y + 0.08
+  const wallY = (POND_LIQUID_Y + WELL_Y) / 2
+  const half = DISH_INNER / 2
+  const slope = 0.32
+  const lining = { color: '#0a1418', metalness: 0.42, roughness: 0.48 }
+  return (
+    <group>
+      <mesh position={[0, WELL_Y, 0]} receiveShadow>
+        <boxGeometry args={[DISH_INNER - 0.55, 0.08, DISH_INNER - 0.55]} />
+        <meshStandardMaterial color="#00050a" metalness={0.18} roughness={0.72} />
+      </mesh>
+      <mesh position={[0, wallY, half - 0.12]} rotation={[-slope, 0, 0]} receiveShadow>
+        <boxGeometry args={[DISH_INNER, wallH, 0.26]} />
+        <meshStandardMaterial {...lining} />
+      </mesh>
+      <mesh position={[0, wallY, -half + 0.12]} rotation={[slope, 0, 0]} receiveShadow>
+        <boxGeometry args={[DISH_INNER, wallH, 0.26]} />
+        <meshStandardMaterial {...lining} />
+      </mesh>
+      <mesh position={[half - 0.12, wallY, 0]} rotation={[0, 0, slope]} receiveShadow>
+        <boxGeometry args={[0.26, wallH, DISH_INNER]} />
+        <meshStandardMaterial {...lining} />
+      </mesh>
+      <mesh position={[-half + 0.12, wallY, 0]} rotation={[0, 0, -slope]} receiveShadow>
+        <boxGeometry args={[0.26, wallH, DISH_INNER]} />
+        <meshStandardMaterial {...lining} />
+      </mesh>
+    </group>
+  )
+}
+
+function DishLip() {
+  const rim = 0.34
   const wall = POND_SIZE / 2 + 0.02
+  const steel = { color: '#0a161c', metalness: 0.5, roughness: 0.36 }
+  return (
+    <group>
+      <mesh position={[0, 0.08, -wall]} castShadow receiveShadow>
+        <boxGeometry args={[POND_SIZE + rim, 0.28, rim]} />
+        <meshStandardMaterial {...steel} />
+      </mesh>
+      <mesh position={[0, 0.08, wall]} castShadow receiveShadow>
+        <boxGeometry args={[POND_SIZE + rim, 0.28, rim]} />
+        <meshStandardMaterial {...steel} />
+      </mesh>
+      <mesh position={[-wall, 0.08, 0]} castShadow receiveShadow>
+        <boxGeometry args={[rim, 0.28, POND_SIZE + rim]} />
+        <meshStandardMaterial {...steel} />
+      </mesh>
+      <mesh position={[wall, 0.08, 0]} castShadow receiveShadow>
+        <boxGeometry args={[rim, 0.28, POND_SIZE + rim]} />
+        <meshStandardMaterial {...steel} />
+      </mesh>
+      <mesh position={[0, 0.2, -wall]} castShadow>
+        <boxGeometry args={[POND_SIZE + rim + 0.08, 0.07, rim + 0.08]} />
+        <meshStandardMaterial color="#c5d0d6" metalness={0.72} roughness={0.22} />
+      </mesh>
+      <mesh position={[0, 0.2, wall]} castShadow>
+        <boxGeometry args={[POND_SIZE + rim + 0.08, 0.07, rim + 0.08]} />
+        <meshStandardMaterial color="#c5d0d6" metalness={0.72} roughness={0.22} />
+      </mesh>
+      <mesh position={[-wall, 0.2, 0]} castShadow>
+        <boxGeometry args={[rim + 0.08, 0.07, POND_SIZE + rim + 0.08]} />
+        <meshStandardMaterial color="#c5d0d6" metalness={0.72} roughness={0.22} />
+      </mesh>
+      <mesh position={[wall, 0.2, 0]} castShadow>
+        <boxGeometry args={[rim + 0.08, 0.07, POND_SIZE + rim + 0.08]} />
+        <meshStandardMaterial color="#c5d0d6" metalness={0.72} roughness={0.22} />
+      </mesh>
+    </group>
+  )
+}
+
+function LiquidRipples() {
+  const splashes = useJuiceStore((s) => s.splashes)
+  const group = useRef<Mesh[]>([])
+
+  useFrame(() => {
+    const now = performance.now()
+    const events = splashes.slice(-8)
+    for (let i = 0; i < group.current.length; i += 1) {
+      const mesh = group.current[i]
+      if (!mesh) continue
+      const ev = events[i]
+      if (!ev) {
+        mesh.visible = false
+        continue
+      }
+      const t = (now - ev.at) / RIPPLE_MS
+      if (t < 0 || t >= 1) {
+        mesh.visible = false
+        continue
+      }
+      mesh.visible = true
+      mesh.position.set(ev.x, POND_LIQUID_Y + 0.012, ev.z)
+      const dump = ev.x === 0 && ev.z === 0
+      const s = (dump ? 0.55 : 0.28) + t * (dump ? 3.4 : 2.15)
+      mesh.scale.set(s, 1, s)
+      const mat = mesh.material as { opacity: number }
+      mat.opacity = (dump ? 0.42 : 0.34) * (1 - t) * (1 - t)
+    }
+  })
+
+  return (
+    <group>
+      {Array.from({ length: 8 }, (_, i) => (
+        <mesh
+          key={i}
+          ref={(el) => {
+            if (el) group.current[i] = el
+          }}
+          rotation={[-Math.PI / 2, 0, 0]}
+          visible={false}
+        >
+          <ringGeometry args={[0.22, 0.38, 24]} />
+          <meshBasicMaterial
+            color="#6ec8d4"
+            transparent
+            opacity={0.3}
+            blending={AdditiveBlending}
+            depthWrite={false}
+          />
+        </mesh>
+      ))}
+    </group>
+  )
+}
+
+export function Pond() {
   const hex = useMemo(() => makeHexTexture(), [])
   const caustic = useMemo(() => makeCausticTexture(), [])
   const shimmer = useRef<Mesh>(null)
+  const liquid = DISH_INNER - 0.12
 
   useFrame(({ clock }) => {
     if (!shimmer.current) return
@@ -81,55 +216,42 @@ export function Pond() {
     shimmer.current.position.x = Math.sin(t * 0.35) * 0.12
     shimmer.current.position.z = Math.cos(t * 0.28) * 0.12
     const mat = shimmer.current.material as { opacity: number }
-    mat.opacity = 0.16 + Math.sin(t * 1.7) * 0.05
+    mat.opacity = 0.1 + Math.sin(t * 1.7) * 0.035
   })
 
   return (
     <group>
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.1, 0]} receiveShadow>
-        <planeGeometry args={[inner, inner]} />
+      <DishWell />
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, POND_LIQUID_Y, 0]} receiveShadow>
+        <planeGeometry args={[liquid, liquid]} />
         <meshPhysicalMaterial
-          color="#041820"
-          roughness={0.18}
-          metalness={0.28}
+          color="#01070c"
+          roughness={0.12}
+          metalness={0.22}
           transparent
-          opacity={0.96}
-          emissive="#021014"
-          emissiveIntensity={0.28}
-          envMapIntensity={1.05}
+          opacity={0.9}
+          emissive="#000408"
+          emissiveIntensity={0.16}
+          envMapIntensity={0.85}
         />
       </mesh>
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.085, 0]}>
-        <planeGeometry args={[inner, inner]} />
-        <meshBasicMaterial map={hex} transparent opacity={0.55} />
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, POND_LIQUID_Y + 0.008, 0]}>
+        <planeGeometry args={[liquid, liquid]} />
+        <meshBasicMaterial map={hex} transparent opacity={0.28} depthWrite={false} />
       </mesh>
-      <mesh ref={shimmer} rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.07, 0]}>
-        <planeGeometry args={[inner * 0.92, inner * 0.92]} />
+      <mesh ref={shimmer} rotation={[-Math.PI / 2, 0, 0]} position={[0, POND_LIQUID_Y + 0.016, 0]}>
+        <planeGeometry args={[liquid * 0.92, liquid * 0.92]} />
         <meshBasicMaterial
           map={caustic}
           transparent
-          opacity={0.22}
+          opacity={0.14}
           blending={AdditiveBlending}
           depthWrite={false}
         />
       </mesh>
+      <LiquidRipples />
       <RaisedCross />
-      <mesh position={[0, -0.02, -wall]} castShadow receiveShadow>
-        <boxGeometry args={[POND_SIZE + rim, 0.16, rim]} />
-        <meshStandardMaterial color="#0a161c" metalness={0.45} roughness={0.4} />
-      </mesh>
-      <mesh position={[0, 0.02, wall]} castShadow receiveShadow>
-        <boxGeometry args={[POND_SIZE + rim, 0.26, rim]} />
-        <meshStandardMaterial color="#0a161c" metalness={0.45} roughness={0.4} />
-      </mesh>
-      <mesh position={[-wall, 0.02, 0]} castShadow receiveShadow>
-        <boxGeometry args={[rim, 0.26, POND_SIZE + rim]} />
-        <meshStandardMaterial color="#0a161c" metalness={0.45} roughness={0.4} />
-      </mesh>
-      <mesh position={[wall, 0.02, 0]} castShadow receiveShadow>
-        <boxGeometry args={[rim, 0.26, POND_SIZE + rim]} />
-        <meshStandardMaterial color="#0a161c" metalness={0.45} roughness={0.4} />
-      </mesh>
+      <DishLip />
     </group>
   )
 }

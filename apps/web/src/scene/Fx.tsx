@@ -6,6 +6,7 @@ import { BEASTS } from '@hhc/shared'
 import { useJuiceStore } from '../game/juice'
 import { useGameStore } from '../store/gameStore'
 import { visualMouthWorld } from './beasts/vinyl'
+import { POND_LIQUID_Y } from './Pond'
 
 function mouthWorld(seat: 0 | 1 | 2 | 3, extend: number): [number, number, number] {
   const { x, y, z } = visualMouthWorld(seat, extend)
@@ -61,6 +62,12 @@ function EatTrails() {
   )
 }
 
+const DROP_DIRS = [
+  [0.16, 0.22],
+  [-0.14, 0.18],
+  [0.04, -0.2],
+] as const
+
 function Splashes() {
   const splashes = useJuiceStore((s) => s.splashes)
   const group = useRef<Group>(null)
@@ -69,39 +76,63 @@ function Splashes() {
     if (!group.current) return
     const now = performance.now()
     for (let i = 0; i < group.current.children.length; i += 1) {
-      const child = group.current.children[i] as Mesh
+      const burst = group.current.children[i]
       const ev = splashes[i]
       if (!ev) {
-        child.visible = false
+        burst.visible = false
         continue
       }
-      const t = (now - ev.at) / 420
+      const t = (now - ev.at) / 480
       if (t >= 1) {
-        child.visible = false
+        burst.visible = false
         continue
       }
-      child.visible = true
-      child.position.set(ev.x, -0.04, ev.z)
-      const s = 0.2 + t * 1.4
-      child.scale.set(s, 1, s)
-      const mat = child.material as { opacity: number }
-      mat.opacity = 0.45 * (1 - t)
+      burst.visible = true
+      burst.position.set(ev.x, POND_LIQUID_Y + 0.02, ev.z)
+      const ring = burst.children[0] as Mesh
+      const ringS = 0.35 + t * 1.85
+      ring.scale.set(ringS, 1, ringS)
+      const ringMat = ring.material as { opacity: number }
+      ringMat.opacity = 0.62 * (1 - t)
+      for (let d = 0; d < DROP_DIRS.length; d += 1) {
+        const drop = burst.children[d + 1] as Mesh
+        const [dx, dz] = DROP_DIRS[d]
+        const up = Math.sin(t * Math.PI) * 0.42
+        drop.position.set(dx * t * 1.6, up, dz * t * 1.6)
+        drop.scale.setScalar(0.7 * (1 - t * 0.55))
+        const dropMat = drop.material as { opacity: number }
+        dropMat.opacity = 0.85 * (1 - t)
+      }
     }
   })
 
   return (
     <group ref={group}>
       {splashes.map((ev) => (
-        <mesh key={ev.id} rotation={[-Math.PI / 2, 0, 0]} visible={false}>
-          <ringGeometry args={[0.18, 0.28, 20]} />
-          <meshBasicMaterial
-            color="#8ef2ff"
-            transparent
-            opacity={0.4}
-            blending={AdditiveBlending}
-            depthWrite={false}
-          />
-        </mesh>
+        <group key={ev.id} visible={false}>
+          <mesh rotation={[-Math.PI / 2, 0, 0]}>
+            <ringGeometry args={[0.2, 0.34, 22]} />
+            <meshBasicMaterial
+              color="#b8fbff"
+              transparent
+              opacity={0.55}
+              blending={AdditiveBlending}
+              depthWrite={false}
+            />
+          </mesh>
+          {DROP_DIRS.map(([dx, dz]) => (
+            <mesh key={`${dx}:${dz}`}>
+              <sphereGeometry args={[0.07, 8, 6]} />
+              <meshBasicMaterial
+                color="#d7ffff"
+                transparent
+                opacity={0.85}
+                blending={AdditiveBlending}
+                depthWrite={false}
+              />
+            </mesh>
+          ))}
+        </group>
       ))}
     </group>
   )
