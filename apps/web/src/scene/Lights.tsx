@@ -9,12 +9,12 @@ export function Lights() {
 
   return (
     <>
-      <ambientLight intensity={0.7} />
-      <hemisphereLight args={['#c4e4ff', '#1a2430', 0.58]} />
+      <ambientLight intensity={0.82} />
+      <hemisphereLight args={['#d4ecff', '#243044', 0.7]} />
       <directionalLight
         castShadow
-        position={[4, 16, -6]}
-        intensity={1.5}
+        position={[4, 18, -4]}
+        intensity={1.65}
         shadow-mapSize-width={1024}
         shadow-mapSize-height={1024}
       />

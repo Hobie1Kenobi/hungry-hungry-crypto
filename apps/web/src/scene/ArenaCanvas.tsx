@@ -20,11 +20,11 @@ function ArenaCamera() {
   useLayoutEffect(() => {
     const cam = camera as PerspectiveCamera
     const aspect = width / Math.max(1, height)
-    cam.fov = aspect < 1 ? 42 : 36
+    cam.fov = aspect < 1.05 ? 40 : 34
     cam.near = 0.1
     cam.far = 80
-    cam.position.set(0, 23.4, -10.6)
-    cam.lookAt(0, 0.22, 0.55)
+    cam.position.set(0, 26.8, -6.4)
+    cam.lookAt(0, 0.28, 0.12)
     cam.updateProjectionMatrix()
   }, [camera, width, height])
 
@@ -36,7 +36,7 @@ function SoftEnvironment() {
   useLayoutEffect(() => {
     const env = makeSoftEnv()
     scene.environment = env
-    scene.environmentIntensity = 0.55
+    scene.environmentIntensity = 0.7
     return () => {
       scene.environment = null
       env.dispose()
@@ -53,13 +53,13 @@ export function ArenaCanvas() {
       <Canvas
         shadows
         dpr={[1, 1.75]}
-        camera={{ position: [0, 23.4, -10.6], fov: 36, near: 0.1, far: 80 }}
+        camera={{ position: [0, 26.8, -6.4], fov: 34, near: 0.1, far: 80 }}
         gl={{ antialias: true }}
       >
         <ArenaCamera />
         <SoftEnvironment />
-        <color attach="background" args={['#141b28']} />
-        <fog attach="fog" args={['#141b28', 46, 78]} />
+        <color attach="background" args={['#1c2738']} />
+        <fog attach="fog" args={['#1c2738', 58, 88]} />
         <Lights />
         <Table />
         <Pond />
@@ -70,7 +70,7 @@ export function ArenaCanvas() {
         {pellets.map((pellet) => (
           <PelletChip key={pellet.id} pellet={pellet} />
         ))}
-        <ContactShadows position={[0, 0.035, 0]} opacity={0.28} scale={14} blur={2.2} far={6} />
+        <ContactShadows position={[0, 0.035, 0]} opacity={0.16} scale={13} blur={1.8} far={4.5} />
       </Canvas>
     </div>
   )
