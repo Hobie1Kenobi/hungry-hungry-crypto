@@ -110,9 +110,9 @@ function DishWell() {
 function DishLip() {
   const rim = 0.34
   const wall = POND_SIZE / 2 + 0.02
-  const inner = POND_SIZE / 2 - 0.06
+  const inner = POND_SIZE / 2 - 0.1
   const steel = { color: '#0a161c', metalness: 0.5, roughness: 0.36 }
-  const well = { color: '#03080c', metalness: 0.28, roughness: 0.62 }
+  const well = { color: '#3a4a52', metalness: 0.34, roughness: 0.48 }
   return (
     <group>
       <mesh position={[0, 0.08, -wall]} castShadow receiveShadow>
@@ -131,20 +131,20 @@ function DishLip() {
         <boxGeometry args={[rim, 0.28, POND_SIZE + rim]} />
         <meshStandardMaterial {...steel} />
       </mesh>
-      <mesh position={[0, 0.06, inner]} receiveShadow>
-        <boxGeometry args={[POND_SIZE - 0.2, 0.22, 0.1]} />
+      <mesh position={[0, 0.1, inner]} receiveShadow>
+        <boxGeometry args={[POND_SIZE - 0.28, 0.36, 0.16]} />
         <meshStandardMaterial {...well} />
       </mesh>
-      <mesh position={[0, 0.06, -inner]} receiveShadow>
-        <boxGeometry args={[POND_SIZE - 0.2, 0.22, 0.1]} />
+      <mesh position={[0, 0.1, -inner]} receiveShadow>
+        <boxGeometry args={[POND_SIZE - 0.28, 0.36, 0.16]} />
         <meshStandardMaterial {...well} />
       </mesh>
-      <mesh position={[inner, 0.06, 0]} receiveShadow>
-        <boxGeometry args={[0.1, 0.22, POND_SIZE - 0.2]} />
+      <mesh position={[inner, 0.1, 0]} receiveShadow>
+        <boxGeometry args={[0.16, 0.36, POND_SIZE - 0.28]} />
         <meshStandardMaterial {...well} />
       </mesh>
-      <mesh position={[-inner, 0.06, 0]} receiveShadow>
-        <boxGeometry args={[0.1, 0.22, POND_SIZE - 0.2]} />
+      <mesh position={[-inner, 0.1, 0]} receiveShadow>
+        <boxGeometry args={[0.16, 0.36, POND_SIZE - 0.28]} />
         <meshStandardMaterial {...well} />
       </mesh>
       <mesh position={[0, 0.2, -wall]} castShadow>

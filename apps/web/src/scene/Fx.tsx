@@ -89,18 +89,23 @@ function Splashes() {
         continue
       }
       burst.visible = true
-      burst.position.set(ev.x, POND_LIQUID_Y + 0.03, ev.z)
-      const ring = burst.children[0] as Mesh
-      const ringS = 0.55 + t * 2.4
+      burst.position.set(ev.x, POND_LIQUID_Y + 0.04, ev.z)
+      const flash = burst.children[0] as Mesh
+      const flashS = 0.55 + t * 1.1
+      flash.scale.set(flashS, 1, flashS)
+      const flashMat = flash.material as { opacity: number }
+      flashMat.opacity = t < 0.35 ? 0.7 * (1 - t / 0.35) : 0
+      const ring = burst.children[1] as Mesh
+      const ringS = 0.7 + t * 3.1
       ring.scale.set(ringS, 1, ringS)
       const ringMat = ring.material as { opacity: number }
-      ringMat.opacity = 0.85 * (1 - t)
-      const inner = burst.children[1] as Mesh
-      inner.scale.set(0.35 + t * 1.5, 1, 0.35 + t * 1.5)
+      ringMat.opacity = 0.95 * (1 - t)
+      const inner = burst.children[2] as Mesh
+      inner.scale.set(0.4 + t * 1.8, 1, 0.4 + t * 1.8)
       const innerMat = inner.material as { opacity: number }
-      innerMat.opacity = 0.7 * (1 - t)
+      innerMat.opacity = 0.8 * (1 - t)
       for (let d = 0; d < DROP_DIRS.length; d += 1) {
-        const drop = burst.children[d + 2] as Mesh
+        const drop = burst.children[d + 3] as Mesh
         const [dx, dz] = DROP_DIRS[d]
         const up = Math.sin(t * Math.PI) * 0.62
         drop.position.set(dx * t * 2.1, up, dz * t * 2.1)
@@ -115,6 +120,17 @@ function Splashes() {
     <group ref={group}>
       {splashes.map((ev) => (
         <group key={ev.id} visible={false}>
+          <mesh rotation={[-Math.PI / 2, 0, 0]} renderOrder={11}>
+            <circleGeometry args={[0.55, 20]} />
+            <meshBasicMaterial
+              color="#f5ffff"
+              transparent
+              opacity={0.7}
+              blending={AdditiveBlending}
+              depthWrite={false}
+              depthTest={false}
+            />
+          </mesh>
           <mesh rotation={[-Math.PI / 2, 0, 0]} renderOrder={12}>
             <ringGeometry args={[0.22, 0.4, 24]} />
             <meshBasicMaterial
