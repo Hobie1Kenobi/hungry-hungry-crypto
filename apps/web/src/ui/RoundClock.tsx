@@ -15,9 +15,10 @@ export function RoundClock() {
     let last = performance.now()
     let raf = 0
     const loop = (now: number) => {
-      const dt = Math.min(0.05, (now - last) / 1000)
+      const raw = Math.max(0, (now - last) / 1000)
       last = now
       const s = useGameStore.getState()
+      const dt = s.playMode === 'practice' ? raw : Math.min(0.05, raw)
       if (s.playMode === 'practice') {
         setChompRef.current({ seat: s.localSeat, down: s.chompHeld, clientTime: now })
       }

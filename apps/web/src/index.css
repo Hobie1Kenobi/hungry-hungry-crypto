@@ -478,8 +478,8 @@ h2,
 
 .chomp-btn:active,
 .chomp-btn.held {
-  transform: translateY(12px) scale(0.96);
-  filter: brightness(1.28);
+  transform: translateY(16px) scale(0.94);
+  filter: brightness(1.32);
   box-shadow:
     0 0 0 #007a88,
     0 0 56px rgba(0, 229, 255, 1),
@@ -489,19 +489,20 @@ h2,
 .results {
   position: absolute;
   inset: 0;
-  display: grid;
-  place-items: center;
-  background: rgba(4, 6, 12, 0.32);
-  padding: 20px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+  background: transparent;
+  padding: 18px 18px 22px;
   pointer-events: auto;
 }
 
 .results-card {
-  width: min(520px, 100%);
-  background: rgba(8, 10, 16, 0.62);
+  width: min(380px, 92%);
+  background: rgba(8, 10, 16, 0.72);
   border: 1px solid var(--line);
-  padding: 28px 24px;
-  backdrop-filter: blur(8px);
+  padding: 16px 16px 14px;
+  backdrop-filter: blur(10px);
 }
 
 .results-hero {

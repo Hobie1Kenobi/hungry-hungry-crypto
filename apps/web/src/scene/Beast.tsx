@@ -1,60 +1,15 @@
 import { Billboard, Text } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
-import { useMemo, useRef, type Ref } from 'react'
+import { useRef } from 'react'
 import type { Group, Mesh, MeshStandardMaterial, PointLight } from 'three'
 import type { Seat } from '@hhc/shared'
 import { BEASTS, beastPosition, beastYaw, chompReach } from '@hhc/shared'
 import { useJuiceStore } from '../game/juice'
 import { useGameStore } from '../store/gameStore'
-import { Chassis, HeadDressing, MachineMouth } from './beasts/kits'
+import { Chassis, HeadDressing, MachineMouth, MachineNeck } from './beasts/kits'
 import { BEAST_NECK_LIFT } from './beasts/vinyl'
 
-const RING_COUNT = 6
-
-function HydraulicNeck({
-  pistonRef,
-  ringsRef,
-  color,
-  gold,
-}: {
-  pistonRef: Ref<Mesh>
-  ringsRef: Ref<Group>
-  color: string
-  gold: boolean
-}) {
-  const rings = useMemo(() => Array.from({ length: RING_COUNT }, (_, i) => i), [])
-  const ringColor = gold ? '#D4AF37' : '#e6edf2'
-  return (
-    <group>
-      <mesh rotation={[Math.PI / 2, 0, 0]} position={[0, 0, 0.16]} castShadow>
-        <cylinderGeometry args={[0.58, 0.64, 0.4, 8]} />
-        <meshStandardMaterial color={ringColor} metalness={0.9} roughness={0.14} />
-      </mesh>
-      <mesh rotation={[Math.PI / 2, 0, 0]} position={[0, 0, 0.52]} castShadow>
-        <cylinderGeometry args={[0.5, 0.54, 0.78, 8]} />
-        <meshStandardMaterial color="#8b96a2" metalness={0.78} roughness={0.22} />
-      </mesh>
-      <mesh ref={pistonRef} rotation={[Math.PI / 2, 0, 0]} position={[0, 0, 1.2]} castShadow>
-        <cylinderGeometry args={[0.42, 0.46, 1, 10]} />
-        <meshStandardMaterial color={color} metalness={0.58} roughness={0.26} />
-      </mesh>
-      <group ref={ringsRef}>
-        {rings.map((i) => (
-          <group key={i}>
-            <mesh rotation={[Math.PI / 2, 0, 0]} castShadow>
-              <torusGeometry args={[0.56, 0.14, 8, 16]} />
-              <meshStandardMaterial color="#f3f7fb" metalness={0.95} roughness={0.08} />
-            </mesh>
-            <mesh rotation={[Math.PI / 2, 0, 0]} position={[0, 0, 0.18]} castShadow>
-              <torusGeometry args={[0.5, 0.1, 8, 12]} />
-              <meshStandardMaterial color="#1a1e22" roughness={0.75} />
-            </mesh>
-          </group>
-        ))}
-      </group>
-    </group>
-  )
-}
+const RING_COUNT = 5
 
 export function Beast({ seat }: { seat: Seat }) {
   const spec = BEASTS[seat]
@@ -82,13 +37,12 @@ export function Beast({ seat }: { seat: Seat }) {
   const squash = useRef(0)
   const gulp = useRef(0)
   const shake = useRef(0)
-  const jaw = useRef(0.34)
+  const jaw = useRef(0.48)
   const visExt = useRef(0)
   const slam = useRef(0)
 
   const [x, y, z] = beastPosition(seat)
   const yaw = beastYaw(seat)
-  const gold = seat === 3
 
   useFrame((_, dt) => {
     const t = performance.now() / 1000
@@ -98,55 +52,57 @@ export function Beast({ seat }: { seat: Seat }) {
       slam.current = 1
     }
     lastDown.current = down
-    anticip.current = Math.max(0, anticip.current - dt * 9)
-    slam.current = Math.max(0, slam.current - dt * 7)
+    anticip.current = Math.max(0, anticip.current - dt * 10)
+    slam.current = Math.max(0, slam.current - dt * 8)
 
     if (lastEatAt > lastEat.current) {
       lastEat.current = lastEatAt
       squash.current = 1
       gulp.current = 1
     }
-    squash.current = Math.max(0, squash.current - dt * 11)
-    gulp.current = Math.max(0, gulp.current - dt * 2.8)
+    squash.current = Math.max(0, squash.current - dt * 12)
+    gulp.current = Math.max(0, gulp.current - dt * 2.6)
 
     if (missAt > 0 && performance.now() - missAt < 220) shake.current = 1
     shake.current = Math.max(0, shake.current - dt * 6)
 
     const winner = ui === 'results' && result?.winner === seat
     const loser = ui === 'results' && result && result.winner !== seat
-    const targetJaw = winner ? 0.62 : loser ? 0.12 : down ? Math.min(1, Math.max(extend * 1.2, 0.82)) : 0.34 + extend * 0.1
-    jaw.current += (targetJaw - jaw.current) * Math.min(1, dt * (down ? 10 : 14))
+    const restJaw = 0.48
+    const targetJaw = winner ? 0.78 : loser ? 0.16 : down ? Math.min(1, Math.max(extend * 1.15, 0.88)) : restJaw + extend * 0.08
+    jaw.current += (targetJaw - jaw.current) * Math.min(1, dt * (down ? 12 : 16))
 
-    const punch = extend + slam.current * 0.14 - anticip.current * 0.2 + (extend > 0.7 ? Math.sin(extend * Math.PI) * 0.05 : 0)
-    visExt.current += (Math.max(0, Math.min(1.08, punch)) - visExt.current) * Math.min(1, dt * 16)
+    const punch = down ? extend + slam.current * 0.16 - anticip.current * 0.18 : extend
+    const want = Math.max(0, Math.min(1.06, punch))
+    visExt.current += (want - visExt.current) * Math.min(1, dt * (down ? 28 : 22))
 
-    const breathe = 1 + Math.sin(t * 2.05 + seat) * (down ? 0.01 : 0.028)
-    const sq = 1 - squash.current * 0.32
-    const gulpS = 1 + gulp.current * 0.14
-    const fat = seat === 2 ? 1.04 : 1
+    const breathe = 1 + Math.sin(t * 2.05 + seat) * (down ? 0.01 : 0.03)
+    const sq = 1 - squash.current * 0.36
+    const gulpS = 1 + gulp.current * 0.16
+    const fat = seat === 2 ? 1.02 : 1
 
     if (rig.current) {
-      rig.current.rotation.x = winner ? -0.42 : loser ? 0.4 : squash.current * -0.08
-      rig.current.rotation.z = winner ? Math.sin(t * 2.2) * 0.05 : loser ? 0.12 : 0
-      rig.current.position.y = winner ? 0.1 : loser ? -0.14 : 0
+      rig.current.rotation.x = winner ? -0.48 : loser ? 0.46 : squash.current * -0.12
+      rig.current.rotation.z = winner ? Math.sin(t * 2.4) * 0.08 : loser ? 0.16 : 0
+      rig.current.position.y = winner ? 0.16 : loser ? -0.2 : slam.current * 0.04
     }
     if (body.current) {
-      body.current.scale.set(fat * gulpS * (1 + squash.current * 0.16), breathe * sq * (loser ? 0.82 : 1), fat * gulpS)
+      body.current.scale.set(fat * gulpS * (1 + squash.current * 0.2), breathe * sq * (loser ? 0.78 : 1), fat * gulpS)
     }
     if (antL.current) antL.current.rotation.z = Math.sin(t * 3.4 + seat) * 0.22
     if (antR.current) antR.current.rotation.z = Math.sin(t * 3.4 + seat + 1.2) * -0.22
     if (head.current) {
-      const camYaw = seat === 2 ? 0.58 : seat === 3 ? 0.3 : seat === 1 ? -0.24 : 0.1
+      const camYaw = seat === 2 ? 0.12 : seat === 3 ? 0.22 : seat === 1 ? -0.18 : 0.08
       head.current.rotation.y = camYaw + Math.sin(t * 9) * shake.current * 0.28
       head.current.rotation.z = Math.cos(t * 11) * shake.current * 0.12
-      head.current.rotation.x = -0.16 + squash.current * 0.2
+      head.current.rotation.x = -0.1 + squash.current * 0.22
     }
     if (visorMat.current) {
       const blink = Math.sin(t * 7.5 + seat * 2.1) > 0.93 ? 0.18 : 1
-      visorMat.current.emissiveIntensity = (winner ? 4.2 : down ? 3.4 : 2.4) * blink
+      visorMat.current.emissiveIntensity = (winner ? 4.4 : down ? 3.6 : 2.5) * blink
     }
     const len = chompReach(visExt.current)
-    const barrel = 0.82
+    const barrel = 0.72
     const rod = Math.max(0.28, len - barrel)
     if (piston.current) {
       piston.current.scale.set(1, rod, 1)
@@ -155,7 +111,7 @@ export function Beast({ seat }: { seat: Seat }) {
     if (ringsRef.current) {
       for (let i = 0; i < RING_COUNT; i += 1) {
         const ring = ringsRef.current.children[i]
-        if (ring) ring.position.set(0, 0, barrel + ((i + 0.45) / RING_COUNT) * rod)
+        if (ring) ring.position.set(0, 0, barrel + ((i + 0.4) / RING_COUNT) * rod)
       }
     }
     if (head.current) head.current.position.set(0, 0.02, len)
@@ -163,34 +119,34 @@ export function Beast({ seat }: { seat: Seat }) {
       const open = jaw.current
       const up = jaws.current.children[1]
       const low = jaws.current.children[2]
-      if (up) up.rotation.x = open * 0.92
-      if (low) low.rotation.x = -open * 0.82
+      if (up) up.rotation.x = open * 0.98
+      if (low) low.rotation.x = -open * 0.9
     }
     if (mouthLight.current) {
-      mouthLight.current.intensity = (down ? 3.6 : 1.1) + gulp.current * 4
+      mouthLight.current.intensity = (down ? 4.2 : 2.2) + gulp.current * 5
     }
   })
 
   return (
     <group position={[x, y, z]} rotation={[0, yaw, 0]}>
       <mesh position={[0, 0.02, -0.18]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
-        <circleGeometry args={[1.35, 24]} />
-        <meshStandardMaterial color={spec.color} transparent opacity={0.18} />
+        <circleGeometry args={[1.45, 24]} />
+        <meshStandardMaterial color={spec.color} transparent opacity={0.2} />
       </mesh>
       <group ref={rig}>
-        <group ref={body} position={[0, 0.02, seat === 2 || seat === 3 ? 0.06 : -0.08]}>
+        <group ref={body} position={[0, 0.02, seat === 2 ? 0.1 : -0.06]}>
           <Chassis seat={seat} />
         </group>
-        <group position={[0, BEAST_NECK_LIFT, 0.42]}>
-          <HydraulicNeck pistonRef={piston} ringsRef={ringsRef} color={spec.color} gold={gold} />
-          <group ref={head} position={[0, 0.02, 1]} scale={1.42}>
+        <group position={[0, BEAST_NECK_LIFT, 0.48]}>
+          <MachineNeck seat={seat} pistonRef={piston} ringsRef={ringsRef} color={spec.color} />
+          <group ref={head} position={[0, 0.02, 1]} scale={1.38}>
             <HeadDressing seat={seat} visorRef={visorMat} antL={antL} antR={antR} />
             <MachineMouth jawsRef={jaws} seat={seat} />
-            <pointLight ref={mouthLight} position={[0, 0.02, 0.55]} color="#ff6a88" intensity={1.2} distance={2.4} />
+            <pointLight ref={mouthLight} position={[0, 0.02, 0.62]} color="#ff6a88" intensity={2.2} distance={2.8} />
           </group>
         </group>
       </group>
-      <Billboard position={[0, 2.15, 0]}>
+      <Billboard position={[0, seat === 0 ? 2.55 : 2.2, 0]}>
         <Text fontSize={0.22} color={spec.color} anchorX="center" anchorY="middle">
           {you ? `${spec.name}  YOU` : spec.name}
         </Text>

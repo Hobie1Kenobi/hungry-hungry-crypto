@@ -12,6 +12,7 @@ import {
   emptyScores,
   makeMatchResult,
   planSeats,
+  practiceWallClock,
   spawnPellets,
   stepArena,
   stepNeckExtend,
@@ -187,8 +188,10 @@ export const useGameStore = create<GameState>((set, get) => ({
     if (state.ui !== 'playing') return
     const origin = state.matchClockOrigin
     const clock = origin > 0 ? Math.max(0, now - origin) : now
+    const wall = state.playMode === 'practice' && origin > 0 ? practiceWallClock(now, origin, state.timeLeft) : null
+    const stepDt = wall ? wall.dt : dt
     if (state.playMode === 'online') {
-      const neckExtend = stepNeckExtend(state.neckExtend, state.chompDown, state.chompPulseUntil, clock, dt)
+      const neckExtend = stepNeckExtend(state.neckExtend, state.chompDown, state.chompPulseUntil, clock, stepDt)
       set({ neckExtend })
       return
     }
@@ -215,7 +218,7 @@ export const useGameStore = create<GameState>((set, get) => ({
     const world = {
       now: clock,
       dumpT: state.dumpT,
-      timeLeft: state.timeLeft,
+      timeLeft: wall?.timeLeft ?? state.timeLeft,
       pellets: state.pellets,
       neckExtend: state.neckExtend,
       chompDown,
@@ -246,7 +249,7 @@ export const useGameStore = create<GameState>((set, get) => ({
         refillCount: state.refillCount,
         lastRefillAt: state.lastRefillAt,
       },
-      dt,
+      stepDt,
       clock,
     )
     for (const hit of stepped.hits) {
@@ -262,8 +265,10 @@ export const useGameStore = create<GameState>((set, get) => ({
       useJuiceStore.getState().notifyDump()
     }
     const next: Partial<GameState> = { ...stepped.snapshot }
-    if (stepped.ended) {
-      Object.assign(next, finishLocal({ ...state, ...stepped.snapshot }))
+    if (wall) next.timeLeft = wall.timeLeft
+    const ended = stepped.ended || Boolean(wall?.ended)
+    if (ended) {
+      Object.assign(next, finishLocal({ ...state, ...stepped.snapshot, timeLeft: next.timeLeft ?? stepped.snapshot.timeLeft }))
     }
     set(next)
   },
